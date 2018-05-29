@@ -11,6 +11,5 @@ wheel==0.31.0
 pymongo==3.6.1
 passlib==1.7.1
 requests==2.18.4
-Flask-RESTful
-Flask-JWT-Extended==3.9.1
+Flask-RESTful==0.3.6
 uwsgi

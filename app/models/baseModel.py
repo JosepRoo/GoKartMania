@@ -1,7 +1,6 @@
 import uuid
 
 from app.common.database import Database
-from app.models.users.errors import UserNotFoundException
 
 
 class BaseModel:
@@ -42,4 +41,3 @@ class BaseModel:
         user = Database.find_one(collection, {'_id': _id})
         if user:
             return cls(**user)
-        raise UserNotFoundException("El usuario con el token / id dado no existe.")
