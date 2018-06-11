@@ -7,13 +7,13 @@ __author__ = 'richogtz'
 
 class Database(object):
     # URI = "mongodb://richogtz:cloudstrifeFF7!@127.0.0.1:27017"
-    URI = os.environ.get('MONGODB_URI') or "mongodb://127.0.0.1:27017"
+    URI = os.environ.get('MONGODB_URI') or "mongodb://127.0.0.1:27017/pakkeRegistro"
     DATABASE = None
 
     @staticmethod
     def initialize():
         client = pymongo.MongoClient(Database.URI)
-        Database.DATABASE = client['pakkeRegistro']
+        Database.DATABASE = client.get_database()
 
     @staticmethod
     def insert(collection, data):
