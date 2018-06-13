@@ -1,21 +1,23 @@
 from flask import Flask, jsonify
-from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
 from app.common.database import Database
 from app.common.response import Response
+from app.resources.user import User
+from app.resources.reservation import Reservations
 from config import config
 
 
 def create_app(config_name):
     app = Flask(__name__)
     api = Api(app)
-    jwt = JWTManager(app)
     app.config.from_object(config[config_name])
     # Register our blueprints
     from .default import default as default_blueprint
     app.register_blueprint(default_blueprint)
 
+    api.add_resource(User, '/user')
+    api.add_resource(Reservations, '/user/reservations')
 
     @app.after_request
     def after_request(response):

@@ -1,7 +1,7 @@
 import uuid
 
 from app.common.database import Database
-
+from app.models.users.errors import UserNotFound
 
 class BaseModel:
     def __init__(self, _id=None):
@@ -41,3 +41,4 @@ class BaseModel:
         user = Database.find_one(collection, {'_id': _id})
         if user:
             return cls(**user)
+        raise UserNotFound("El usuario con el ID dado no existe.")
