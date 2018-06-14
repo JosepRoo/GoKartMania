@@ -41,19 +41,5 @@ class User(BaseModel):
             return new_user
         raise UserAlreadyRegisteredError("El Usuario ya existe.")
 
-    @staticmethod
-    def login(user_email, user_id):
-        session['email'] = user_email
-
-    @staticmethod
-    def logout():
-        session['email'] = None
-
-    def update_user(self):
-        self.update_mongo(COLLECTION)
-
-    def delete_user(self):
-        self.delete_from_mongo(COLLECTION)
-
     def get_reservations(self):
         pass
