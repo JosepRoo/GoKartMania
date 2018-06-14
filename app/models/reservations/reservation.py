@@ -1,8 +1,10 @@
 from app.models.baseModel import BaseModel
+from app.common.database import Database
 from app.models.users.constants import COLLECTION as USERS_COLLECTION
 from app.models.reservations.constants import COLLECTION as RESERVATION_COLLECTION
 from app.models.users.errors import InvalidEmail, UserAlreadyRegisteredError
 from app.models.users.user import User
+from app.models.reservations.errors import ReservationNotFound
 
 
 class Reservation(BaseModel):
@@ -20,9 +22,22 @@ class Reservation(BaseModel):
         from app.models.turns.turn import Turn as TurnModel
         reservation = cls(**new_reservation)
         reservation.save_to_mongo(RESERVATION_COLLECTION)
-        # Por default, una reservación debe llebar al menos un turno con al menos un piloto
-        TurnModel.add(reservation, {"schedule": "11:00", "turn_number": 1, "reservation_id": reservation._id})
-        user.reservations.append(reservation)
+        # Por default, una reservación debe llevar al menos un turno con al menos un piloto
+        TurnModel.add(reservation, {"schedule": "HH:MM", "turn_number": 0, "reservation_id": reservation._id})
+        user.reservations.append(reservation._id)
         user.update_mongo(USERS_COLLECTION)
         print(reservation.turns)
         return new_reservation
+
+    @classmethod
+    def get_by_id(cls, _id, collection):
+        """
+        Returns the reservation object with the given id, or raises an exception if that reservation was not found
+        :param _id: id of the reservation to find
+        :param collection: DB that contains all the reservations
+        :return: reservation object
+        """
+        reservation = Database.find_one(collection, {'_id': _id})
+        if reservation:
+            return cls(**reservation)
+        raise ReservationNotFound("La reservación con el ID dado no existe.")

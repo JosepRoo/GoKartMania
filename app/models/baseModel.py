@@ -3,6 +3,7 @@ import uuid
 from app.common.database import Database
 from app.models.users.errors import UserNotFound
 
+
 class BaseModel:
     def __init__(self, _id=None):
         self._id = uuid.uuid4().hex if _id is None else _id

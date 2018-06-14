@@ -4,6 +4,7 @@ from flask_restful import Api
 from app.common.database import Database
 from app.common.response import Response
 from app.resources.user import User
+from app.resources.pilot import Pilot
 from app.resources.reservation import Reservations
 from config import config
 
@@ -18,6 +19,7 @@ def create_app(config_name):
 
     api.add_resource(User, '/user')
     api.add_resource(Reservations, '/user/reservations')
+    api.add_resource(Pilot, '/user/pilot/<string:reservation_id>')
 
     @app.after_request
     def after_request(response):
