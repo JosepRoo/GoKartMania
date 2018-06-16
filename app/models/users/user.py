@@ -39,7 +39,7 @@ class User(BaseModel):
             new_user = cls(**kwargs)
             new_user.save_to_mongo(COLLECTION)
             return new_user
-        raise UserAlreadyRegisteredError("El Usuario ya existe.")
+        return user
 
     @staticmethod
     def login(user_email, user_id):

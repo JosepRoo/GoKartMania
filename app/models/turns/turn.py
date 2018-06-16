@@ -1,5 +1,5 @@
 from app.models.baseModel import BaseModel
-from app.models.reservations.constants import COLLECTION
+from app.models.reservations.constants import COLLECTION_TEMP
 from app.models.reservations.reservation import Reservation
 
 
@@ -16,9 +16,7 @@ class Turn(BaseModel):
     def add(cls, reservation: Reservation, new_turn):
         from app.models.pilots.pilot import Pilot as PilotModel
         turn = cls(**new_turn)
-        print(turn.pilots)
         PilotModel.add(turn, reservation, {'name': 'Piloto 1'})
-        print(turn.pilots)
         reservation.turns.append(turn)
-        reservation.update_mongo(COLLECTION)
+        reservation.update_mongo(COLLECTION_TEMP)
         return new_turn

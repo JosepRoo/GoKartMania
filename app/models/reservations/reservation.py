@@ -1,7 +1,9 @@
+from flask import session
+
 from app.models.baseModel import BaseModel
 from app.common.database import Database
 from app.models.users.constants import COLLECTION as USERS_COLLECTION
-from app.models.reservations.constants import COLLECTION as RESERVATION_COLLECTION
+from app.models.reservations.constants import COLLECTION_TEMP as RESERVATION_COLLECTION
 from app.models.users.errors import InvalidEmail, UserAlreadyRegisteredError
 from app.models.users.user import User
 from app.models.reservations.errors import ReservationNotFound
@@ -26,7 +28,7 @@ class Reservation(BaseModel):
         TurnModel.add(reservation, {"schedule": "HH:MM", "turn_number": 0, "reservation_id": reservation._id})
         user.reservations.append(reservation._id)
         user.update_mongo(USERS_COLLECTION)
-        print(reservation.turns)
+        session['reservation'] = reservation._id
         return new_reservation
 
     @classmethod
