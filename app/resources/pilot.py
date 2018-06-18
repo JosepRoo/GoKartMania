@@ -20,8 +20,7 @@ class Pilots(Resource):
         """
         try:
             reservation = ReservationModel.get_by_id(reservation_id, COLLECTION_TEMP)
-            # Validar que al menos exista un turno, en caso de que lo haya borrado
-            return [pilot.json() for pilot in reservation.turns[0].pilots], 200
+            return [pilot.json() for pilot in reservation.pilots], 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 400
 
@@ -34,10 +33,10 @@ class Pilots(Resource):
         """
         try:
             reservation = ReservationModel.get_by_id(reservation_id, COLLECTION_TEMP)
-            pilot_number = len(reservation.turns[-1].pilots)
+            pilot_number = len(reservation.pilots)
             if pilot_number >= 8:
                 return Response(message="La reservación ya no puede aceptar más pilotos.").json(), 403
-            return PilotModel.add(reservation.turns[-1], reservation, {'name': f'Piloto {pilot_number + 1}'}), 200
+            return PilotModel.add(reservation, {'name': f'Piloto {pilot_number + 1}'}), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 400
 

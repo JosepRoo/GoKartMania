@@ -1,7 +1,7 @@
 from flask_restful import reqparse
 
 PARSER = reqparse.RequestParser(bundle_errors=True)
-PARSER.add_argument('schedule',
+PARSER.add_argument('schedules',
                     type=str,
                     required=True,
                     help="Este campo no puede ser dejado en blanco."

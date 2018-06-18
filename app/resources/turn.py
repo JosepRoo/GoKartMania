@@ -12,7 +12,7 @@ class Turns(Resource):
     @staticmethod
     def post():
         """
-        Registers a new turn with the given schedule
+        Registers a new turn with the given schedules
         :return:
         """
         try:
