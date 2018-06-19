@@ -1,0 +1,138 @@
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/functions';
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+.tittle-button {
+  font-style: italic;
+  font-weight: 700;
+  padding: 5px;
+  color:white;
+  margin-bottom: 0px;
+}
+
+.button-background {
+  background-color: #D92F20;
+  cursor: pointer;
+}
+
+.tittle-banner {
+  font-style: italic;
+  font-weight: 400;
+  padding: 5px;
+  color:white;
+  margin-bottom: 0px;
+  text-align: center;
+}
+
+.banner-background {
+  background-color: #B9261A;
+}
+
+.banner-photo {
+  // max-height: 600px;
+}
+
+.icon-inst {
+  max-width: 200px;
+}
+
+
+.background {
+  background-color: black;
+}
+
+.instructions-tittle {
+  margin-top: 30px !important;
+}
+
+.inst-square {
+  // padding-right:60px !important;
+  // padding-left:60px !important;
+}
+
+.ready-banner {
+  font-weight: 400 !important;
+}
+
+@include media-breakpoint-up(xs) {
+  .tittle-banner {
+    font-size: 1rem !important;
+  }
+  .tittle-button {
+    font-size: 1.5rem !important;
+  }
+  .instructions-tittle {
+    margin-bottom: 15px !important;
+  }
+  .icons-row {
+    margin-bottom: 20px;
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  .tittle-banner {
+    font-size: 1.2rem !important;
+  }
+  .tittle-button {
+    font-size: 1.8rem !important;
+  }
+  .instructions-tittle {
+    margin-bottom: 22px !important;
+  }
+  .icons-row {
+    margin-bottom: 38px;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .tittle-banner {
+    font-size: 1.5rem !important;
+  }
+  .tittle-button {
+    font-size: 2.1rem !important;
+  }
+  .instructions-tittle {
+    margin-bottom: 35px !important;
+  }
+  .icons-row {
+    margin-bottom: 40px;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  .tittle-banner {
+    font-size: 2rem !important;
+  }
+  .tittle-button {
+    font-size: 2.5rem !important;
+  }
+  .instructions-tittle {
+    margin-bottom: 40px !important;
+  }
+  .icons-row {
+    margin-bottom: 50px;
+  }
+}
+
+.location {
+  color: white;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.location-tittle {
+  color: gray;
+  font-weight: 400;
+  font-style: italic;
+}
+
+// B9261A

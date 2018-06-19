@@ -1,0 +1,96 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/theming';
+@import url('https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i');
+
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+  font-family: 'PT Sans';
+}
+
+@include mat-core();
+
+.mat-form-field.mat-form-field {
+  width           : 100%;
+}
+
+$custom-typography: mat-typography-config(
+    $font-family: 'PT Sans'
+);
+
+$bv-brand: (
+    50: #FF5959,
+    100: #FF5959,
+    200: #FF5959,
+    300: #FF5959,
+    400: #FF5959,
+    500: #FF5959,
+    600: black,
+    700: black,
+    800: black,
+    900: black,
+    A100: black,
+    A200: black,
+    A400: black,
+    A700: black,
+    contrast: (
+        50: $black-87-opacity,
+        100: $black-87-opacity,
+        200: $black-87-opacity,
+        300: $black-87-opacity,
+        400: $black-87-opacity,
+        500: white,
+        600: white,
+        700: white,
+        800: white,
+        900: white,
+        A100: $black-87-opacity,
+        A200: $black-87-opacity,
+        A400: $black-87-opacity,
+        A700: white,
+    )
+);
+
+$bv-brand-error: (
+    50: #D90D0D,
+    100: #D90D0D,
+    200: #D90D0D,
+    300: #D90D0D,
+    400: #D90D0D,
+    500: #D90D0D,
+    600: black,
+    700: black,
+    800: black,
+    900: black,
+    A100: black,
+    A200: black,
+    A400: black,
+    A700: black,
+    contrast: (
+        50: $black-87-opacity,
+        100: $black-87-opacity,
+        200: $black-87-opacity,
+        300: $black-87-opacity,
+        400: $black-87-opacity,
+        500: white,
+        600: white,
+        700: white,
+        800: white,
+        900: white,
+        A100: $black-87-opacity,
+        A200: $black-87-opacity,
+        A400: $black-87-opacity,
+        A700: white,
+    )
+);
+
+$candy-app-primary: mat-palette($bv-brand);
+$candy-app-accent:  mat-palette($bv-brand, A200, A100, A400);
+
+$candy-app-warn:    mat-palette($bv-brand-error);
+
+$candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent, $candy-app-warn);
+
+@include mat-core($custom-typography);
+@include angular-material-theme($candy-app-theme);
