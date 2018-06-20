@@ -5,5 +5,9 @@ class PilotErrors(BaseError):
     pass
 
 
+class PilotNotFound(PilotErrors):
+    pass
+
+
 class InvalidLogin(PilotErrors):
     pass

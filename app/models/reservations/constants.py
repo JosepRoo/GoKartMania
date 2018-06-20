@@ -1,6 +1,6 @@
 from flask_restful import reqparse
 
-COLLECTION = 'reservations'
+COLLECTION_TEMP = 'temp_reservations'
 
 PARSER = reqparse.RequestParser(bundle_errors=True)
 PARSER.add_argument('type',
