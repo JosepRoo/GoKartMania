@@ -4,9 +4,10 @@ from app.models.dates.date import Date
 
 class Schedule(BaseModel):
     def __init__(self, hour, turns=list(), _id=None):
+        from app.models.turns.turn import AbstractTurn
         super().__init__(_id)
         self.hour = hour
-        self.turns = turns
+        self.turns = [AbstractTurn(**turn) for turn in turns] if turns else turns
 
     @classmethod
     def add(cls, date: Date, new_schedule):
