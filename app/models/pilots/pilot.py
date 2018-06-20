@@ -38,7 +38,7 @@ class Pilot(BaseModel):
         :return: The requested pilot
         """
         for pilot in reservation.pilots:
-            if pilot.json()["_id"] == pilot_id:
+            if pilot._id == pilot_id:
                 return pilot
         raise PilotNotFound("El piloto con el ID dado no existe")
 
@@ -52,7 +52,7 @@ class Pilot(BaseModel):
         :return: All the pilots of the current reservation, with updated data
         """
         for pilot in reservation.pilots:
-            if pilot.json()["_id"] == pilot_id:
+            if pilot._id == pilot_id:
                 new_pilot = cls(**updated_pilot, _id=pilot_id)
                 reservation.pilots.remove(pilot)
                 reservation.pilots.append(new_pilot)
@@ -69,8 +69,22 @@ class Pilot(BaseModel):
         :return: The remaining pilots of the reservation
         """
         for pilot in reservation.pilots:
-            if pilot.json()["_id"] == pilot_id:
+            if pilot._id == pilot_id:
                 reservation.pilots.remove(pilot)
                 reservation.update_mongo(COLLECTION_TEMP)
                 return reservation.pilots
         raise PilotNotFound("El piloto con el ID dado no existe")
+
+
+class AbstractPilot(BaseModel):
+    from app.models.turns.turn import AbstractTurn
+
+    def __init__(self, position, _id=None):
+        super().__init__(_id)
+        self.position = position
+
+    @classmethod
+    def add(cls, turn: AbstractTurn, new_pilot):
+        pilot = cls(**new_pilot)
+        turn.pilots.append(pilot)
+        return pilot

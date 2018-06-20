@@ -21,11 +21,11 @@ class Turn(BaseModel):
 
 class AbstractTurn(BaseModel):
     def __init__(self, turn_number, type=None, pilots=list(), _id=None):
-        from app.models.pilots.pilot import Pilot
+        from app.models.pilots.pilot import AbstractPilot
         super().__init__(_id)
         self.turn_number = turn_number
         self.type = type
-        self.pilots = [Pilot(**pilot) for pilot in pilots] if pilots else pilots
+        self.pilots = [AbstractPilot(**pilot) for pilot in pilots] if pilots else pilots
 
     @classmethod
     def add(cls, schedule: Schedule, new_turn):
