@@ -3,6 +3,10 @@ from app.models.pilots.errors import PilotNotFound
 from app.models.reservations.constants import COLLECTION_TEMP
 from app.models.reservations.reservation import Reservation
 
+"""
+This is the pilot model object which holds the information of the pilot if they have a licence.
+"""
+
 
 class Pilot(BaseModel):
     def __init__(self, name, last_name=None, location=None, birth_date=None, postal_code=None, nickname=None,
@@ -85,6 +89,12 @@ class AbstractPilot(BaseModel):
 
     @classmethod
     def add(cls, turn: AbstractTurn, new_pilot):
+        """
+        Adds a new pilot to the given abstract turn party
+        :param turn: Abstract turn object
+        :param new_pilot: The new pilot to be added to the turn
+        :return: Pilot object
+        """
         pilot = cls(**new_pilot)
         turn.pilots.append(pilot)
         return pilot

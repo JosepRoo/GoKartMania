@@ -11,7 +11,7 @@ class User(Resource):
     def post():
         """
         Registers a new user manually given its body parameters
-        :return:
+        :return: A brand new user, or a session to the currently existing user
         """
         parser = reqparse.RequestParser()
         parser.add_argument('email',

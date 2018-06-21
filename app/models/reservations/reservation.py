@@ -8,6 +8,11 @@ from app.models.users.errors import InvalidEmail, UserAlreadyRegisteredError
 from app.models.users.user import User
 from app.models.reservations.errors import ReservationNotFound
 
+"""
+This is the reservation model object which will be used to store the temporal and real collections of the user,
+when they complete the process of reservation and the payment is processed.
+"""
+
 
 class Reservation(BaseModel):
     def __init__(self, user_id, type, user_email, id_location, turns=list(), pilots=list(), _id=None):
@@ -23,12 +28,18 @@ class Reservation(BaseModel):
 
     @classmethod
     def add(cls, user: User, new_reservation):
+        """
+        Adds a new reservation to the Temporal Reservation Collection, when the user starts the process
+        :param user: User object
+        :param new_reservation: Reservation object with user information
+        :return: Reservation object
+        """
         from app.models.turns.turn import Turn as TurnModel
         from app.models.pilots.pilot import Pilot as PilotModel
         reservation = cls(**new_reservation)
         reservation.save_to_mongo(RESERVATION_COLLECTION)
         # Por default, una reservación debe llevar al menos un turno y al menos un piloto
-        TurnModel.add(reservation, {"schedules": "HH:MM", "turn_number": 0, "positions": {}})
+        TurnModel.add(reservation, {"schedules": "00", "turn_number": 0, "positions": {}})
         PilotModel.add(reservation, {'name': 'Piloto 1'})
         user.reservations.append(reservation._id)
         user.update_mongo(USERS_COLLECTION)
@@ -39,9 +50,9 @@ class Reservation(BaseModel):
     def get_by_id(cls, _id, collection):
         """
         Returns the reservation object with the given id, or raises an exception if that reservation was not found
-        :param _id: id of the reservation to find
+        :param _id: ID of the reservation to find
         :param collection: DB that contains all the reservations
-        :return: reservation object
+        :return: Reservation object
         """
         reservation = Database.find_one(collection, {'_id': _id})
         if reservation:

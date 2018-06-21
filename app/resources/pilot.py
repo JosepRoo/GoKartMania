@@ -18,8 +18,10 @@ class Pilots(Resource):
         :return: JSON object with all the pilots
         """
         try:
-            reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-            return [pilot.json() for pilot in reservation.pilots], 200
+            if session.get('reservation'):
+                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+                return [pilot.json() for pilot in reservation.pilots], 200
+            return Response(message="Uso de variable de sesión no autorizada."), 401
         except ReservationErrors as e:
             return Response(message=e.message).json(), 400
 
@@ -30,11 +32,13 @@ class Pilots(Resource):
         :return: JSON object with the pilot info by default (its name)
         """
         try:
-            reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-            pilot_number = len(reservation.pilots)
-            if pilot_number >= 8:
-                return Response(message="La reservación ya no puede aceptar más pilotos.").json(), 403
-            return PilotModel.add(reservation, {'name': f'Piloto {pilot_number + 1}'}), 200
+            if session.get('reservation'):
+                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+                pilot_number = len(reservation.pilots)
+                if pilot_number >= 8:
+                    return Response(message="La reservación ya no puede aceptar más pilotos.").json(), 403
+                return PilotModel.add(reservation, {'name': f'Piloto {pilot_number + 1}'}), 200
+            return Response(message="Uso de variable de sesión no autorizada."), 401
         except ReservationErrors as e:
             return Response(message=e.message).json(), 400
 
@@ -48,8 +52,10 @@ class Pilot(Resource):
         :return:
         """
         try:
-            reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-            return PilotModel.get(reservation, pilot_id).json(), 200
+            if session.get('reservation'):
+                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+                return PilotModel.get(reservation, pilot_id).json(), 200
+            return Response(message="Uso de variable de sesión no autorizada."), 401
         except PilotNotFound as e:
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
@@ -63,9 +69,11 @@ class Pilot(Resource):
         :return: JSON object with all the pilots, with updated data
         """
         try:
-            data = PARSER.parse_args()
-            reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-            return [pilot.json() for pilot in PilotModel.update(reservation, data, pilot_id)], 200
+            if session.get('reservation'):
+                data = PARSER.parse_args()
+                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+                return [pilot.json() for pilot in PilotModel.update(reservation, data, pilot_id)], 200
+            return Response(message="Uso de variable de sesión no autorizada."), 401
         except PilotNotFound as e:
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
@@ -79,8 +87,10 @@ class Pilot(Resource):
         :return: JSON object with the remaining pilots
         """
         try:
-            reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-            return [pilot.json() for pilot in PilotModel.delete(reservation, pilot_id)], 200
+            if session.get('reservation'):
+                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+                return [pilot.json() for pilot in PilotModel.delete(reservation, pilot_id)], 200
+            return Response(message="Uso de variable de sesión no autorizada."), 401
         except PilotNotFound as e:
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
