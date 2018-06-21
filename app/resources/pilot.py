@@ -51,7 +51,7 @@ class Pilot(Resource):
             reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
             return PilotModel.get(reservation, pilot_id).json(), 200
         except PilotNotFound as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 404
         except ReservationErrors as e:
             return Response(message=e.message).json(), 400
 
@@ -67,7 +67,7 @@ class Pilot(Resource):
             reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
             return [pilot.json() for pilot in PilotModel.update(reservation, data, pilot_id)], 200
         except PilotNotFound as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 404
         except ReservationErrors as e:
             return Response(message=e.message).json(), 400
 
@@ -82,6 +82,6 @@ class Pilot(Resource):
             reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
             return [pilot.json() for pilot in PilotModel.delete(reservation, pilot_id)], 200
         except PilotNotFound as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 404
         except ReservationErrors as e:
             return Response(message=e.message).json(), 400
