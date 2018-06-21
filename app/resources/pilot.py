@@ -12,27 +12,25 @@ from app.models.reservations.reservation import Reservation as ReservationModel
 
 class Pilots(Resource):
     @staticmethod
-    def get(reservation_id):
+    def get():
         """
         Retrieves the information of all the pilots in the given reservation
-        :param reservation_id: The ID of the reservation to which the pilot array is to be read
         :return: JSON object with all the pilots
         """
         try:
-            reservation = ReservationModel.get_by_id(reservation_id, COLLECTION_TEMP)
+            reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
             return [pilot.json() for pilot in reservation.pilots], 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 400
 
     @staticmethod
-    def post(reservation_id):
+    def post():
         """
         Adds a new pilot to the party
-        :param reservation_id: The ID of the reservation to which the pilot is to be added
         :return: JSON object with the pilot info by default (its name)
         """
         try:
-            reservation = ReservationModel.get_by_id(reservation_id, COLLECTION_TEMP)
+            reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
             pilot_number = len(reservation.pilots)
             if pilot_number >= 8:
                 return Response(message="La reservación ya no puede aceptar más pilotos.").json(), 403
