@@ -2,8 +2,6 @@ from flask_restful import Resource
 from flask import session
 
 from app import Response
-from app.common.database import Database
-from app.models.dates.constants import COLLECTION
 from app.models.dates.constants import PARSER
 from app.models.dates.date import Date as DateModel
 from app.models.reservations.constants import COLLECTION_TEMP
@@ -15,6 +13,12 @@ import calendar
 class Dates(Resource):
     @staticmethod
     def get(start_date, end_date):
+        """
+        Retrieves all date objects in the given range
+        :param start_date: The start date in range
+        :param end_date: The end date in range
+        :return: JSON object with the dates in the given range
+        """
         try:
             return [date.json() for date in DateModel.get_dates_in_range(start_date, end_date)], 200
         except ReservationErrors as e:
@@ -22,6 +26,10 @@ class Dates(Resource):
 
     @staticmethod
     def post():
+        """
+        Inserts date objects to the collection in the month and year given in the parameters
+        :return: Successful response if the insertion was completed
+        """
         try:
             data = PARSER.parse_args()
             month_dates = calendar.monthrange(data.get('year'), data.get('month'))[1]
@@ -32,9 +40,15 @@ class Dates(Resource):
             return Response(message=e.message).json(), 400
 
     @staticmethod
-    def put():
+    def put(start_date, end_date):
+        """
+        Randomly auto-fills the dates in the parameters with turns and pilots
+        :param start_date: The start date in range
+        :param end_date: The end date in range
+        :return: Successful response if the update was completed
+        """
         try:
-            DateModel.auto_fill()
+            DateModel.auto_fill(start_date, end_date)
             return Response(success=True, message="Actualización del mes exitosa").json(), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 400
@@ -42,10 +56,34 @@ class Dates(Resource):
 
 class AvailableDates(Resource):
     @staticmethod
-    def get():
+    def get(start_date, end_date):
+        """
+        Retrieves the dates with their status of availability in a given range
+        :param start_date: The start date in range
+        :param end_date: The end date in range
+        :return: JSON object with the available dates in the given range
+        """
         try:
-            reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-            return DateModel.get_available_dates(reservation), 200
-            # return [date.json() for date in DateModel.get_available_dates()], 200
+            if session.get('reservation'):
+                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+                return DateModel.get_available_dates(reservation, start_date, end_date), 200
+            return Response(message="Uso de variable de sesión no autorizada."), 401
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 400
+
+
+class AvailableSchedules(Resource):
+    @staticmethod
+    def get(date):
+        """
+        Retrieves the schedules with their status of availability in a given date
+        :param date: The date to be processed
+        :return: JSON object with the available schedules in the given range
+        """
+        try:
+            if session.get('reservation'):
+                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+                return DateModel.get_available_schedules(reservation, date), 200
+            return Response(message="Uso de variable de sesión no autorizada."), 401
         except ReservationErrors as e:
             return Response(message=e.message).json(), 400

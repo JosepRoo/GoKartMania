@@ -14,7 +14,7 @@ class Reservations(Resource):
     def post():
         """
         Registers a new reservation given its type
-        :return:
+        :return: JSON object with the created reservation
         """
         try:
             data = PARSER.parse_args()

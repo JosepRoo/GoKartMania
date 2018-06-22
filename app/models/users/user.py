@@ -1,5 +1,3 @@
-from flask import session
-
 from app import Database
 from app.common.utils import Utils
 from app.models.baseModel import BaseModel
@@ -20,6 +18,11 @@ class User(BaseModel):
 
     @classmethod
     def get_by_email(cls, email):
+        """
+        Attempts to find a user according to the given email
+        :param email: The email to be found in the User Collection
+        :return: Found User object
+        """
         data = Database.find_one(COLLECTION, {"email": email})
         if data is not None:
             return cls(**data)
@@ -28,8 +31,8 @@ class User(BaseModel):
     def register(cls, kwargs):
         """
         Registers a new user if the provided email was not found in the existing collection
-        :param kwargs: key word arguments that contain the new user information
-        :return: user object
+        :param kwargs: Key word arguments that contain the new user information
+        :return: User object
         """
         email = kwargs['email']
         if not Utils.email_is_valid(email):
@@ -40,6 +43,3 @@ class User(BaseModel):
             new_user.save_to_mongo(COLLECTION)
             return new_user
         return user
-
-    def get_reservations(self):
-        pass
