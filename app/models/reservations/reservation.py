@@ -15,13 +15,14 @@ when they complete the process of reservation and the payment is processed.
 
 
 class Reservation(BaseModel):
-    def __init__(self, user_id, type, user_email, id_location, turns=list(), pilots=list(), _id=None):
+    def __init__(self, user_id, type, user_email, date, id_location, turns=list(), pilots=list(), _id=None):
         from app.models.turns.turn import Turn
         from app.models.pilots.pilot import Pilot
         super().__init__(_id)
         self.user_id = user_id
         self.type = type
         self.user_email = user_email
+        self.date = date
         self.id_location = id_location
         self.turns = [Turn(**turn) for turn in turns] if turns else turns
         self.pilots = [Pilot(**pilot) for pilot in pilots] if pilots else pilots
@@ -36,10 +37,10 @@ class Reservation(BaseModel):
         """
         from app.models.turns.turn import Turn as TurnModel
         from app.models.pilots.pilot import Pilot as PilotModel
-        reservation = cls(**new_reservation)
+        reservation = cls(**new_reservation, date=None)
         reservation.save_to_mongo(RESERVATION_COLLECTION)
         # Por default, una reservación debe llevar al menos un turno y al menos un piloto
-        TurnModel.add(reservation, {"schedules": "00", "turn_number": 0, "positions": {}})
+        TurnModel.add(reservation, {"schedule": "00", "turn_number": 0, "positions": {}})
         PilotModel.add(reservation, {'name': 'Piloto 1'})
         user.reservations.append(reservation._id)
         user.update_mongo(USERS_COLLECTION)

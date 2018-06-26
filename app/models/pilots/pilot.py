@@ -83,9 +83,10 @@ class Pilot(BaseModel):
 class AbstractPilot(BaseModel):
     from app.models.turns.turn import AbstractTurn
 
-    def __init__(self, position, _id=None):
+    def __init__(self, position, allocation_date, _id=None):
         super().__init__(_id)
         self.position = position
+        self.allocation_date = allocation_date
 
     @classmethod
     def add(cls, turn: AbstractTurn, new_pilot):
