@@ -9,5 +9,5 @@ class TurnNotFound(TurnErrors):
     pass
 
 
-class InvalidLogin(TurnErrors):
+class TurnNotAvailable(TurnErrors):
     pass

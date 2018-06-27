@@ -4,7 +4,7 @@ from flask_restful import Api
 from app.common.database import Database
 from app.common.response import Response
 from app.resources.date import Dates, AvailableDates, AvailableSchedules
-from app.resources.turn import Turns
+from app.resources.turn import Turns, Turn
 from app.resources.user import User
 from app.resources.pilot import Pilots, Pilot
 from app.resources.reservation import Reservations
@@ -29,6 +29,7 @@ def create_app(config_name):
     api.add_resource(AvailableSchedules, '/available_schedules/<string:date>')
 
     api.add_resource(Turns, '/user/turns')
+    api.add_resource(Turn, '/user/turn/<string:turn_id>')
 
     @app.after_request
     def after_request(response):

@@ -8,11 +8,6 @@ PARSER.add_argument('type',
                     required=True,
                     help="Este campo no puede ser dejado en blanco."
                     )
-# PARSER.add_argument('turns',
-#                     type=dict,
-#                     required=False,
-#                     help="Este campo no puede ser dejado en blanco."
-#                     )
 PARSER.add_argument('user_email',
                     type=str,
                     required=True,
