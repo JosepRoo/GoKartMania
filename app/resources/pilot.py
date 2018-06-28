@@ -10,6 +10,11 @@ from app.models.reservations.errors import ReservationErrors
 from app.models.reservations.reservation import Reservation as ReservationModel
 
 
+class FakeRequest(dict):
+    def __setattr__(self, name, value):
+        object.__setattr__(self, name, value)
+
+
 class Pilots(Resource):
     @staticmethod
     def get():
@@ -38,14 +43,72 @@ class Pilots(Resource):
                             help="Este campo no puede ser dejado en blanco.",
                             action='append'
                             )
-        data = parser.parse_args()
+        pilots = parser.parse_args()
+
+        """
+        nested_parser.add_argument('name',
+                                    type=str,
+                                    location=('pilots',),
+                                    required=True,
+                                    help="Este campo no puede ser dejado en blanco."
+                                    )
+        nested_parser.add_argument('last_name',
+                                    type=str,
+                                    location=('pilots',),
+                                    required=False,
+                                    help="Este campo no puede ser dejado en blanco."
+                                    )
+        nested_parser.add_argument('location',
+                                    type=str,
+                                    location=('pilots',),
+                                    required=False,
+                                    help="Este campo no puede ser dejado en blanco."
+                                    )
+        nested_parser.add_argument('birth_date',
+                                    type=str,
+                                    location=('pilots',),
+                                    required=False,
+                                    help="Este campo no puede ser dejado en blanco."
+                                    )
+        nested_parser.add_argument('postal_code',
+                                    type=str,
+                                    location=('pilots',),
+                                    required=False,
+                                    help="Este campo no puede ser dejado en blanco."
+                                    )
+        nested_parser.add_argument('nickname',
+                                    type=str,
+                                    location=('pilots',),
+                                    required=False,
+                                    help="Este campo no puede ser dejado en blanco."
+                                    )
+        nested_parser.add_argument('city',
+                                    type=str,
+                                    location=('pilots',),
+                                    required=False,
+                                    help="Este campo no puede ser dejado en blanco."
+                                    )
+        nested_parser.add_argument('name',
+                                    type=str,
+                                    location=('pilots',),
+                                    required=False,
+                                    help="Este campo no puede ser dejado en blanco."
+                                    )
+        pilot_data = nested_one_parser.parse_args(req=pilots)
+        print(pilot_data)
+        """
         try:
             if session.get('reservation'):
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
                 pilot_number = len(reservation.pilots)
                 if pilot_number >= 8:
                     return Response(message="La reservación ya no puede aceptar más pilotos.").json(), 403
-                reservation_pilots = [PilotModel.add(reservation, data.get('pilots')[i]).json() for i in range(len(data.get('pilots')))]
+                for pilot in pilots.get('pilots'):
+                    for item in list(pilot.keys()):
+                        if item not in [a.name for a in PARSER.args]:
+                            del pilot[item]
+                reservation_pilots = [PilotModel.add(reservation, pilots.get('pilots')[i]).json() for i in
+                                      range(len(pilots.get('pilots')))]
                 return reservation_pilots
             return Response(message="Uso de variable de sesión no autorizada."), 401
         except ReservationErrors as e:
