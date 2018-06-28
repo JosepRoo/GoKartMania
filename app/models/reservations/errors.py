@@ -9,5 +9,5 @@ class ReservationNotFound(ReservationErrors):
     pass
 
 
-class InvalidLogin(ReservationErrors):
+class WrongReservationType(ReservationErrors):
     pass

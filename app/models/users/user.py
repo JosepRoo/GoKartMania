@@ -1,3 +1,4 @@
+from flask import session
 from app import Database
 from app.common.utils import Utils
 from app.models.baseModel import BaseModel
@@ -38,8 +39,10 @@ class User(BaseModel):
         if not Utils.email_is_valid(email):
             raise InvalidEmail("El email dado no tiene un formato válido.")
         user = User.get_by_email(email)
+        new_user = cls(**kwargs)
+        new_user.reservations.append(session['reservation'])
         if user is None:
-            new_user = cls(**kwargs)
             new_user.save_to_mongo(COLLECTION)
-            return new_user
-        return user
+        else:
+            new_user.update_mongo(COLLECTION)
+        return new_user
