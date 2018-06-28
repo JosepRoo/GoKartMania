@@ -17,18 +17,21 @@
             <div class="col-12 col-sm-10" #scrollList>
               <div class="container">
 
-                <!-- <div class="row justify-content-center item-list">
-                  <div class="col-11 col-sm-10 text-center" *ngIf="this.reservation.get('pilots').length < 8">
-                    <mat-radio-group formControlName="type">
-                      <mat-radio-button value="Adulto">Adulto</mat-radio-button>
-                      <mat-radio-button  value="2">Niños</mat-radio-button>
-                    </mat-radio-group>
+                <div class="row justify-content-center" style="padding-bottom:0px;">
+                  <div class="col-11 col-sm-10 text-center">
+                    <mat-form-field>
+                      <mat-select placeholder="Tipo de grupo" formControlName="type" name="type">
+                        <mat-option [value]="'Niños'">Niño</mat-option>
+                        <mat-option [value]="'Adultos'">Adulto</mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="reservation.controls.type.hasError('required')">El tipo de grupo es necesario</mat-error>
+                    </mat-form-field>
                   </div>
-                </div> -->
+                </div>
 
                   <!-- start add pilot button -->
                 <div class="row justify-content-center item-list">
-                  <div class="col-11 col-sm-10 text-center" *ngIf="numbers.length >= 8">
+                  <div class="col-11 col-sm-10 text-center" *ngIf="numbers.length > 0">
                     <a (click)="addPilot()"><img class="img-fluid img-res" src="../assets/button-plus.png" /><span class="tittle-banner">Agregar piloto</span></a>
                   </div>
                 </div>
