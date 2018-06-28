@@ -12,9 +12,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatIconModule } from '@angular/material/icon';
-import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
 
-// Boostrap
+// Bootstrap
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 
@@ -22,6 +22,10 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+// Services
+import { ReservationService } from './services/reservation.service';
+
+// Components
 import { AppComponent } from './app.component';
 import { ReservationComponent } from './reservation/reservation.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -52,10 +56,11 @@ import { FooterComponent } from './footer/footer.component';
     MatMomentDateModule,
     MatBadgeModule,
     MatIconModule,
+    MatSelectModule,
     MDBBootstrapModule.forRoot()
   ],
-  schemas: [ NO_ERRORS_SCHEMA ],
-  providers: [],
+  schemas: [NO_ERRORS_SCHEMA],
+  providers: [ReservationService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
