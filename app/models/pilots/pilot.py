@@ -31,7 +31,7 @@ class Pilot(BaseModel):
         pilot = cls(**new_pilot)
         reservation.pilots.append(pilot)
         reservation.update_mongo(COLLECTION_TEMP)
-        return new_pilot
+        return pilot
 
     @staticmethod
     def get(reservation: Reservation, pilot_id):

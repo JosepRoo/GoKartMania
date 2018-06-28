@@ -102,59 +102,62 @@ class Date(BaseModel):
 
         for date in Database.find(COLLECTION, query):
             new_date = cls(**date)
-            availability_dict[new_date.date.strftime("%Y-%m-%d")] = {}
+            date_str = new_date.date.strftime("%Y-%m-%d")
+            availability_dict[date_str] = {}
             busy_schedules = 0
             empty_schedules = 0
             i = 0
             for schedule in new_date.schedules:
-                availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour] = {}
+                availability_dict[date_str][schedule.hour] = {}
                 busy_turns = 0
                 for turn in schedule.turns:
-                    availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour][turn.turn_number] = {}
+                    availability_dict[date_str][schedule.hour][turn.turn_number] = {}
                     for k in range(8):
                         if k+1 in [pilot.position for pilot in turn.pilots]:
-                            availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour][turn.turn_number][f'pos{k+1}'] = 0
+                            availability_dict[date_str][schedule.hour][turn.turn_number][f'pos{k+1}'] = 0
                         else:
-                            availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour][turn.turn_number][f'pos{k+1}'] = 1
+                            availability_dict[date_str][schedule.hour][turn.turn_number][f'pos{k+1}'] = 1
                     if turn.type is None:
                         if i == 0:
-                            availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour][turn.turn_number]['cupo'] = 2
-                        elif i == 1 and result[0].get('type') == 'Niño':
-                            if reservation.type == 'Niño':
-                                availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour][turn.turn_number]['cupo'] = 0
+                            print("primer turno")
+                            print(result[1].get('type'))
+                            availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 2
+                        elif i == 1 and result[0].get('type') == 'Niños':
+                            if reservation.type == 'Niños':
+                                availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 0
                                 busy_turns += 1
                             else:
-                                availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour][turn.turn_number]['cupo'] = 2
-                        elif i == 1 and result[0].get('type') == 'Adulto':
-                            availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour][turn.turn_number]['cupo'] = 2
-                        elif result[i-1].get('type') != 'Niño' and result[i-2].get('type') != 'Niño':
-                            availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour][turn.turn_number]['cupo'] = 2
+                                availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 2
+                        elif i == 1 and result[0].get('type') == 'Adultos':
+                            availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 2
+                        elif result[i-1].get('type') != 'Niños' and result[i-2].get('type') != 'Niños':
+                            availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 2
                         else:
-                            if reservation.type == 'Niño':
-                                availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour][turn.turn_number]['cupo'] = 0
+                            if reservation.type == 'Niños':
+                                availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 0
                                 busy_turns += 1
                             else:
-                                availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour][turn.turn_number]['cupo'] = 2
+                                availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 2
                     elif turn.type != reservation.type or total_pilots + len(turn.pilots) > 8:
-                        availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour][turn.turn_number]['cupo'] = 0
+                        availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 0
                         busy_turns += 1
                     else:
-                        availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour][turn.turn_number]['cupo'] = 1
+                        availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 1
                     i += 1
                 if busy_turns == 5:
-                    availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour]["cupo"] = 0
+                    availability_dict[date_str][schedule.hour]["cupo"] = 0
                     busy_schedules += 1
                 elif busy_turns == 0:
-                    availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour]["cupo"] = 2
+                    availability_dict[date_str][schedule.hour]["cupo"] = 2
                     empty_schedules += 1
                 else:
-                    availability_dict[new_date.date.strftime("%Y-%m-%d")][schedule.hour]["cupo"] = 1
+                    availability_dict[date_str][schedule.hour]["cupo"] = 1
             if busy_schedules == 11:
-                availability_dict[new_date.date.strftime("%Y-%m-%d")]["cupo"] = 0
+                availability_dict[date_str]["cupo"] = 0
             if empty_schedules == 11:
-                availability_dict[new_date.date.strftime("%Y-%m-%d")]["cupo"] = 2
+                availability_dict[date_str]["cupo"] = 2
             else:
-                availability_dict[new_date.date.strftime("%Y-%m-%d")]["cupo"] = 1
+                availability_dict[date_str]["cupo"] = 1
         return availability_dict
 
     @classmethod
@@ -178,15 +181,15 @@ class Date(BaseModel):
                     for x in range(randint(1, 8)):
                         AbstractPilot.add(turn, {'position': x+1, 'allocation_date': None})
                     if i == 0:
-                        turn.type = choice(['Niño', 'Adulto'])
-                    elif i == 1 and arr[0] == 'Niño':
-                        turn.type = 'Adulto'
-                    elif i == 1 and arr[0] == 'Adulto':
-                        turn.type = choice(['Niño', 'Adulto'])
-                    elif arr[-1] != 'Niño' and arr[-2] != 'Niño':
-                        turn.type = choice(['Niño', 'Adulto'])
+                        turn.type = choice(['Niños', 'Adultos'])
+                    elif i == 1 and arr[0] == 'Niños':
+                        turn.type = 'Adultos'
+                    elif i == 1 and arr[0] == 'Adultos':
+                        turn.type = choice(['Niños', 'Adultos'])
+                    elif arr[-1] != 'Niños' and arr[-2] != 'Niños':
+                        turn.type = choice(['Niños', 'Adultos'])
                     else:
-                        turn.type = 'Adulto'
+                        turn.type = 'Adultos'
                     arr.append(turn.type)
                     i += 1
             print(arr)

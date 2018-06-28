@@ -23,8 +23,7 @@ class Turns(Resource):
             if session.get('reservation'):
                 data = PARSER.parse_args()
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-                TurnModel.check_and_add(reservation, data)
-                return Response(success=True, message="Registro del turno exitoso").json(), 200
+                return TurnModel.check_and_add(reservation, data).json(), 200
             return Response(message="Uso de variable de sesión no autorizada."), 401
         except TurnErrors as e:
             return Response(message=e.message).json(), 401
@@ -63,7 +62,7 @@ class Turn(Resource):
             if session.get('reservation'):
                 data = PARSER.parse_args()
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-                return [turn.json() for turn in TurnModel.update(reservation, data, turn_id)], 200
+                return [turn.json() for turn in TurnModel.check_and_update(reservation, data, turn_id)], 200
             return Response(message="Uso de variable de sesión no autorizada."), 401
         except TurnNotFound as e:
             return Response(message=e.message).json(), 404

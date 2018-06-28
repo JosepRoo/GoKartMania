@@ -2,11 +2,10 @@ from flask import session
 
 from app.models.baseModel import BaseModel
 from app.common.database import Database
-from app.models.users.constants import COLLECTION as USERS_COLLECTION
-from app.models.reservations.constants import COLLECTION_TEMP as RESERVATION_COLLECTION
+from app.models.reservations.constants import COLLECTION_TEMP
 from app.models.users.errors import InvalidEmail, UserAlreadyRegisteredError
 from app.models.users.user import User
-from app.models.reservations.errors import ReservationNotFound
+from app.models.reservations.errors import ReservationNotFound, WrongReservationType
 
 """
 This is the reservation model object which will be used to store the temporal and real collections of the user,
@@ -15,37 +14,41 @@ when they complete the process of reservation and the payment is processed.
 
 
 class Reservation(BaseModel):
-    def __init__(self, user_id, type, user_email, date, id_location, turns=list(), pilots=list(), _id=None):
+    def __init__(self, type, date, id_location, turns=list(), pilots=list(), _id=None):
         from app.models.turns.turn import Turn
         from app.models.pilots.pilot import Pilot
         super().__init__(_id)
-        self.user_id = user_id
         self.type = type
-        self.user_email = user_email
         self.date = date
         self.id_location = id_location
         self.turns = [Turn(**turn) for turn in turns] if turns else turns
         self.pilots = [Pilot(**pilot) for pilot in pilots] if pilots else pilots
 
     @classmethod
-    def add(cls, user: User, new_reservation):
+    def add(cls, new_reservation):
         """
         Adds a new reservation to the Temporal Reservation Collection, when the user starts the process
-        :param user: User object
         :param new_reservation: Reservation object with user information
         :return: Reservation object
         """
         from app.models.turns.turn import Turn as TurnModel
         from app.models.pilots.pilot import Pilot as PilotModel
         reservation = cls(**new_reservation, date=None)
-        reservation.save_to_mongo(RESERVATION_COLLECTION)
+        print(reservation.type)
+        if reservation.type != "Niños" and reservation.type != "Adultos":
+            raise WrongReservationType("Error en el tipo de reservación. Solo puede ser 'Adultos' o 'Niños'.")
+        reservation.save_to_mongo(COLLECTION_TEMP)
         # Por default, una reservación debe llevar al menos un turno y al menos un piloto
-        TurnModel.add(reservation, {"schedule": "00", "turn_number": 0, "positions": {}})
-        PilotModel.add(reservation, {'name': 'Piloto 1'})
-        user.reservations.append(reservation._id)
-        user.update_mongo(USERS_COLLECTION)
+        # TurnModel.add(reservation, {"schedule": "00", "turn_number": 0, "positions": {}, "date": None})
+        # PilotModel.add(reservation, {'name': 'Piloto 1'})
         session['reservation'] = reservation._id
         return new_reservation
+
+    @classmethod
+    def update(cls, reservation, type):
+        reservation.type = type
+        reservation.update_mongo(COLLECTION_TEMP)
+        return reservation
 
     @classmethod
     def get_by_id(cls, _id, collection):

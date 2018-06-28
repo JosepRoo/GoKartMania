@@ -31,13 +31,22 @@ class Pilots(Resource):
         Adds a new pilot to the party
         :return: JSON object with the pilot info by default (its name)
         """
+        parser = reqparse.RequestParser()
+        parser.add_argument('pilots',
+                            type=dict,
+                            required=True,
+                            help="Este campo no puede ser dejado en blanco.",
+                            action='append'
+                            )
+        data = parser.parse_args()
         try:
             if session.get('reservation'):
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
                 pilot_number = len(reservation.pilots)
                 if pilot_number >= 8:
                     return Response(message="La reservación ya no puede aceptar más pilotos.").json(), 403
-                return PilotModel.add(reservation, {'name': f'Piloto {pilot_number + 1}'}), 200
+                reservation_pilots = [PilotModel.add(reservation, data.get('pilots')[i]).json() for i in range(len(data.get('pilots')))]
+                return reservation_pilots
             return Response(message="Uso de variable de sesión no autorizada."), 401
         except ReservationErrors as e:
             return Response(message=e.message).json(), 400
