@@ -1,16 +1,16 @@
 <div>
   <form [formGroup]="reservation" (ngSubmit)="sendPilots()">
 
-    <!-- start tittle bannner -->
+    <!-- start tittle banner -->
     <div class="row justify-content-center banner-background">
       <div class="col-11 col-sm-8 col-md-5 text-center">
         <span class="tittle-banner">Selecciona a tus pilotos</span>
       </div>
     </div>
-    <!-- end tittle bannner -->
+    <!-- end title banner -->
 
     <!-- start pilot list -->
-    <div class="row background">
+    <div class="row background" >
       <div class="col">
         <div class="container form">
           <div class="row justify-content-center">
@@ -21,7 +21,7 @@
                   <div class="col-11 col-sm-10 text-center" *ngIf="this.reservation.get('pilots').length < 8">
                     <mat-radio-group formControlName="type">
                       <mat-radio-button value="Adulto">Adulto</mat-radio-button>
-                      <mat-radio-button  value="2">Ninos</mat-radio-button>
+                      <mat-radio-button  value="2">Niños</mat-radio-button>
                     </mat-radio-group>
                   </div>
                 </div> -->
@@ -36,7 +36,7 @@
 
                 <!-- start pilot info -->
                 <div class="item-list" formArrayName="pilots"
-                  *ngFor="let pilot of getformData().controls; let i = index;">
+                  *ngFor="let pilot of getFormData().controls; let i = index;">
                   <div class="row justify-content-center">
                     <div class="col-3 text-right" style="white-space: nowrap !important;">
                       <span class="helmet-helper">
@@ -73,7 +73,7 @@
                       <mat-form-field>
                         <input matInput placeholder="Correo electrónico del piloto" formControlName="email" required>
                         <mat-error *ngIf="pilot.controls.email.hasError('required')">El correo es necesario</mat-error>
-                        <mat-error *ngIf="pilot.controls.email.errors?.email">El correo no es valido</mat-error>
+                        <mat-error *ngIf="pilot.controls.email.errors?.email">El correo no es válido</mat-error>
                       </mat-form-field>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4">
@@ -92,7 +92,7 @@
                     </div>
                     <div class="col-12 col-sm-6 col-md-4">
                       <mat-form-field>
-                        <input matInput placeholder="Codigo Postal" formControlName="postalCode" maxlength="5" required>
+                        <input matInput placeholder="Código Postal" formControlName="postalCode" maxlength="5" required>
                         <mat-error *ngIf="pilot.controls.postalCode.hasError('required')">El código postal es necesario</mat-error>
                         <mat-error *ngIf="pilot.controls.postalCode.errors?.pattern">El código postal es invalido</mat-error>
                       </mat-form-field>
@@ -123,7 +123,7 @@
                         <span class="tittle-banner" style="color: gray;">Datos del Piloto</span>
                         <div class="row">
                           <div class="col-12">
-                            <span class="empty-data" style="">Nombre del piloto</span>
+                            <span class="empty-data">Nombre del piloto</span>
                           </div>
                         </div>
                       </div>
