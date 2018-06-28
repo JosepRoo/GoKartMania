@@ -14,6 +14,10 @@ export const routes: Routes = [
     path: 'reservar',
     component: ReservationComponent
   },
+  { path: '',
+    redirectTo: '/instrucciones',
+    pathMatch: 'full'
+  },
   {
     path: '**', redirectTo: 'instrucciones'
   }
