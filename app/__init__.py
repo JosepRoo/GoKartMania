@@ -21,7 +21,7 @@ def create_app(config_name):
 
     api.add_resource(User, '/user')
     api.add_resource(Reservations, '/user/reservations')
-    api.add_resource(Pilots, '/user/pilots/')
+    api.add_resource(Pilots, '/user/pilots')
     api.add_resource(Pilot, '/user/pilot/<string:pilot_id>')
 
     api.add_resource(Dates, '/dates', '/dates/<string:start_date>/<string:end_date>')
