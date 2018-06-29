@@ -25,8 +25,11 @@ export class PilotService {
   ) {}
 
   addPilots(pilots): Observable<any[]> {
+    const data = {
+      pilots : pilots
+    };
     return this.http
-      .post<any>(this.pilotsApi, pilots, { headers: this.headers })
+      .post<any>(this.pilotsApi, data, { headers: this.headers })
       .pipe(res => {
         return res;
       })
