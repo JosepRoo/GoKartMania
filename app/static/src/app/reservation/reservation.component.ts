@@ -60,24 +60,24 @@ export class ReservationComponent implements OnInit {
   createPilot(isLicense) {
     if (isLicense) {
       return this.formBuilder.group({
-        name: ['', Validators.required],
-        lastName: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]],
-        birthDate: ['', Validators.required],
-        postalCode: ['', [Validators.required, Validators.pattern('[0-9]{5}')]],
-        nickName: ['', Validators.required],
-        city: ['', Validators.required],
+        name: [null, Validators.required],
+        lastName: [null, Validators.required],
+        email: [null, [Validators.required, Validators.email]],
+        birthDate: [null, Validators.required],
+        postalCode: [null, [Validators.required, Validators.pattern('[0-9]{5}')]],
+        nickName: [null, Validators.required],
+        city: [null, Validators.required],
         licensed: [true]
       });
     }
     return this.formBuilder.group({
-      name: ['', Validators.required],
-      lastName: [''],
-      birthDate: [''],
-      email: [''],
-      postalCode: [''],
-      nickName: [''],
-      city: [''],
+      name: [null, Validators.required],
+      lastName: [null],
+      birthDate: [null],
+      email: [null],
+      postalCode: [null],
+      nickName: [null],
+      city: [null],
       licensed: [false]
     });
   }
