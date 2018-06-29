@@ -67,7 +67,7 @@ class AvailableDates(Resource):
             if session.get('reservation'):
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
                 return DateModel.get_available_dates(reservation, start_date, end_date), 200
-            return Response(message="Uso de variable de sesión no autorizada."), 401
+            return Response(message="Uso de variable de sesión no autorizada.").json(), 401
         except ReservationErrors as e:
             return Response(message=e.message).json(), 400
 
@@ -84,6 +84,6 @@ class AvailableSchedules(Resource):
             if session.get('reservation'):
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
                 return DateModel.get_available_schedules(reservation, date), 200
-            return Response(message="Uso de variable de sesión no autorizada."), 401
+            return Response(message="Uso de variable de sesión no autorizada.").json(), 401
         except ReservationErrors as e:
             return Response(message=e.message).json(), 400

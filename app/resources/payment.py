@@ -28,7 +28,7 @@ class Payments(Resource):
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
                 user = UserModel.get_by_id(user_id, COLLECTION)
                 return PaymentModel.add(user, reservation, data), 200
-            return Response(message="Uso de variable de sesión no autorizada."), 401
+            return Response(message="Uso de variable de sesión no autorizada.").json(), 401
         except TurnErrors as e:
             return Response(message=e.message).json(), 401
         except ScheduleErrors as e:
