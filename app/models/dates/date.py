@@ -119,7 +119,8 @@ class Date(BaseModel):
                         else:
                             availability_dict[date_str][schedule.hour][turn.turn_number][f'pos{k}'] = 1
                     if turn.type is None:
-                        if "Niños" in turn_types[i - 2: i] or "Niños" in turn_types[i + 1: i + 3]:
+                        f = lambda x: 0 if x < 0 else x
+                        if "Niños" in turn_types[f(i - 2): i] + turn_types[i + 1: i + 3]:
                             availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 0
                             busy_turns += 1
                         else:

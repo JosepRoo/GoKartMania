@@ -19,7 +19,7 @@ class Reservations(Resource):
         """
         try:
             data = PARSER.parse_args()
-            return ReservationModel.add(data), 200
+            return ReservationModel.add(data).json(), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except UserErrors as e:

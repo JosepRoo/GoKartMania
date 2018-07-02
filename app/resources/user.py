@@ -26,7 +26,6 @@ class User(Resource):
                             )
         data = parser.parse_args()
         try:
-            new_user = UserModel.register(data)
-            return Response(success=True, message="Registro de usuario {} exitoso".format(new_user.name)).json(), 200
+            return UserModel.register(data).json(), 200
         except UserErrors as e:
             return Response(message=e.message).json(), 400

@@ -1,13 +1,17 @@
 import os
 import requests
 import json
+import datetime
 
-from app.models.reservations.constants import COLLECTION_TEMP
+from tzlocal import get_localzone
+from app.models.reservations.constants import COLLECTION_TEMP, COLLECTION
 from app.models.users.user import User
 from app.models.baseModel import BaseModel
 from app.models.payments.constants import CURRENCY, PAYMENT_COUNTRY, URL, URL_CHARGE, URL_TOKEN, HEADERS
 from app.models.payments.errors import PaymentFailed, TokenisationFailed
 from app.models.reservations.reservation import Reservation
+from app.models.turns.turn import Turn as TurnModel
+from app.models.locations.location import Location
 
 """
 This is the payment model object which holds the information of the payment to concrete a reservation.
@@ -15,11 +19,10 @@ This is the payment model object which holds the information of the payment to c
 
 
 class Card(BaseModel):
-    def __init__(self, number, name, type, token, month, year, _id=None):
+    def __init__(self, number, name, token, month, year, _id=None):
         super().__init__(_id)
         self.number = number
         self.name = name
-        self.type = type
         self.token = token
         self.month = month
         self.year = year
@@ -65,33 +68,51 @@ class Card(BaseModel):
 
 
 class Payment(BaseModel):
-    def __init__(self, status, payment_method, amount, date, id_card, etomin_number=None, id_reference=None, _id=None):
+    def __init__(self, status, payment_method, amount=None, date=None, etomin_number=None, id_reference=None, _id=None):
         self.status = status
         self.payment_method = payment_method
         self.amount = amount
         self.etomin_number = etomin_number
         self.date = date
         self.id_reference = id_reference
-        self.id_card = id_card
         super().__init__(_id)
 
     @classmethod
-    def add(cls, user: User, reservation: Reservation, new_payment):
+    def add(cls, user: User, reservation: Reservation, new_card, new_payment):
         """
         Adds a new payment to the given user.
+        :param new_card: The new card to be processed
         :param user: User object
         :param reservation: Reservation object
         :param new_payment: The new payment to be added to the user
         :return: A brand new payment
         """
-        new_payment["status"] = "PENDIENTE"
+        card = Card.tokenise_card(new_card)
 
-        card = Card(new_payment.get('number'), new_payment.get('name'), new_payment.get('type'),
-                    new_payment.get('token'), new_payment.get('month'), new_payment.get('year'))
+        new_payment["status"] = "PENDIENTE"
 
         etomin_number = card.token
 
         payment = cls(**new_payment)
+
+        location = reservation.location[0]
+        license_price = len(reservation.pilots) * location.type.get('LICENCIA')
+
+        # Modificar para Sucursal Tlalnepantla
+        # pues tiene un tercer tipo que no se considera en reservation.type
+        if reservation.type == "Adultos":
+            prices = location.type.get('GOKART')
+        else:
+            prices = location.type.get('CADET')
+
+        prices_size = len(prices)
+        turns_size = len(reservation.turns)
+        if turns_size != 3:
+            turns_price = prices[prices_size - 1] * (turns_size // prices_size) + prices[turns_size % prices_size - 1]
+        else:
+            turns_price = prices[prices_size - 1]
+        amount = license_price + turns_price
+        print(license_price, " ", turns_price)
         params = {
             "public_key": os.environ.get("ETOMIN_PB_KEY"),
             "transaction": {
@@ -102,7 +123,7 @@ class Payment(BaseModel):
                     "external_reference": payment._id
                 },
                 "payment": {
-                    "amount": new_payment.get("amount"),
+                    "amount": amount,
                     "payment_method": new_payment.get("payment_method"),
                     "currency": CURRENCY,
                     "payment_country": PAYMENT_COUNTRY,
@@ -122,11 +143,19 @@ class Payment(BaseModel):
             obj_charge = json.loads(charge.text)
             if int(obj_charge.get("error")) == 0:
                 payment.status = "APROBADO"
+                payment.amount = amount
+                payment.date = datetime.datetime.now().astimezone(get_localzone())
                 payment.id_reference = obj_charge.get("authorization_code")
                 payment.etomin_number = obj_charge.get("card_token")
                 new_payment["status"] = "APROBADO"
-                reservation.payment = payment
-                reservation.update_mongo(COLLECTION_TEMP)
+                reservation.payment.append(payment)
+                # Guardar en la colección de reservaciones reales
+                reservation.save_to_mongo(COLLECTION)
+                # Borrar de la colección de reservaciones temporales
+                reservation.delete_from_mongo(COLLECTION_TEMP)
+                # Nulificar las fechas tentativas de reservacion
+                for turn in reservation.turns:
+                    TurnModel.remove_allocation_dates(reservation, turn)
                 return new_payment
             else:
                 payment.status = "RECHAZADO"
