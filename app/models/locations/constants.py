@@ -13,3 +13,8 @@ PARSER.add_argument('type',
                     required=True,
                     help="Este campo no puede ser dejado en blanco."
                     )
+PARSER.add_argument('name',
+                    type=str,
+                    required=True,
+                    help="Este campo no puede ser dejado en blanco."
+                    )

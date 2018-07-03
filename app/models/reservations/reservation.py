@@ -5,8 +5,6 @@ from app.common.database import Database
 from app.models.reservations.constants import COLLECTION_TEMP
 from app.models.locations.constants import COLLECTION
 from app.models.locations.location import Location as LocationModel
-from app.models.users.errors import InvalidEmail, UserAlreadyRegisteredError
-from app.models.users.user import User
 from app.models.reservations.errors import ReservationNotFound, WrongReservationType
 
 """

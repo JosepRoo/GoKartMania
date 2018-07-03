@@ -41,3 +41,17 @@ class Reservations(Resource):
             return Response(message=e.message).json(), 401
         except UserErrors as e:
             return Response(message=e.message).json(), 401
+
+    @staticmethod
+    def get():
+        """
+        Retrieves the information of the current reservation
+        :return:
+        """
+        try:
+            if session.get('reservation'):
+                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+                return reservation.json(), 200
+            return Response(message="Uso de variable de sesión no autorizada.").json(), 401
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 400

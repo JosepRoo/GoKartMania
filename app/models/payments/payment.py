@@ -96,7 +96,8 @@ class Payment(BaseModel):
         payment = cls(**new_payment)
 
         location = reservation.location[0]
-        license_price = len(reservation.pilots) * location.type.get('LICENCIA')
+        licensed_pilots = [pilot.licensed for pilot in reservation.pilots].count(True)
+        license_price = licensed_pilots * location.type.get('LICENCIA')
 
         # Modificar para Sucursal Tlalnepantla
         # pues tiene un tercer tipo que no se considera en reservation.type

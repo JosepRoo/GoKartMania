@@ -10,8 +10,9 @@ and the schedule, depending the POST method.
 
 
 class Location(BaseModel):
-    def __init__(self, type, _id=None):
+    def __init__(self, name, type, _id=None):
         super().__init__(_id)
+        self.name = name
         self.type = type
 
     @classmethod

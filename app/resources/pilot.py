@@ -1,3 +1,4 @@
+import flask_restful
 from flask_restful import Resource, reqparse
 from flask import session
 
@@ -107,6 +108,10 @@ class Pilots(Resource):
                     for item in list(pilot.keys()):
                         if item not in [a.name for a in PARSER.args]:
                             del pilot[item]
+                    for argument in [a.name for a in PARSER.args if a.required]:
+                        if argument not in pilot.keys():
+                            msg = {argument: "Este campo no puede ser dejado en blanco."}
+                            flask_restful.abort(400, message=msg)
                 reservation_pilots = [PilotModel.add(reservation, pilots.get('pilots')[i]).json() for i in
                                       range(len(pilots.get('pilots')))]
                 return reservation_pilots
