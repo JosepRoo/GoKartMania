@@ -1,5 +1,7 @@
 import uuid
 
+import datetime
+
 from app.common.database import Database
 from app.models.users.errors import UserNotFound
 
@@ -9,17 +11,53 @@ class BaseModel:
         self._id = uuid.uuid4().hex if _id is None else _id
 
     def json(self, exclude=None, date_to_string=True):
-        if exclude:
-            return {
-            attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for
-                     element in self.__getattribute__(attrib)]
-                    if type(self.__getattribute__(attrib)) is list else self.__getattribute__(attrib)
+        from app.models.locations.location import Location
+        from app.models.payments.payment import Payment
+        if date_to_string:
+            if exclude:
+                return {
+                    attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for
+                             element in self.__getattribute__(attrib)]
+                    if type(self.__getattribute__(attrib)) is list
+                    else self.__getattribute__(attrib).strftime("%Y-%m-%d %H:%M")
+                    if type(self.__getattribute__(attrib)) is datetime.datetime
+                    else self.__getattribute__(attrib)
                     for attrib in self.__dict__.keys() if attrib not in exclude}
 
-        return {
-        attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for element in
-                 self.__getattribute__(attrib)]
-                if type(self.__getattribute__(attrib)) is list else self.__getattribute__(attrib)
+            return {
+                attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for
+                         element in
+                         self.__getattribute__(attrib)]
+                if type(self.__getattribute__(attrib)) is list
+                else self.__getattribute__(attrib).json()
+                if isinstance(self.__getattribute__(attrib), Location)
+                else self.__getattribute__(attrib).json()
+                if isinstance(self.__getattribute__(attrib), Payment)
+                else self.__getattribute__(attrib).strftime("%Y-%m-%d %H:%M")
+                if type(self.__getattribute__(attrib)) is datetime.datetime
+                else self.__getattribute__(attrib)
+                for attrib in self.__dict__.keys()}
+        else:
+            if exclude:
+                return {
+                    attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element
+                             for
+                             element in self.__getattribute__(attrib)]
+                    if type(self.__getattribute__(attrib)) is list
+                    else self.__getattribute__(attrib)
+                    for attrib in self.__dict__.keys()
+                    if attrib not in exclude}
+
+            return {
+                attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for
+                         element in
+                         self.__getattribute__(attrib)]
+                if type(self.__getattribute__(attrib)) is list
+                else self.__getattribute__(attrib).json()
+                if isinstance(self.__getattribute__(attrib), Location)
+                else self.__getattribute__(attrib).json()
+                if isinstance(self.__getattribute__(attrib), Payment)
+                else self.__getattribute__(attrib)
                 for attrib in self.__dict__.keys()}
 
     def delete_from_mongo(self, collection):

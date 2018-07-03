@@ -64,7 +64,10 @@ class Date(BaseModel):
         :return: JSON object with dates in range with their status
         """
         availability = cls.build_availability_dict(reservation, first_date, last_date)
-        return {date: availability[date]['cupo'] for date in availability}
+        available_dates = []
+        for date in availability:
+            available_dates.append({"fecha": date, "cupo": availability[date]['cupo']})
+        return available_dates
 
     @classmethod
     def get_available_schedules(cls, reservation: Reservation, date):
@@ -101,13 +104,13 @@ class Date(BaseModel):
         result = list(Database.aggregate(COLLECTION, expressions))
         turn_types = [item.get('type') for item in result]
 
+        i = 0
         for date in Database.find(COLLECTION, query):
             new_date = cls(**date)
             date_str = new_date.date.strftime("%Y-%m-%d")
             availability_dict[date_str] = {}
             busy_schedules = 0
             empty_schedules = 0
-            i = 0
             for schedule in new_date.schedules:
                 availability_dict[date_str][schedule.hour] = {}
                 busy_turns = 0

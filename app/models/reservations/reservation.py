@@ -1,5 +1,6 @@
 from flask import session
-
+import datetime
+from tzlocal import get_localzone
 from app.models.baseModel import BaseModel
 from app.common.database import Database
 from app.models.reservations.constants import COLLECTION_TEMP
@@ -14,7 +15,7 @@ when they complete the process of reservation and the payment is processed.
 
 
 class Reservation(BaseModel):
-    def __init__(self, type, date, location=list(), payment=list(), turns=list(), pilots=list(), _id=None):
+    def __init__(self, type, date, location=None, payment=None, turns=list(), pilots=list(), _id=None):
         from app.models.turns.turn import Turn
         from app.models.pilots.pilot import Pilot
         from app.models.payments.payment import Payment
@@ -22,10 +23,10 @@ class Reservation(BaseModel):
         super().__init__(_id)
         self.type = type
         self.date = date
-        self.location = [Location(**location) for location in location] if location else location
+        self.location = Location(**location) if location else location
         self.turns = [Turn(**turn) for turn in turns] if turns else turns
         self.pilots = [Pilot(**pilot) for pilot in pilots] if pilots else pilots
-        self.payment = [Payment(**payment) for payment in payment] if payment else payment
+        self.payment = Payment(**payment) if payment else payment
 
     @classmethod
     def add(cls, new_reservation):
@@ -38,8 +39,10 @@ class Reservation(BaseModel):
         from app.models.pilots.pilot import Pilot as PilotModel
         id_location = new_reservation.pop('id_location')
         location = Database.find_one(COLLECTION, {'_id': id_location})
-        reservation = cls(**new_reservation, date=None)
-        reservation.location.append(LocationModel(**location))
+        now = datetime.datetime.now().astimezone(get_localzone())
+        reservation = cls(**new_reservation, date=now)
+        print(reservation.date)
+        reservation.location = LocationModel(**location)
         if reservation.type != "Niños" and reservation.type != "Adultos":
             raise WrongReservationType("Error en el tipo de reservación. Solo puede ser 'Adultos' o 'Niños'.")
         reservation.save_to_mongo(COLLECTION_TEMP)
@@ -53,6 +56,10 @@ class Reservation(BaseModel):
     def update(cls, reservation, type):
         reservation.type = type
         reservation.update_mongo(COLLECTION_TEMP)
+        reservation.date.tzinfo = get_localzone()
+        print(reservation.date)
+        print(reservation.date.astimezone(get_localzone()))
+        #cls.remove_temporal_reservations()
         return reservation
 
     @classmethod
@@ -67,3 +74,13 @@ class Reservation(BaseModel):
         if reservation:
             return cls(**reservation)
         raise ReservationNotFound("La reservación con el ID dado no existe.")
+
+    @classmethod
+    def remove_temporal_reservations(cls):
+        for temp_reservation in Database.find(COLLECTION_TEMP, {}):
+            reservation = cls(**temp_reservation)
+            now = datetime.datetime.now().astimezone(get_localzone()).replace(tzinfo=None)
+            print(reservation.date)
+            print(now)
+            print("\n")
+            #print(reservation.date - now)

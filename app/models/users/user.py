@@ -3,6 +3,7 @@ from app import Database
 from app.common.utils import Utils
 from app.models.baseModel import BaseModel
 from app.models.emails.email import Email
+from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.users.constants import COLLECTION
 from app.models.users.errors import InvalidEmail
 
@@ -42,11 +43,13 @@ class User(BaseModel):
         if not Utils.email_is_valid(email):
             raise InvalidEmail("El email dado no tiene un formato válido.")
         user = User.get_by_email(email)
-        new_user = cls(**kwargs)
-        new_user.reservations.append(session['reservation'])
         if user is None:
+            new_user = cls(**kwargs)
+            new_user.reservations.append(session['reservation'])
             new_user.save_to_mongo(COLLECTION)
         else:
+            new_user = cls(**kwargs, _id=user._id)
+            new_user.reservations.append(session['reservation'])
             new_user.update_mongo(COLLECTION)
         return new_user
 
@@ -62,43 +65,75 @@ class User(BaseModel):
 
         turns_detail = ""
         for turn in reservation.turns:
-            turns_detail += turn.schedule + " hrs - Turno: " + turn.turn_number + "\n"
+            turns_detail += "<p>" + turn.schedule + " hrs - Turno " + turn.turn_number + "\n</p>"
             for key in turn.positions:
                 for pilot in reservation.pilots:
                     if pilot._id == turn.positions.get(key):
-                        turns_detail += key + " " + pilot.name + "\n"
+                        turns_detail += "<p>" + key + " " + pilot.name + "\n</p>"
             turns_detail += "\n"
 
         pilots_detail = ""
         for pilot in reservation.pilots:
-            pilots_detail += "Nombre: " + pilot.name + "\n"
+            pilots_detail += "<p>Nombre: " + pilot.name + "\n</p>"
             if pilot.email is not None:
-                pilots_detail += "Email: " + pilot.email + "\n"
+                pilots_detail += "<p>Email: " + pilot.email + "\n</p>"
             if pilot.licensed:
-                pilots_detail += "Licencia: Sí" + "\n"
+                pilots_detail += "<p>Licencia: Sí" + "\n</p>"
             else:
-                pilots_detail += "Licencia: No" + "\n"
+                pilots_detail += "<p>Licencia: No" + "\n</p>"
             pilots_detail += "\n"
 
         email.text("Estimado {}:\n"
                    "Gracias por usar el servicio de Reservaciones de GoKartMania.\n"
-                   "A continuación se desglosan los datos de su compra:\n"
+                   "A continuación se desglosan los datos de su compra:\n\n"
                    "Número de confirmación:\n"
-                   "{}\n"
+                   "{}\n\n"
                    "Ubicación:\n"
-                   "{}\n"
+                   "{}\n\n"
                    "Fecha:\n"
-                   "{}\n"
+                   "{}\n\n"
                    "Detalle de los turnos:\n"
-                   "{}\n\n"
+                   "{}\n"
                    "Pilotos:\n"
-                   "{}\n\n"
+                   "{}\n"
                    "Total de la compra:\n"
                    "${}\n\n"
+                   "Presenta en taquilla el código adjunto para comenzar tu carrera.\n\n"
                    "En sus marcas. Listos. ¡Fuera!".format(self.name, reservation._id,
-                                                           reservation.location[0].name, reservation.date,
-                                                           turns_detail, pilots_detail, reservation.payment[0].amount))
-        email.html("<html></html>")
-        email.send()
-        return email
+                                                           reservation.location.name,
+                                                           reservation.date.strftime("%Y-%m-%d"),
+                                                           turns_detail, pilots_detail, reservation.payment.amount))
+        email_str = "inicio\n"
+        for i in pilots_detail:
+            email_str += ""
 
+        email.html("<html>"
+                   "    <head>Tu reservación.</head>"
+                   "    <body>"
+                   "        <h1>Estimado {}:\n</h1>"
+                   "        <p>Gracias por usar el servicio de Reservaciones de GoKartMania.\n</p>"
+                   "        <p>A continuación se desglosan los datos de su compra:\n\n</p>"
+                   "        <strong>Número de confirmación:\n</strong>"
+                   "        <p>{}\n\n</p>"
+                   "        <strong>Ubicación:\n</strong>"
+                   "        <p>{}\n\n</p>"
+                   "        <strong>Fecha:\n</strong>"
+                   "        <p>{}\n\n</p>"
+                   "        <strong>Detalle de los turnos:\n</strong>"
+                   "        {}\n"
+                   "        <strong>Pilotos:\n</strong>"
+                   "        {}\n"
+                   "        <strong>Total de la compra:\n</strong>"
+                   "        <p>${}\n\n</p>"
+                   "        <p>Presenta en taquilla el código adjunto para comenzar tu carrera.\n\n</p>"
+                   "        <p>En sus marcas. Listos. ¡Fuera!</p>"
+                   "    </body>"
+                   "</html>".format(self.name, reservation._id, reservation.location.name,
+                                    reservation.date.strftime("%Y-%m-%d"), turns_detail, pilots_detail,
+                                    reservation.payment.amount))
+
+        try:
+            email.send()
+            return email
+        except EmailErrors as e:
+            raise FailedToSendEmail(e)

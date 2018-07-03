@@ -33,7 +33,7 @@ class Dates(Resource):
         try:
             data = PARSER.parse_args()
             month_dates = calendar.monthrange(data.get('year'), data.get('month'))[1]
-            for i in range(4):
+            for i in range(month_dates):
                 DateModel.add(data, i+1)
             return Response(success=True, message="Registro del mes exitoso").json(), 200
         except ReservationErrors as e:
