@@ -56,6 +56,7 @@ class Turn(BaseModel):
     def check_and_add(cls, reservation: Reservation, new_turn):
         available_schedules = DateModel.get_available_schedules(reservation, new_turn.get('date'))
         still_available = cls.check_turn_availability(available_schedules, new_turn)
+        print(still_available)
         if still_available:
             turn_positions = available_schedules[new_turn.get('schedule')].get(int(new_turn.get('turn_number')))
             user_positions = new_turn.get('positions')
@@ -139,6 +140,23 @@ class Turn(BaseModel):
                 raise ScheduleNotAvailable("El horario que seleccionaste no se encuentra disponible por el momento.")
         else:
             raise DateNotAvailable("La fecha que seleccionaste no se encuentra disponible por el momento.")
+
+    @classmethod
+    def remove_allocation_dates(cls, reservation: Reservation, current_turn):
+        first_date = datetime.datetime.strptime(reservation.date, "%Y-%m-%d")
+        last_date = datetime.datetime.strptime(reservation.date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        query = {'date': {'$gte': first_date, '$lte': last_date}}
+        for date in Database.find(COLLECTION, query):
+            new_date = DateModel(**date)
+            for schedule in new_date.schedules:
+                if schedule.hour == current_turn.schedule:
+                    for turn in schedule.turns:
+                        if turn.turn_number == int(current_turn.turn_number):
+                            pilots = turn.pilots.copy()
+                            for pilot in pilots:
+                                if pilot._id in [pilot._id for pilot in reservation.pilots]:
+                                    pilot.allocation_date = None
+                            new_date.update_mongo(COLLECTION)
 
     @classmethod
     def update(cls, reservation: Reservation, updated_turn, turn_id):

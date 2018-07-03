@@ -9,16 +9,18 @@ This is the pilot model object which holds the information of the pilot if they 
 
 
 class Pilot(BaseModel):
-    def __init__(self, name, last_name=None, location=None, birth_date=None, postal_code=None, nickname=None,
-                 city=None, _id=None):
+    def __init__(self, name, licensed, last_name=None, email=None, location=None,
+                 birth_date=None, postal_code=None, nickname=None, city=None, _id=None):
         super().__init__(_id)
         self.name = name
         self.last_name = last_name
+        self.email = email
         self.location = location
         self.birth_date = birth_date
         self.postal_code = postal_code
         self.nickname = nickname
         self.city = city
+        self.licensed = licensed
 
     @classmethod
     def add(cls, reservation: Reservation, new_pilot):
