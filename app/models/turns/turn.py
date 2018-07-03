@@ -34,7 +34,7 @@ class Turn(BaseModel):
         allocation_date = new_turn.pop('date')
         print(allocation_date)
         turn = cls(**new_turn)
-        reservation.date = allocation_date
+        reservation.date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d") + datetime.timedelta(days=1)
         reservation.turns.append(turn)
         reservation.update_mongo(COLLECTION_TEMP)
         return turn
@@ -143,8 +143,8 @@ class Turn(BaseModel):
 
     @classmethod
     def remove_allocation_dates(cls, reservation: Reservation, current_turn):
-        first_date = datetime.datetime.strptime(reservation.date, "%Y-%m-%d")
-        last_date = datetime.datetime.strptime(reservation.date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        first_date = reservation.date
+        last_date = reservation.date + datetime.timedelta(days=1)
         query = {'date': {'$gte': first_date, '$lte': last_date}}
         for date in Database.find(COLLECTION, query):
             new_date = DateModel(**date)
@@ -171,7 +171,7 @@ class Turn(BaseModel):
             if turn._id == turn_id:
                 allocation_date = updated_turn.pop('date')
                 new_turn = cls(**updated_turn, _id=turn_id)
-                reservation.date = allocation_date
+                reservation.date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d") + datetime.timedelta(days=1)
                 reservation.turns.remove(turn)
                 reservation.turns.append(new_turn)
                 reservation.update_mongo(COLLECTION_TEMP)

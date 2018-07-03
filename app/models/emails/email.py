@@ -4,27 +4,12 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-import boto.ses
 from botocore.exceptions import ClientError
 
 from app.models.emails.errors import FailedToSendEmail
 
 AWS_ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY")
 AWS_SECRET_KEY = os.environ.get("AWS_SECRET_KEY")
-# ATTACHMENT = 'app/reservation_qrs/225b1edc707f4f6a839884f67e7c236b.png'
-
-BODY_HTML = """\
-<html>
-<head></head>
-<body>
-<h1>Hello!</h1>
-<p>Please see the attached file for a list of customers to contact.</p>
-<img src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA
-AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
-    9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />
-</body>
-</html>
-"""
 
 
 class Email(object):
@@ -77,12 +62,6 @@ class Email(object):
                                   aws_secret_access_key=AWS_SECRET_KEY
                                   )
 
-        # connection = boto.ses.connect_to_region(
-        #     'us-east-1',
-        #     aws_access_key_id=AWS_ACCESS_KEY,
-        #     aws_secret_access_key=AWS_SECRET_KEY
-        # )
-
         msg = MIMEMultipart('mixed')
         # Add subject, from and to lines.
         msg['Subject'] = self.subject
@@ -97,11 +76,11 @@ class Email(object):
         # Encode the text and HTML content and set the character encoding. This step is
         # necessary if you're sending a message with characters outside the ASCII range.
         textpart = MIMEText(self._text.encode("utf-8"), 'plain', "utf-8")
-        #htmlpart = MIMEText(self._html.encode("utf-8"), 'html', "utf-8")
+        htmlpart = MIMEText(self._html.encode("utf-8"), 'html', "utf-8")
 
         # Add the text and HTML parts to the child container.
         msg_body.attach(textpart)
-        #msg_body.attach(htmlpart)
+        msg_body.attach(htmlpart)
 
         # Define the attachment part and encode it using MIMEApplication.
         att = MIMEApplication(open(self.qr_code, 'rb').read())
@@ -128,20 +107,7 @@ class Email(object):
                     'Data': msg.as_string(),
                 }
             )
-            #return response
-            # Display an error if something goes wrong.
+            return response
+        # Display an error if something goes wrong.
         except ClientError as e:
-            print(e.response['Error']['Message'])
-        else:
-            print("Email sent! Message ID:"),
-            print(response['MessageId'])
-        #
-        # return connection.send_email(
-        #     from_addr,
-        #     self.subject,
-        #     None,
-        #     self.to,
-        #     format=self._format,
-        #     text_body=self._text,
-        #     html_body=self._html
-        # )
+            raise FailedToSendEmail(e.response['Error']['Message'])

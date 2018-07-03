@@ -95,7 +95,7 @@ class Payment(BaseModel):
 
         payment = cls(**new_payment)
 
-        location = reservation.location[0]
+        location = reservation.location
         licensed_pilots = [pilot.licensed for pilot in reservation.pilots].count(True)
         license_price = licensed_pilots * location.type.get('LICENCIA')
 
@@ -149,7 +149,7 @@ class Payment(BaseModel):
                 payment.id_reference = obj_charge.get("authorization_code")
                 payment.etomin_number = obj_charge.get("card_token")
                 new_payment["status"] = "APROBADO"
-                reservation.payment.append(payment)
+                reservation.payment = payment
                 # Guardar en la colección de reservaciones reales
                 reservation.save_to_mongo(COLLECTION)
                 # Borrar de la colección de reservaciones temporales
