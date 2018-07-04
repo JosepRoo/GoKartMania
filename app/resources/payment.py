@@ -6,6 +6,7 @@ from app.models.emails.errors import EmailErrors
 from app.models.payments.constants import CARD_PARSER, PAYMENT_PARSER
 from app.models.payments.errors import PaymentErrors
 from app.models.reservations.constants import COLLECTION_TEMP, COLLECTION
+from app.models.reservations.errors import ReservationErrors
 from app.models.users.constants import COLLECTION as USER_COLLECTION
 from app.models.locations.constants import COLLECTION as LOCATION_COLLECTION
 from app.models.users.errors import UserErrors
@@ -37,6 +38,8 @@ class Payments(Resource):
                 # PilotModel.send_recovery_message(user, reservation, qr_code)
                 return Response(success=True, message="Correos de confirmacion exitosamente enviados.").json(), 200
             return Response(message="Uso de variable de sesion no autorizada.").json(), 401
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 401
         except PaymentErrors as e:
             return Response(message=e.message).json(), 401
         except EmailErrors as e:
