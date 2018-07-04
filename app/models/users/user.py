@@ -126,7 +126,7 @@ class User(BaseModel):
                    "        <strong>Total de la compra:\n</strong>"
                    "        <p>${}\n\n</p>"
                    "        <p>Presenta en taquilla el codigo adjunto para comenzar tu carrera.\n\n</p>"
-                   "        <img src='data:image/png;base64, {}' alt='QR Code' />"
+                   "        <img src='138.197.209.15/qr/{}' alt='QR Code' />"
                    "        <p>En sus marcas. Listos. ¡Fuera!</p>"
                    "    </body>"
                    "</html>".format(self.name, reservation._id, reservation.location.name,

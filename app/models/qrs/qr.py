@@ -18,7 +18,7 @@ class QR(BaseModel):
         :return: Path pointing to the location of the qr code image
         """
         qr = cls(**{})
-        qr.url = f'/gokartmania.com/#/reservation/{reservation._id}'
+        qr.url = f'gokartmania.com/#/reservation/{reservation._id}'
         img = qrcode.make(qr.url)
         #if not os.path.exists("app/reservation_qrs"):
         #    os.makedirs('app/reservation_qrs')
@@ -26,7 +26,7 @@ class QR(BaseModel):
         #img_file = open(img_path,"w+")
         img.save(img_path, format="PNG")
         #img_file.close()
-        return img_path
+        return qr._id+".png"
 
     @staticmethod
     def remove_reservations_qrs():
