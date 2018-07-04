@@ -3,7 +3,7 @@ import datetime
 from tzlocal import get_localzone
 from app.models.baseModel import BaseModel
 from app.common.database import Database
-from app.models.reservations.constants import COLLECTION_TEMP
+from app.models.reservations.constants import COLLECTION_TEMP, TIMEOUT
 from app.models.locations.constants import COLLECTION
 from app.models.locations.location import Location as LocationModel
 from app.models.reservations.errors import ReservationNotFound, WrongReservationType
@@ -41,7 +41,7 @@ class Reservation(BaseModel):
         location = Database.find_one(COLLECTION, {'_id': id_location})
         now = datetime.datetime.now().astimezone(get_localzone())
         reservation = cls(**new_reservation, date=now)
-        print(reservation.date)
+        #print(reservation.date)
         reservation.location = LocationModel(**location)
         if reservation.type != "Niños" and reservation.type != "Adultos":
             raise WrongReservationType("Error en el tipo de reservación. Solo puede ser 'Adultos' o 'Niños'.")
@@ -54,12 +54,12 @@ class Reservation(BaseModel):
 
     @classmethod
     def update(cls, reservation, type):
+        from app.models.qrs.qr import QR
+
         reservation.type = type
         reservation.update_mongo(COLLECTION_TEMP)
-        reservation.date.tzinfo = get_localzone()
-        print(reservation.date)
-        print(reservation.date.astimezone(get_localzone()))
-        #cls.remove_temporal_reservations()
+        #print(QR.remove_reservations_qrs())
+        #QR.create(reservation)
         return reservation
 
     @classmethod
@@ -79,8 +79,7 @@ class Reservation(BaseModel):
     def remove_temporal_reservations(cls):
         for temp_reservation in Database.find(COLLECTION_TEMP, {}):
             reservation = cls(**temp_reservation)
-            now = datetime.datetime.now().astimezone(get_localzone()).replace(tzinfo=None)
-            print(reservation.date)
-            print(now)
-            print("\n")
-            #print(reservation.date - now)
+            now = datetime.datetime.now().astimezone(get_localzone())
+            delta = now - reservation.date
+            if delta > TIMEOUT:
+                reservation.delete_from_mongo(COLLECTION_TEMP)

@@ -68,7 +68,7 @@ class Email(object):
         msg['From'] = from_addr
         msg['To'] = self.to
 
-        print(self.to)
+        #print(self.to)
 
         # Create a multipart/alternative child container.
         msg_body = MIMEMultipart('alternative')

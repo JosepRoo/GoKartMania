@@ -1,6 +1,6 @@
 from app.common.database import Database
 from app.models.baseModel import BaseModel
-from app.models.dates.constants import COLLECTION
+from app.models.dates.constants import COLLECTION, COLLECTION_DATES
 import datetime
 from random import randint, choice
 from app.models.reservations.reservation import Reservation
@@ -33,7 +33,8 @@ class Date(BaseModel):
         new_day = cls(date=d, schedules=[])
         for i in range(11, 22):
             ScheduleModel.add(new_day, {'hour': f'{i}', 'turns': []})
-        new_day.save_to_mongo(COLLECTION)
+        # new_day.save_to_mongo(COLLECTION)
+        new_day.save_to_mongo(COLLECTION_DATES)
         return new_day
 
     @classmethod
@@ -182,7 +183,7 @@ class Date(BaseModel):
                         turn.type = 'Adultos'
                     arr.append(turn.type)
                     i += 1
-            print(arr)
+            #print(arr)
             new_date.update_mongo(COLLECTION)
 
     @classmethod

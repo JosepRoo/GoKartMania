@@ -113,7 +113,7 @@ class Payment(BaseModel):
         else:
             turns_price = prices[prices_size - 1]
         amount = license_price + turns_price
-        print(license_price, " ", turns_price)
+        #print(license_price, " ", turns_price)
         params = {
             "public_key": os.environ.get("ETOMIN_PB_KEY"),
             "transaction": {
