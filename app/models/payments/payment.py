@@ -52,7 +52,7 @@ class Card(BaseModel):
         card_info = cls.parse_card(new_card)
 
         if len(str(new_card.get("number"))) != 16:
-            raise TokenisationFailed("El número de la tarjeta es inválido.")
+            raise TokenisationFailed("El numero de la tarjeta es invalido.")
         auth = requests.get(URL)
         if auth.status_code == 200:
             token = requests.post(URL_TOKEN, params={}, data=json.dumps(card_info), headers=HEADERS)
@@ -150,9 +150,9 @@ class Payment(BaseModel):
                 payment.etomin_number = obj_charge.get("card_token")
                 new_payment["status"] = "APROBADO"
                 reservation.payment = payment
-                # Guardar en la colección de reservaciones reales
+                # Guardar en la coleccion de reservaciones reales
                 reservation.save_to_mongo(COLLECTION)
-                # Borrar de la colección de reservaciones temporales
+                # Borrar de la coleccion de reservaciones temporales
                 reservation.delete_from_mongo(COLLECTION_TEMP)
                 # Nulificar las fechas tentativas de reservacion
                 for turn in reservation.turns:

@@ -38,7 +38,7 @@ class Location(BaseModel):
         else:
             location = Database.find_one(COLLECTION, {'_id': _id})
             if location is None:
-                raise LocationNotFound("La ubicación con el ID dado no existe.")
+                raise LocationNotFound("La ubicacion con el ID dado no existe.")
             return [cls(**location)]
 
     @classmethod
@@ -50,7 +50,7 @@ class Location(BaseModel):
         """
         location = Database.find_one(COLLECTION, {'_id': updated_location['_id']})
         if location is None:
-            raise LocationNotFound("La ubicación con el ID dado no existe.")
+            raise LocationNotFound("La ubicacion con el ID dado no existe.")
         location = cls(**updated_location)
         location.update_mongo(COLLECTION)
         return location

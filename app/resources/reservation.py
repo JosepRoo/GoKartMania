@@ -36,7 +36,7 @@ class Reservations(Resource):
                 data = PARSER.parse_args()
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
                 return ReservationModel.update(reservation, data.get('type')).json(), 200
-            return Response(message="Uso de variable de sesión no autorizada.").json(), 401
+            return Response(message="Uso de variable de sesion no autorizada.").json(), 401
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except UserErrors as e:
@@ -52,6 +52,6 @@ class Reservations(Resource):
             if session.get('reservation'):
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
                 return reservation.json(), 200
-            return Response(message="Uso de variable de sesión no autorizada.").json(), 401
+            return Response(message="Uso de variable de sesion no autorizada.").json(), 401
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401

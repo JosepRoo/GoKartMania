@@ -51,7 +51,7 @@ class Email(object):
         if not from_addr:
             from_addr = 'contacto@iualia.com'
         if not self._html and not self._text:
-            raise FailedToSendEmail('Debes proporcionar un mensaje de texto o cuerpo HTML válido.')
+            raise FailedToSendEmail('Debes proporcionar un mensaje de texto o cuerpo HTML valido.')
         if not self._html:
             self._format = 'text'
             body = self._text
