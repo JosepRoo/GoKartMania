@@ -2,6 +2,8 @@ from flask_restful import reqparse
 
 COLLECTION = 'dates'
 
+COLLECTION_DATES = 'temp_dates'
+
 PARSER = reqparse.RequestParser(bundle_errors=True)
 PARSER.add_argument('year',
                     type=int,

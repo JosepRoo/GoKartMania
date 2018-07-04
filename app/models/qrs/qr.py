@@ -1,4 +1,5 @@
 import qrcode
+import os
 
 from app.models.baseModel import BaseModel
 from app.models.reservations.reservation import Reservation
@@ -19,6 +20,20 @@ class QR(BaseModel):
         qr = cls(**{})
         qr.url = f'/gokartmania.com/#/reservation/{reservation._id}'
         img = qrcode.make(qr.url)
+        if not os.path.exists("app/reservation_qrs"):
+            os.makedirs('app/reservation_qrs')
         img_path = f'app/reservation_qrs/{qr._id}.png'
         img.save(img_path, format="PNG")
         return img_path
+
+    @staticmethod
+    def remove_reservations_qrs():
+        folder = 'app/reservation_qrs'
+        for file in os.listdir(folder):
+            file_path = os.path.join(folder, file)
+            try:
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+                return os.listdir(folder)
+            except Exception as e:
+                print(e)

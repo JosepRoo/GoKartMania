@@ -126,11 +126,13 @@ class User(BaseModel):
                    "        <strong>Total de la compra:\n</strong>"
                    "        <p>${}\n\n</p>"
                    "        <p>Presenta en taquilla el código adjunto para comenzar tu carrera.\n\n</p>"
+                   "        <img src='data:image/png;base64, {}' alt='QR Code' />"
                    "        <p>En sus marcas. Listos. ¡Fuera!</p>"
                    "    </body>"
                    "</html>".format(self.name, reservation._id, reservation.location.name,
                                     reservation.date.strftime("%Y-%m-%d"), turns_detail, pilots_detail,
-                                    reservation.payment.amount))
+                                    reservation.payment.amount, qr_code))
+        print(qr_code)
 
         try:
             email.send()

@@ -54,4 +54,4 @@ class Reservations(Resource):
                 return reservation.json(), 200
             return Response(message="Uso de variable de sesión no autorizada.").json(), 401
         except ReservationErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 401

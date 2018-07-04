@@ -29,7 +29,7 @@ class Pilots(Resource):
                 return [pilot.json() for pilot in reservation.pilots], 200
             return Response(message="Uso de variable de sesión no autorizada.").json(), 401
         except ReservationErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 401
 
     @staticmethod
     def post():
@@ -117,7 +117,7 @@ class Pilots(Resource):
                 return reservation_pilots
             return Response(message="Uso de variable de sesión no autorizada.").json(), 401
         except ReservationErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 401
 
 
 class Pilot(Resource):
@@ -136,7 +136,7 @@ class Pilot(Resource):
         except PilotNotFound as e:
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 401
 
     @staticmethod
     def put(pilot_id):
@@ -154,7 +154,7 @@ class Pilot(Resource):
         except PilotNotFound as e:
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 401
 
     @staticmethod
     def delete(pilot_id):
@@ -171,4 +171,4 @@ class Pilot(Resource):
         except PilotNotFound as e:
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 401

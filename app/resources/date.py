@@ -22,7 +22,7 @@ class Dates(Resource):
         try:
             return [date.json() for date in DateModel.get_dates_in_range(start_date, end_date)], 200
         except ReservationErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 401
 
     @staticmethod
     def post():
@@ -33,11 +33,11 @@ class Dates(Resource):
         try:
             data = PARSER.parse_args()
             month_dates = calendar.monthrange(data.get('year'), data.get('month'))[1]
-            for i in range(month_dates):
+            for i in range(1):
                 DateModel.add(data, i+1)
             return Response(success=True, message="Registro del mes exitoso").json(), 200
         except ReservationErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 401
 
     @staticmethod
     def put(start_date, end_date):
@@ -51,7 +51,7 @@ class Dates(Resource):
             DateModel.auto_fill(start_date, end_date)
             return Response(success=True, message="Actualización del mes exitosa").json(), 200
         except ReservationErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 401
 
 
 class AvailableDates(Resource):
@@ -69,7 +69,7 @@ class AvailableDates(Resource):
                 return DateModel.get_available_dates(reservation, start_date, end_date), 200
             return Response(message="Uso de variable de sesión no autorizada.").json(), 401
         except ReservationErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 401
 
 
 class AvailableSchedules(Resource):
@@ -86,4 +86,4 @@ class AvailableSchedules(Resource):
                 return DateModel.get_available_schedules(reservation, date), 200
             return Response(message="Uso de variable de sesión no autorizada.").json(), 401
         except ReservationErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 401

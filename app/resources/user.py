@@ -28,4 +28,4 @@ class User(Resource):
         try:
             return UserModel.register(data).json(), 200
         except UserErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 401

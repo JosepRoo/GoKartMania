@@ -1,6 +1,8 @@
 import os
 
 import pymongo
+from bson import CodecOptions
+from tzlocal import get_localzone
 
 __author__ = 'richogtz'
 
@@ -27,11 +29,15 @@ class Database(object):
 
     @staticmethod
     def find(collection, query):
-        return Database.DATABASE[collection].find(query)
+        return Database.DATABASE[collection].with_options(
+                    codec_options=CodecOptions(
+                        tz_aware=True, tzinfo=get_localzone())).find(query)
 
     @staticmethod
     def find_one(collection, query):
-        return Database.DATABASE[collection].find_one(query)
+        return Database.DATABASE[collection].with_options(
+                    codec_options=CodecOptions(
+                        tz_aware=True, tzinfo=get_localzone())).find_one(query)
 
     @staticmethod
     def update(collection, query, data):

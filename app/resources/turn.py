@@ -49,7 +49,7 @@ class Turn(Resource):
         except TurnNotFound as e:
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 401
 
     @staticmethod
     def put(turn_id):
@@ -67,4 +67,4 @@ class Turn(Resource):
         except TurnNotFound as e:
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=e.message).json(), 401

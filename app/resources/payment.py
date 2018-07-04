@@ -34,7 +34,7 @@ class Payments(Resource):
                 PaymentModel.add(user, reservation, card_date, payment_data)
                 qr_code = QRModel.create(reservation)
                 UserModel.send_recovery_message(user, reservation, qr_code)
-                PilotModel.send_recovery_message(user, reservation, qr_code)
+                # PilotModel.send_recovery_message(user, reservation, qr_code)
                 return Response(success=True, message="Correos de confirmación exitosamente enviados.").json(), 200
             return Response(message="Uso de variable de sesión no autorizada.").json(), 401
         except PaymentErrors as e:
