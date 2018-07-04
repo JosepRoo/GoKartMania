@@ -103,7 +103,7 @@ class Pilots(Resource):
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
                 pilot_number = len(reservation.pilots)
                 if pilot_number >= 8:
-                    return Response(message="La reservación ya no puede aceptar más pilotos.").json(), 403
+                    return Response(message="La reservacion ya no puede aceptar más pilotos.").json(), 403
                 for pilot in pilots.get('pilots'):
                     for item in list(pilot.keys()):
                         if item not in [a.name for a in PARSER.args]:

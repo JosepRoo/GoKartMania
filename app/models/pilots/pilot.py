@@ -92,8 +92,8 @@ class Pilot(BaseModel):
         """
         for pilot in reservation.pilots:
             if pilot.licensed:
-                email = Email(to=pilot.email, subject='Confirmación de reservación', qr_code=qr_code)
-                # email = Email(to='areyna@sitsolutions.org', subject='Confirmación de reservación', qr_code=qr_code)
+                email = Email(to=pilot.email, subject='confirmacion de reservacion', qr_code=qr_code)
+                # email = Email(to='areyna@sitsolutions.org', subject='confirmacion de reservacion', qr_code=qr_code)
                 turns_detail = ""
                 for turn in reservation.turns:
                     turns_detail += "<p>" + turn.schedule + " hrs - Turno " + turn.turn_number + "\n</p>"
@@ -111,7 +111,7 @@ class Pilot(BaseModel):
                 email.text("Estimado {}:\n"
                            "Gracias por usar el servicio de Reservaciones de GoKartMania.\n"
                            "A continuación se desglosan los datos de su compra:\n\n"
-                           "Número de confirmación:\n"
+                           "Número de confirmacion:\n"
                            "{}\n\n"
                            "Ubicación:\n"
                            "{}\n\n"
@@ -131,12 +131,12 @@ class Pilot(BaseModel):
                                                                    reservation.payment.amount))
 
                 email.html("<html>"
-                           "    <head>Tu reservación.</head>"
+                           "    <head>Tu reservacion.</head>"
                            "    <body>"
                            "        <h1>Estimado {}:\n</h1>"
                            "        <p>Gracias por usar el servicio de Reservaciones de GoKartMania.\n</p>"
                            "        <p>A continuación se desglosan los datos de su compra:\n\n</p>"
-                           "        <strong>Número de confirmación:\n</strong>"
+                           "        <strong>Número de confirmacion:\n</strong>"
                            "        <p>{}\n\n</p>"
                            "        <strong>Ubicación:\n</strong>"
                            "        <p>{}\n\n</p>"

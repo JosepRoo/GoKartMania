@@ -44,9 +44,9 @@ class Reservation(BaseModel):
         #print(reservation.date)
         reservation.location = LocationModel(**location)
         if reservation.type != "Niños" and reservation.type != "Adultos":
-            raise WrongReservationType("Error en el tipo de reservación. Solo puede ser 'Adultos' o 'Niños'.")
+            raise WrongReservationType("Error en el tipo de reservacion. Solo puede ser 'Adultos' o 'Niños'.")
         reservation.save_to_mongo(COLLECTION_TEMP)
-        # Por default, una reservación debe llevar al menos un turno y al menos un piloto
+        # Por default, una reservacion debe llevar al menos un turno y al menos un piloto
         # TurnModel.add(reservation, {"schedule": "00", "turn_number": 0, "positions": {}, "date": None})
         # PilotModel.add(reservation, {'name': 'Piloto 1'})
         session['reservation'] = reservation._id
@@ -73,7 +73,7 @@ class Reservation(BaseModel):
         reservation = Database.find_one(collection, {'_id': _id})
         if reservation:
             return cls(**reservation)
-        raise ReservationNotFound("La reservación con el ID dado no existe.")
+        raise ReservationNotFound("La reservacion con el ID dado no existe.")
 
     @classmethod
     def remove_temporal_reservations(cls):
