@@ -83,18 +83,18 @@ class Email(object):
         msg_body.attach(htmlpart)
 
         # Define the attachment part and encode it using MIMEApplication.
-        att = MIMEApplication(open(self.qr_code, 'rb').read())
+        #att = MIMEApplication(open(self.qr_code, 'rb').read())
 
         # Add a header to tell the email client to treat this part as an attachment,
         # and to give the attachment a name.
-        att.add_header('Content-Disposition', 'attachment', filename=os.path.basename(self.qr_code))
+        #att.add_header('Content-Disposition', 'attachment', filename=os.path.basename(self.qr_code))
 
         # Attach the multipart/alternative child container to the multipart/mixed
         # parent container.
         msg.attach(msg_body)
 
         # Add the attachment to the parent container.
-        msg.attach(att)
+        #msg.attach(att)
 
         try:
             # Provide the contents of the email.
