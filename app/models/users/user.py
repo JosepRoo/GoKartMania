@@ -132,7 +132,7 @@ class User(BaseModel):
                    "</html>".format(self.name, reservation._id, reservation.location.name,
                                     reservation.date.strftime("%Y-%m-%d"), turns_detail, pilots_detail,
                                     reservation.payment.amount, qr_code))
-        print(qr_code)
+        #print(qr_code)
 
         try:
             email.send()

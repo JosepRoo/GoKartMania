@@ -41,7 +41,7 @@ class Reservation(BaseModel):
         location = Database.find_one(COLLECTION, {'_id': id_location})
         now = datetime.datetime.now().astimezone(get_localzone())
         reservation = cls(**new_reservation, date=now)
-        print(reservation.date)
+        #print(reservation.date)
         reservation.location = LocationModel(**location)
         if reservation.type != "Niños" and reservation.type != "Adultos":
             raise WrongReservationType("Error en el tipo de reservación. Solo puede ser 'Adultos' o 'Niños'.")

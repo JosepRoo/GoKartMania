@@ -183,7 +183,7 @@ class Date(BaseModel):
                         turn.type = 'Adultos'
                     arr.append(turn.type)
                     i += 1
-            print(arr)
+            #print(arr)
             new_date.update_mongo(COLLECTION)
 
     @classmethod
