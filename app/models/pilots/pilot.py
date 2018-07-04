@@ -83,7 +83,7 @@ class Pilot(BaseModel):
                 return reservation.pilots
         raise PilotNotFound("El piloto con el ID dado no existe")
 
-    def send_recovery_message(self, reservation: Reservation, qr_code):
+    def send_confirmation_message(self, reservation: Reservation, qr_code):
         """
         Sends an email to the reservation pilots with the summary of their turns
         :param qr_code:

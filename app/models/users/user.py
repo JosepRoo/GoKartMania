@@ -53,7 +53,7 @@ class User(BaseModel):
             new_user.update_mongo(COLLECTION)
         return new_user
 
-    def send_recovery_message(self, reservation: Reservation, qr_code):
+    def send_confirmation_message(self, reservation: Reservation, qr_code):
         """
         Sends an email to the current user with the summary of the reservation (all turns)
         :param qr_code:
