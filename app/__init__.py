@@ -18,8 +18,9 @@ def create_app(config_name):
     api = Api(app)
     app.config.from_object(config[config_name])
     # Register our blueprints
-    from .default import default as default_blueprint
+    from .default import default as default_blueprint, qrs as qrs_blueprint
     app.register_blueprint(default_blueprint)
+    app.register_blueprint(qrs_blueprint, url_prefix='/qr')
 
     api.add_resource(User, '/user')
     api.add_resource(Reservations, '/user/reservations')
