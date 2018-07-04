@@ -47,4 +47,4 @@ Thumbs.db
 *.pyc
 __pycache__
 venv/
-app/reservation_qrs/
+# app/reservation_qrs/
