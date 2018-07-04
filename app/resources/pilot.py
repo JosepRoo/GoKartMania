@@ -27,7 +27,7 @@ class Pilots(Resource):
             if session.get('reservation'):
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
                 return [pilot.json() for pilot in reservation.pilots], 200
-            return Response(message="Uso de variable de sesión no autorizada.").json(), 401
+            return Response(message="Uso de variable de sesion no autorizada.").json(), 401
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
 
@@ -103,7 +103,7 @@ class Pilots(Resource):
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
                 pilot_number = len(reservation.pilots)
                 if pilot_number >= 8:
-                    return Response(message="La reservación ya no puede aceptar más pilotos.").json(), 403
+                    return Response(message="La reservacion ya no puede aceptar mas pilotos.").json(), 403
                 for pilot in pilots.get('pilots'):
                     for item in list(pilot.keys()):
                         if item not in [a.name for a in PARSER.args]:
@@ -115,7 +115,7 @@ class Pilots(Resource):
                 reservation_pilots = [PilotModel.add(reservation, pilots.get('pilots')[i]).json() for i in
                                       range(len(pilots.get('pilots')))]
                 return reservation_pilots
-            return Response(message="Uso de variable de sesión no autorizada.").json(), 401
+            return Response(message="Uso de variable de sesion no autorizada.").json(), 401
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
 
@@ -132,7 +132,7 @@ class Pilot(Resource):
             if session.get('reservation'):
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
                 return PilotModel.get(reservation, pilot_id).json(), 200
-            return Response(message="Uso de variable de sesión no autorizada.").json(), 401
+            return Response(message="Uso de variable de sesion no autorizada.").json(), 401
         except PilotNotFound as e:
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
@@ -150,7 +150,7 @@ class Pilot(Resource):
                 data = PARSER.parse_args()
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
                 return [pilot.json() for pilot in PilotModel.update(reservation, data, pilot_id)], 200
-            return Response(message="Uso de variable de sesión no autorizada.").json(), 401
+            return Response(message="Uso de variable de sesion no autorizada.").json(), 401
         except PilotNotFound as e:
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
@@ -167,7 +167,7 @@ class Pilot(Resource):
             if session.get('reservation'):
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
                 return [pilot.json() for pilot in PilotModel.delete(reservation, pilot_id)], 200
-            return Response(message="Uso de variable de sesión no autorizada.").json(), 401
+            return Response(message="Uso de variable de sesion no autorizada.").json(), 401
         except PilotNotFound as e:
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:

@@ -41,7 +41,7 @@ class User(BaseModel):
         """
         email = kwargs['email']
         if not Utils.email_is_valid(email):
-            raise InvalidEmail("El email dado no tiene un formato válido.")
+            raise InvalidEmail("El email dado no tiene un formato valido.")
         user = User.get_by_email(email)
         if user is None:
             new_user = cls(**kwargs)
@@ -60,8 +60,8 @@ class User(BaseModel):
         :param reservation: Reservation object
         :return: POST method requesting an email to be sent to the user making the reservation
         """
-        # email = Email(to=self.email, subject='Confirmación de reservación')
-        email = Email(to='areyna@sitsolutions.org', subject='Confirmación de reservación', qr_code=qr_code)
+        # email = Email(to=self.email, subject='confirmacion de reservacion')
+        email = Email(to='areyna@sitsolutions.org', subject='Confirmacion de reservacion', qr_code=qr_code)
 
         turns_detail = ""
         for turn in reservation.turns:
@@ -78,17 +78,17 @@ class User(BaseModel):
             if pilot.email is not None:
                 pilots_detail += "<p>Email: " + pilot.email + "\n</p>"
             if pilot.licensed:
-                pilots_detail += "<p>Licencia: Sí" + "\n</p>"
+                pilots_detail += "<p>Licencia: Si" + "\n</p>"
             else:
                 pilots_detail += "<p>Licencia: No" + "\n</p>"
             pilots_detail += "\n"
 
         email.text("Estimado {}:\n"
                    "Gracias por usar el servicio de Reservaciones de GoKartMania.\n"
-                   "A continuación se desglosan los datos de su compra:\n\n"
-                   "Número de confirmación:\n"
+                   "A continuacion se desglosan los datos de su compra:\n\n"
+                   "Numero de confirmacion:\n"
                    "{}\n\n"
-                   "Ubicación:\n"
+                   "Ubicacion:\n"
                    "{}\n\n"
                    "Fecha:\n"
                    "{}\n\n"
@@ -98,7 +98,7 @@ class User(BaseModel):
                    "{}\n"
                    "Total de la compra:\n"
                    "${}\n\n"
-                   "Presenta en taquilla el código adjunto para comenzar tu carrera.\n\n"
+                   "Presenta en taquilla el codigo adjunto para comenzar tu carrera.\n\n"
                    "En sus marcas. Listos. ¡Fuera!".format(self.name, reservation._id,
                                                            reservation.location.name,
                                                            reservation.date.strftime("%Y-%m-%d"),
@@ -108,14 +108,14 @@ class User(BaseModel):
             email_str += ""
 
         email.html("<html>"
-                   "    <head>Tu reservación.</head>"
+                   "    <head>Tu reservacion.</head>"
                    "    <body>"
                    "        <h1>Estimado {}:\n</h1>"
                    "        <p>Gracias por usar el servicio de Reservaciones de GoKartMania.\n</p>"
-                   "        <p>A continuación se desglosan los datos de su compra:\n\n</p>"
-                   "        <strong>Número de confirmación:\n</strong>"
+                   "        <p>A continuacion se desglosan los datos de su compra:\n\n</p>"
+                   "        <strong>Numero de confirmacion:\n</strong>"
                    "        <p>{}\n\n</p>"
-                   "        <strong>Ubicación:\n</strong>"
+                   "        <strong>Ubicacion:\n</strong>"
                    "        <p>{}\n\n</p>"
                    "        <strong>Fecha:\n</strong>"
                    "        <p>{}\n\n</p>"
@@ -125,7 +125,7 @@ class User(BaseModel):
                    "        {}\n"
                    "        <strong>Total de la compra:\n</strong>"
                    "        <p>${}\n\n</p>"
-                   "        <p>Presenta en taquilla el código adjunto para comenzar tu carrera.\n\n</p>"
+                   "        <p>Presenta en taquilla el codigo adjunto para comenzar tu carrera.\n\n</p>"
                    "        <img src='data:image/png;base64, {}' alt='QR Code' />"
                    "        <p>En sus marcas. Listos. ¡Fuera!</p>"
                    "    </body>"
