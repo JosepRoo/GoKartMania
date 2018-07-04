@@ -3,7 +3,7 @@ import os
 
 from app.models.baseModel import BaseModel
 from app.models.reservations.reservation import Reservation
-
+from config import basedir
 
 class QR(BaseModel):
     def __init__(self, _id=None, url=None):
@@ -20,10 +20,12 @@ class QR(BaseModel):
         qr = cls(**{})
         qr.url = f'/gokartmania.com/#/reservation/{reservation._id}'
         img = qrcode.make(qr.url)
-        if not os.path.exists("app/reservation_qrs"):
-            os.makedirs('app/reservation_qrs')
-        img_path = f'app/reservation_qrs/{qr._id}.png'
+        #if not os.path.exists("app/reservation_qrs"):
+        #    os.makedirs('app/reservation_qrs')
+        img_path = f'{basedir}/app/reservation_qrs/{qr._id}.png'
+        #img_file = open(img_path,"w+")
         img.save(img_path, format="PNG")
+        #img_file.close()
         return img_path
 
     @staticmethod
