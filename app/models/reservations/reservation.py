@@ -59,7 +59,7 @@ class Reservation(BaseModel):
         reservation.type = type
         reservation.update_mongo(COLLECTION_TEMP)
         #print(QR.remove_reservations_qrs())
-        #QR.create(reservation)
+        QR.create(reservation)
         return reservation
 
     @classmethod
