@@ -9,7 +9,8 @@ __author__ = 'richogtz'
 
 class Database(object):
     # URI = "mongodb://richogtz:cloudstrifeFF7!@127.0.0.1:27017"
-    URI = os.environ.get('MONGODB_URI') or "mongodb://127.0.0.1:27017/gokartmania"
+    # URI = os.environ.get('MONGODB_URI') or "mongodb://127.0.0.1:27017/gokartmania"
+    URI = "mongodb://127.0.0.1:27017/gokartmania"
     DATABASE = None
 
     @staticmethod

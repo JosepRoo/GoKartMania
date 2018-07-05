@@ -204,7 +204,7 @@ class Date(BaseModel):
                 turn_number = int(new_turn.get('turn_number'))
                 for position in new_turn.get('positions'):
                     position_num = (int(position[-1]))
-                    now = datetime.datetime.now().astimezone(get_localzone())
+                    now = datetime.datetime.now().astimezone(get_localzone())  # + datetime.timedelta(days=3)
                     AbstractPilot.add(schedule.turns[turn_number-1], {'_id': new_turn.get('positions').get(position),
                                                                       'position': position_num, 'allocation_date': now})
                 # Actualizar el tipo de turno, si es null

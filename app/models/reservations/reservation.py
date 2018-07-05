@@ -41,7 +41,7 @@ class Reservation(BaseModel):
         location = Database.find_one(COLLECTION, {'_id': id_location})
         now = datetime.datetime.now().astimezone(get_localzone())
         reservation = cls(**new_reservation, date=now)
-        #print(reservation.date)
+        # print(reservation.date)
         reservation.location = LocationModel(**location)
         if reservation.type != "Niños" and reservation.type != "Adultos":
             raise WrongReservationType("Error en el tipo de reservacion. Solo puede ser 'Adultos' o 'Niños'.")
@@ -55,11 +55,12 @@ class Reservation(BaseModel):
     @classmethod
     def update(cls, reservation, type):
         from app.models.qrs.qr import QR
-
+        from app.models.pilots.pilot import AbstractPilot
         reservation.type = type
         reservation.update_mongo(COLLECTION_TEMP)
         # QR.remove_reservation_qrs()
         # QR.create(reservation)
+        AbstractPilot.remove_allocated_pilots()
         return reservation
 
     @classmethod

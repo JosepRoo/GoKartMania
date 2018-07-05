@@ -8,6 +8,7 @@ from app.models.users.user import User as UserModel
 from app.models.reservations.constants import PARSER, COLLECTION_TEMP
 from app.models.reservations.errors import ReservationErrors
 from app.models.reservations.reservation import Reservation as ReservationModel
+from app.common.utils import login_required
 
 
 class Reservations(Resource):
@@ -26,32 +27,30 @@ class Reservations(Resource):
             return Response(message=e.message).json(), 401
 
     @staticmethod
+    @login_required
     def put():
         """
         Updates the current reservation given its new type
         :return: JSON object with the updated reservation
         """
         try:
-            if session.get('reservation'):
-                data = PARSER.parse_args()
-                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-                return ReservationModel.update(reservation, data.get('type')).json(), 200
-            return Response(message="Uso de variable de sesion no autorizada.").json(), 401
+            data = PARSER.parse_args()
+            reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+            return ReservationModel.update(reservation, data.get('type')).json(), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except UserErrors as e:
             return Response(message=e.message).json(), 401
 
     @staticmethod
+    @login_required
     def get():
         """
         Retrieves the information of the current reservation
         :return:
         """
         try:
-            if session.get('reservation'):
-                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-                return reservation.json(), 200
-            return Response(message="Uso de variable de sesion no autorizada.").json(), 401
+            reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+            return reservation.json(), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401

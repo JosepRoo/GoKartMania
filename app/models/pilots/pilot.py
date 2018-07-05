@@ -1,9 +1,16 @@
+import datetime
+
+from tzlocal import get_localzone
+
+from app import Database
 from app.models.baseModel import BaseModel
 from app.models.emails.email import Email
 from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.pilots.errors import PilotNotFound
-from app.models.reservations.constants import COLLECTION_TEMP
+from app.models.reservations.constants import COLLECTION_TEMP, TIMEOUT
+from app.models.dates.constants import COLLECTION
 from app.models.reservations.reservation import Reservation
+from app.models.dates.date import Date as DateModel
 
 """
 This is the pilot model object which holds the information of the pilot if they have a licence.
@@ -181,3 +188,18 @@ class AbstractPilot(BaseModel):
         pilot = cls(**new_pilot)
         turn.pilots.append(pilot)
         return pilot
+
+    @staticmethod
+    def remove_allocated_pilots():
+        """
+        Removes the allocated date-schedule-turn-pilots that have already concluded their TIMEOUT
+        :return: None
+        """
+        timeout = datetime.datetime.utcnow() - datetime.timedelta(minutes=5)
+        Database.DATABASE[COLLECTION].update_many({},
+                                                  {'$pull': {'schedules.$[].turns.$[].pilots': {
+                                                      'allocation_date': {'$lte': timeout}}}})
+
+        Database.DATABASE[COLLECTION].update_many({},
+                                                  {'$set': {'schedules.$[].turns.$[tu].type': None}},
+                                                  array_filters=[{'tu.pilots': []}])

@@ -1,6 +1,7 @@
 from flask_restful import reqparse
 
-COLLECTION = 'dates'
+#COLLECTION = 'dates'
+COLLECTION = 'temp_dates'
 
 COLLECTION_DATES = 'temp_dates'
 

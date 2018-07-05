@@ -1,5 +1,19 @@
+from flask import session
 from passlib.hash import pbkdf2_sha512
+from app import Response
 import re
+from functools import wraps
+
+
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if session.get('reservation'):
+            return f(*args, **kwargs)
+        else:
+            return Response(message="Uso de variable de sesion no autorizada.").json(), 401
+    return wrap
+
 
 #utility class used thorughout other classes to perform common functions that dont fit in any other class
 class Utils(object):

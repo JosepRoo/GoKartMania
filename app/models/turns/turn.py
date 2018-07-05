@@ -66,7 +66,6 @@ class Turn(BaseModel):
             if positions_available:
                 allocation_date = new_turn.get('date')
                 #print(allocation_date)
-                #print("Todo chido hasta aqui.")
                 DateModel.update_temp(allocation_date, new_turn, reservation.type)
                 if reservation.turns != [] and reservation.turns is not None and reservation.turns[0].turn_number == 0:
                     # Actualizar el turno que ya existia por default
