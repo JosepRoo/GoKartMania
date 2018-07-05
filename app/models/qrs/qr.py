@@ -30,7 +30,7 @@ class QR(BaseModel):
 
     @staticmethod
     def remove_reservation_qrs():
-        folder = 'app/reservation_qrs'
+        folder = f'{basedir}/app/reservation_qrs'
         for file in os.listdir(folder):
             file_path = os.path.join(folder, file)
             try:
