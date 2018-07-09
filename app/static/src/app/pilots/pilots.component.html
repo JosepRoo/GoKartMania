@@ -40,6 +40,8 @@
                 </div>
                 <!-- end add pilot button -->
 
+                  <br *ngIf="error.show">
+
                   <div class="alert alert-danger error" role="alert" *ngIf="error.show">
                     {{error.text}}
                   </div>

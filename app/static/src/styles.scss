@@ -65,6 +65,12 @@ body {
   background-color: white !important;
 }
 
+.error {
+  background-color: #B9261A;
+  color: white;
+  border-color: #B9261A;
+}
+
 $custom-typography: mat-typography-config(
     $font-family: 'PT Sans'
 );
