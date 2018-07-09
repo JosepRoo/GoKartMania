@@ -12,11 +12,12 @@ import 'rxjs/add/observable/throw';
 @Injectable({
   providedIn: 'root'
 })
-export class ReservationService {
-  private reservationApi: string = environment.api + '/user/reservations';
+export class DatesService {
+  private availableDatesApi: string = environment.api + '/available_dates';
+  private availableSchedulesApi: string = environment.api + '/available_schedules';
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
-    'Accept': 'application/json'
+    Accept: 'application/json'
   });
 
   constructor(
@@ -25,9 +26,29 @@ export class ReservationService {
     private location: Location
   ) {}
 
-  addReservation(reservation): Observable<any[]> {
+  getAvailableDates(startDate, endDate): Observable<any[]> {
     return this.http
-      .post<any>(this.reservationApi, reservation, {
+      .get<any>(this.availableDatesApi + '/' + startDate + '/' + endDate, {
+        headers: this.headers
+      })
+      .pipe(res => {
+        return res;
+      })
+      .catch(e => {
+        if (e.status === 401) {
+          this.location.replaceState('/');
+          this.router.navigate(['/instrucciones']);
+          return Observable.throw(e.error.message);
+        }
+        if (e.status === 400) {
+          return Observable.throw(e.error.message);
+        }
+      });
+  }
+
+  getAvailableSchedules(date): Observable<any[]> {
+    return this.http
+      .get<any>(this.availableSchedulesApi + '/' + date, {
         headers: this.headers
       })
       .pipe(res => {
