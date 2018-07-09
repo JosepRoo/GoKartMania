@@ -1,16 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~@angular/material/theming';
 @import url('https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i');
+@import "../node_modules/angular-calendar/css/angular-calendar.css";
 
 @import '~bootstrap/scss/mixins';
 @import '~bootstrap/scss/variables';
 @import '~bootstrap/scss/functions';
 
+html, body { overflow-x: hidden; }
+
 body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
   font-family: 'PT Sans';
+  background: black;
+  background-image: black;
+}
+
+.cal-day-number{
+  color:white !important;
+  font-weight: 700 !important;
+}
+
+.cal-today {
+  background-color: gray !important;
 }
 
 @include mat-core();
@@ -21,6 +34,35 @@ body {
 
 .mat-checkbox-layout {
   white-space: normal !important;
+}
+
+.cal-month-view .cal-header .cal-cell{
+  background-color: black !important;
+}
+
+.cal-month-view .cal-days .cal-cell-row {
+  background-color: black !important;
+}
+
+.cal-month-view .cal-header .cal-cell {
+  color: white !important;
+  font-weight: 800 !important;
+}
+
+.cal-month-view .cal-day-cell:hover {
+  background-color: #B9261A !important;
+}
+
+.cal-month-view .cal-day-free:hover {
+  background-color: white !important;
+}
+
+.cal-month-view .cal-day-half:hover {
+  background-color: white !important;
+}
+
+.cal-month-view .cal-day-full:hover {
+  background-color: white !important;
 }
 
 $custom-typography: mat-typography-config(
@@ -56,6 +98,9 @@ $theme: mat-dark-theme($primary, $accent);
   .mat-checkbox-layout {
     font-size: .6rem !important;
   }
+  .cal-day-number{    
+    font-size: 18px !important;
+  }
 }
 
 @include media-breakpoint-up(sm) {
@@ -77,6 +122,9 @@ $theme: mat-dark-theme($primary, $accent);
   }
   .mat-checkbox-layout {
     font-size: .8rem !important;
+  }
+  .cal-day-number{    
+    font-size: 23px !important;
   }
 }
 
@@ -100,6 +148,9 @@ $theme: mat-dark-theme($primary, $accent);
   .mat-checkbox-layout {
     font-size: 1rem !important;
   }
+  .cal-day-number{    
+    font-size: 28px !important;
+  }
 }
 
 @include media-breakpoint-up(lg) {
@@ -121,6 +172,9 @@ $theme: mat-dark-theme($primary, $accent);
   }
   .mat-checkbox-layout {
     font-size: 1rem !important;
+  }
+  .cal-day-number{    
+    font-size: 36px !important;
   }
 }
 

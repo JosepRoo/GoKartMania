@@ -1,0 +1,44 @@
+.banner-background {
+  background-color: #B9261A;
+  padding-top:5px;
+  padding-bottom:5px;
+}
+
+.tittle-banner {
+  font-style: italic;
+  font-weight: 700;
+  padding: 5px;
+  color: white;
+  margin-bottom: 0px;
+  text-align: center;
+}
+
+.cal-day-selected, .cal-day-selected:hover {
+  background: linear-gradient(to top, black,gray, white) !important;
+}
+
+.cal-day-free {
+  background: linear-gradient(to top, black, #0b4e0ba8, #138813a8) !important;
+}
+
+.cal-day-half {
+  background: linear-gradient(to top, black, #6b6408dc, #beb30ddc) !important;
+}
+
+.cal-day-full {
+  background: linear-gradient(to top, black, rgb(104, 21, 13), #B9261A) !important;
+}
+
+.pointer {
+  text-decoration: none;
+  color: white !important;
+  font-weight: 600;
+  font-size: 26px;
+}
+
+.month {
+  text-decoration: none;
+  color: white !important;
+  font-weight: 600;
+}
+

@@ -36,7 +36,7 @@ export class PilotService {
       .catch(e => {
         if (e.status === 401) {
           this.location.replaceState('/');
-          this.router.navigate(['/reservar']);
+          this.router.navigate(['/instrucciones']);
           return Observable.throw(e.error.message);
         }
         if (e.status === 400) {

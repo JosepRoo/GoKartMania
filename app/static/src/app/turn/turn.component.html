@@ -1,0 +1,53 @@
+<!-- start tittle banner -->
+<div class="row justify-content-center banner-background">
+  <div class="col-11 col-sm-8 col-md-5 text-center">
+    <span class="tittle-banner">2. Selecciona el día y turno</span>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-111 col-sm-8">
+    <a (click)="goBack.emit()"><p style="color:white; font-weight: 700; font-style: italic; padding:20px; margin:0px;"> <mat-icon style="display: inline-flex;vertical-align: middle;">keyboard_backspace</mat-icon> Regresar</p></a>
+  </div>
+</div>
+<!-- end title banner -->
+
+<br>
+<div class="row justify-content-center">
+  <div class="col-12 col-sm-10 col-md-8 text-center">
+    <div *ngIf="!availableDates">
+      <mat-spinner style="margin:0 auto; margin-top: 150px;"></mat-spinner>
+      <span class="tittle-banner">Cargando</span>
+    </div>    
+
+    <app-calendar [prevBtnDisabled]="preventBack" [date]="startDate" *ngIf="availableDates" [availableDates]="availableDates"
+      (onSelectedDate)="onSelectedDate($event)" (onDateChange)="onDateChange($event)"></app-calendar>
+
+    <mat-divider></mat-divider>
+    <br>
+
+    <div class="row justify-content-center justify-content-sm-start" *ngIf="selectedDay && availableDates">
+      <div class="col-10 col-sm-12 text-left">
+        <label style="color:white">{{this.selectedDay | date: 'mediumDate'}}</label>
+      </div>
+      <div class="col-10 col-sm-6">
+        <mat-form-field>
+          <mat-select placeholder="Horario">
+            <mat-option value="option">Option</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-10 col-sm-6" *ngIf="turn.controls.schedule.value">
+        <mat-form-field>
+          <mat-select placeholder="Turno">
+            <mat-option value="option">Option</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <br>
+
+
+  </div>
+</div>
