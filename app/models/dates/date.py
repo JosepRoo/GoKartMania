@@ -79,7 +79,21 @@ class Date(BaseModel):
         :return: JSON object with schedules, turns, and positions in the specified date with their status
         """
         availability = cls.build_availability_dict(reservation, date, date)
-        return availability.get(date)
+        availability_arr = []
+        for date in availability:
+            availability[date].pop('cupo')
+            for schedule in availability[date]:
+                turns = []
+                schedule_status = availability[date][schedule].pop('cupo')
+                for turn in availability[date][schedule]:
+                    turn_status = availability[date][schedule][turn].pop('cupo')
+                    turns.append({"turn": turn, "status": turn_status,
+                                  "positions": [
+                                      {"position": position[-1], "status": availability[date][schedule][turn][position]}
+                                      for position in availability[date][schedule][turn]]})
+                schedule = {'schedule': schedule, 'cupo': schedule_status, 'turnos': turns}
+                availability_arr.append(schedule)
+        return availability_arr
 
     @classmethod
     def build_availability_dict(cls, reservation: Reservation, first_date, last_date):
@@ -170,7 +184,7 @@ class Date(BaseModel):
             for schedule in new_date.schedules:
                 for turn in schedule.turns:
                     for x in range(randint(1, 8)):
-                        AbstractPilot.add(turn, {'position': x+1, 'allocation_date': None})
+                        AbstractPilot.add(turn, {'position': x + 1, 'allocation_date': None})
                     if i == 0:
                         turn.type = choice(['Niños', 'Adultos'])
                     elif i == 1 and arr[0] == 'Niños':
@@ -183,7 +197,7 @@ class Date(BaseModel):
                         turn.type = 'Adultos'
                     arr.append(turn.type)
                     i += 1
-            #print(arr)
+            # print(arr)
             new_date.update_mongo(COLLECTION)
 
     @classmethod
@@ -205,10 +219,11 @@ class Date(BaseModel):
                 for position in new_turn.get('positions'):
                     position_num = (int(position[-1]))
                     now = datetime.datetime.now().astimezone(get_localzone())  # + datetime.timedelta(days=3)
-                    AbstractPilot.add(schedule.turns[turn_number-1], {'_id': new_turn.get('positions').get(position),
-                                                                      'position': position_num, 'allocation_date': now})
+                    AbstractPilot.add(schedule.turns[turn_number - 1], {'_id': new_turn.get('positions').get(position),
+                                                                        'position': position_num,
+                                                                        'allocation_date': now})
                 # Actualizar el tipo de turno, si es null
-                if schedule.turns[turn_number-1].type is None:
+                if schedule.turns[turn_number - 1].type is None:
                     schedule.turns[turn_number - 1].type = reservation_type
                 updated_date.update_mongo(COLLECTION)
 
@@ -221,4 +236,4 @@ class Date(BaseModel):
         now = datetime.datetime.now().astimezone(get_localzone())
         month_dates = calendar.monthrange(now.year, now.month)[1]
         for i in range(1):
-            Date.add({'year': now.year, 'month': now.month}, i+1)
+            Date.add({'year': now.year, 'month': now.month}, i + 1)
