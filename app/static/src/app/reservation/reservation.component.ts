@@ -14,7 +14,7 @@ export class ReservationComponent implements OnInit {
     date: Date;
   };
   stages = ['pilots', 'turns'];
-  selectedStage = 1;
+  selectedStage = 0;
 
   constructor() {
     this.state = this.stages[this.selectedStage];
