@@ -4,6 +4,9 @@ import json
 import datetime
 
 from tzlocal import get_localzone
+
+from app.models.promos.errors import PromotionUsed
+from app.models.promos.promotion import Promotion as PromoModel
 from app.models.reservations.constants import COLLECTION_TEMP, COLLECTION
 from app.models.users.user import User
 from app.models.baseModel import BaseModel
@@ -87,11 +90,24 @@ class Payment(BaseModel):
         :param new_payment: The new payment to be added to the user
         :return: A brand new payment
         """
+
+        if len(reservation.turns) == 0:
+            raise PaymentFailed("Esta reservación no cuenta con ningúna carrera.")
+
         card = Card.tokenise_card(new_card)
 
         new_payment["status"] = "PENDIENTE"
 
         etomin_number = card.token
+
+        promo_id = new_payment.pop('promo_id')
+        # print(promo_id)
+        if promo_id is not None:
+            promo = PromoModel.get_promos(promo_id)[0]
+            # print(promo)
+            # print(promo.type)
+            if not promo.status:
+                raise PromotionUsed("Esta promoción ya fue utilziada por otro usuario.")
 
         payment = cls(**new_payment)
 
@@ -108,12 +124,26 @@ class Payment(BaseModel):
 
         prices_size = len(prices)
         turns_size = len(reservation.turns)
+        if promo_id is not None:
+            promo.status = False
+
+        if promo_id is not None:
+            if promo.type == 'Carreras':
+                turns_size -= promo.value
+
         if turns_size != 3:
             turns_price = prices[prices_size - 1] * (turns_size // prices_size) + prices[turns_size % prices_size - 1]
         else:
             turns_price = prices[prices_size - 1]
+
         amount = license_price + turns_price
-        #print(license_price, " ", turns_price)
+
+        if promo_id is not None:
+            if promo.type == 'Descuento':
+                amount *= (1 - promo.value/100)
+            elif promo.type == 'Reservación':
+                amount = 1
+
         params = {
             "public_key": os.environ.get("ETOMIN_PB_KEY"),
             "transaction": {
@@ -157,6 +187,9 @@ class Payment(BaseModel):
                 # Nulificar las fechas tentativas de reservacion
                 for turn in reservation.turns:
                     TurnModel.remove_allocation_dates(reservation, turn)
+                # Cambiar el status de la promoción utilizada
+                if promo_id is not None:
+                    promo.status = False
                 return new_payment
             else:
                 payment.status = "RECHAZADO"

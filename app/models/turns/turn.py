@@ -58,7 +58,7 @@ class Turn(BaseModel):
         still_available = cls.check_turn_availability(available_schedules, new_turn)
         #print(still_available)
         if still_available:
-            turn_positions = available_schedules[new_turn.get('schedule')].get(int(new_turn.get('turn_number')))
+            turn_positions = available_schedules[int(new_turn.get('schedule')) - 11].get('turns')[int(new_turn.get('turn_number')) - 1].get('positions')
             user_positions = new_turn.get('positions')
             #print(turn_positions)
             #print(user_positions)
@@ -88,11 +88,17 @@ class Turn(BaseModel):
 
     @staticmethod
     def check_turn_availability(available_schedules, new_turn):
-        return available_schedules.get(new_turn.get('schedule')).get(int(new_turn.get('turn_number'))).get('cupo')
+        for schedule in available_schedules:
+            if schedule.get('schedule') == new_turn.get('schedule'):
+                for turn in schedule.get('turns'):
+                    if turn.get('turn') == int(new_turn.get('turn_number')):
+                        return turn.get('status')
+        raise TurnNotFound("El turno con el ID dado no existe.")
 
     @staticmethod
     def check_positions_availability(turn_positions, user_positions):
-        return True not in [turn_positions[position] == 0 for position in user_positions.keys()]
+        return True not in [turn_positions[int(position[-1]) - 1].get('status') == 0
+                            for position in user_positions.keys()]
 
     @classmethod
     def check_and_update(cls, reservation: Reservation, updated_turn, turn_id):
