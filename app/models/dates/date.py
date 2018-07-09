@@ -91,7 +91,7 @@ class Date(BaseModel):
                                   "positions": [
                                       {"position": position[-1], "status": availability[date][schedule][turn][position]}
                                       for position in availability[date][schedule][turn]]})
-                schedule = {'schedule': schedule, 'cupo': schedule_status, 'turnos': turns}
+                schedule = {'schedule': schedule, 'cupo': schedule_status, 'turns': turns}
                 availability_arr.append(schedule)
         return availability_arr
 
