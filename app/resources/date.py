@@ -2,7 +2,7 @@ from flask_restful import Resource
 from flask import session
 
 from app import Response
-from app.common.utils import login_required
+from app.common.utils import Utils
 from app.models.dates.constants import PARSER
 from app.models.dates.date import Date as DateModel
 from app.models.reservations.constants import COLLECTION_TEMP
@@ -57,7 +57,7 @@ class Dates(Resource):
 
 class AvailableDates(Resource):
     @staticmethod
-    @login_required
+    @Utils.login_required
     def get(start_date, end_date):
         """
         Retrieves the dates with their status of availability in a given range
@@ -74,7 +74,7 @@ class AvailableDates(Resource):
 
 class AvailableSchedules(Resource):
     @staticmethod
-    @login_required
+    @Utils.login_required
     def get(date):
         """
         Retrieves the schedules with their status of availability in a given date

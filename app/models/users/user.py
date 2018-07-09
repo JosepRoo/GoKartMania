@@ -222,7 +222,7 @@ class User(BaseModel):
                           <table width="100%">
                             <tr>
                               <td align="center" style="font-weight: 400; padding-bottom:15px; font-size: 20px; color: white; text-align: center;">
-                                <img src="{}">
+                                <img src="138.197.209.15/qr/{}">
                                 <br>
                                 <br>
                                 <span style="font-weight: 700; font-size: 32px; text-align: center;">En sus marcas. Listos.

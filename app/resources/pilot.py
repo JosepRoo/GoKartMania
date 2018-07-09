@@ -3,7 +3,7 @@ from flask_restful import Resource, reqparse
 from flask import session
 
 from app import Response
-from app.common.utils import login_required
+from app.common.utils import Utils
 from app.models.pilots.errors import PilotNotFound
 from app.models.reservations.constants import COLLECTION_TEMP
 from app.models.pilots.constants import PARSER
@@ -19,7 +19,7 @@ class FakeRequest(dict):
 
 class Pilots(Resource):
     @staticmethod
-    @login_required
+    @Utils.login_required
     def get():
         """
         Retrieves the information of all the pilots in the given reservation
@@ -32,7 +32,7 @@ class Pilots(Resource):
             return Response(message=e.message).json(), 401
 
     @staticmethod
-    @login_required
+    @Utils.login_required
     def post():
         """
         Adds a new pilot to the party
@@ -121,7 +121,7 @@ class Pilots(Resource):
 
 class Pilot(Resource):
     @staticmethod
-    @login_required
+    @Utils.login_required
     def get(pilot_id):
         """
         Retrieves the information of the pilot with the given id in the parameters.
@@ -137,7 +137,7 @@ class Pilot(Resource):
             return Response(message=e.message).json(), 401
 
     @staticmethod
-    @login_required
+    @Utils.login_required
     def put(pilot_id):
         """
         Updates the information of the pilot with the given parameters
@@ -154,7 +154,7 @@ class Pilot(Resource):
             return Response(message=e.message).json(), 401
 
     @staticmethod
-    @login_required
+    @Utils.login_required
     def delete(pilot_id):
         """
         Deletes the pilot with the given id in the parameters.

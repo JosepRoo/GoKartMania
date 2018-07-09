@@ -2,7 +2,7 @@ from flask import session
 from flask_restful import Resource
 
 from app import Response
-from app.common.utils import login_required
+from app.common.utils import Utils
 from app.models.reservations.constants import COLLECTION_TEMP
 from app.models.reservations.errors import ReservationErrors
 from app.models.schedules.errors import ScheduleErrors
@@ -15,7 +15,7 @@ from app.models.reservations.reservation import Reservation as ReservationModel
 
 class Turns(Resource):
     @staticmethod
-    @login_required
+    @Utils.login_required
     def post():
         """
         Registers a new turn with the given parameters (date, schedule, and turn)
@@ -35,7 +35,7 @@ class Turns(Resource):
 
 class Turn(Resource):
     @staticmethod
-    @login_required
+    @Utils.login_required
     def get(turn_id):
         """
         Retrieves the information of the turn with the given id in the parameters.
@@ -51,7 +51,7 @@ class Turn(Resource):
             return Response(message=e.message).json(), 401
 
     @staticmethod
-    @login_required
+    @Utils.login_required
     def put(turn_id):
         """
         Updates the information of the turn with the given parameters

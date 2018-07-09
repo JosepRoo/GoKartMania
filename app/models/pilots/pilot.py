@@ -80,7 +80,7 @@ class Pilot(BaseModel):
         """
         Removes from the reservations array of pilots the pilot with the given id.
         :param reservation: Reservation object
-        :param pilot_id: The id of the pilot to be read from the reservation
+        :param pilot_id: The id of the pilot to be deleted from the reservation
         :return: The remaining pilots of the reservation
         """
         for pilot in reservation.pilots:
