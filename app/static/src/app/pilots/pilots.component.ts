@@ -46,7 +46,7 @@ export class PilotsComponent implements OnInit {
     this.reservation = this.formBuilder.group({
       id_location: [1, Validators.required],
       type: ['', Validators.required],
-      pilots: this.formBuilder.array([this.createPilot(0)])
+      pilots: this.formBuilder.array([])
     });
   }
 
@@ -104,7 +104,7 @@ export class PilotsComponent implements OnInit {
   // add one pilot form to the array
   addPilot() {
     const pilots = this.reservation.get('pilots') as FormArray;
-    if (pilots.length < 8) {
+    if (pilots.length < 8 && this.reservation.controls.type.value) {
       pilots.push(this.createPilot(0));
       this.numbers.splice(0, 1);
     }
