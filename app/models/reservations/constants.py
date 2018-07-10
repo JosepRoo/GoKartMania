@@ -17,3 +17,10 @@ PARSER.add_argument('id_location',
                     required=True,
                     help="Este campo no puede ser dejado en blanco."
                     )
+
+PROMO = reqparse.RequestParser(bundle_errors=True)
+PROMO.add_argument('promo_id',
+                   type=str,
+                   required=True,
+                   help="Este campo no puede ser dejado en blanco."
+                   )

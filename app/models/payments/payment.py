@@ -151,20 +151,8 @@ class Payment(BaseModel):
         params = cls.build_etomin_params(user, payment, new_payment, amount, etomin_number)
 
         if promo and promo.type == 'Reservación':
-            promo.status = False
             promo.discount = amount
-            promo.update_mongo(PROMO_COLLECTION)
-            payment.promo = promo
-            payment.status = "APROBADO"
-            payment.amount = 0
-            payment.license_price = license_price
-            payment.date = datetime.datetime.now().astimezone(get_localzone())
-            reservation.payment = payment
-            #reservation.save_to_mongo(COLLECTION)
-            #reservation.delete_from_mongo(COLLECTION_TEMP)
-            for turn in reservation.turns:
-                TurnModel.remove_allocation_dates(reservation, turn)
-            return new_payment
+            return cls.commit_reservation_payment(payment, 0, license_price, reservation, promo)
         else:
             if new_payment.get('payment_type') == 'Etomin':
                 auth = requests.get(URL)
@@ -174,52 +162,15 @@ class Payment(BaseModel):
                     charge = requests.post(URL_CHARGE, params={}, data=json.dumps(params), headers=HEADERS)
                     obj_charge = json.loads(charge.text)
                     if int(obj_charge.get("error")) == 0:
-                        payment.status = "APROBADO"
-                        payment.amount = amount
-                        payment.license_price = license_price
-                        payment.date = datetime.datetime.now().astimezone(get_localzone())
                         payment.id_reference = obj_charge.get("authorization_code")
                         payment.etomin_number = obj_charge.get("card_token")
-                        new_payment["status"] = "APROBADO"
-                        # Cambiar el status de la promoción utilizada
-                        if promo:
-                            promo.status = False
-                            promo.update_mongo(PROMO_COLLECTION)
-                        payment.promo = promo
-                        reservation.payment = payment
-                        # Guardar en la coleccion de reservaciones reales
-                        #reservation.save_to_mongo(COLLECTION)
-                        # Borrar de la coleccion de reservaciones temporales
-                        #reservation.delete_from_mongo(COLLECTION_TEMP)
-                        # Nulificar las fechas tentativas de reservacion
-                        for turn in reservation.turns:
-                            TurnModel.remove_allocation_dates(reservation, turn)
-                        return new_payment
+                        return cls.commit_reservation_payment(payment, amount, license_price, reservation, promo)
                     else:
                         payment.status = "RECHAZADO"
                         payment.etomin_number = etomin_number
                         raise PaymentFailed(obj_charge.get("message"))
             else:
-                payment.status = "APROBADO"
-                payment.amount = amount
-                payment.license_price = license_price
-                payment.date = datetime.datetime.now().astimezone(get_localzone())
-                new_payment["status"] = "APROBADO"
-                # Cambiar el status de la promoción utilizada
-                if promo:
-                    promo.status = False
-                    promo.update_mongo(PROMO_COLLECTION)
-                payment.promo = promo
-                reservation.payment = payment
-                # Guardar en la coleccion de reservaciones reales
-                # reservation.save_to_mongo(COLLECTION)
-                # Borrar de la coleccion de reservaciones temporales
-                # reservation.delete_from_mongo(COLLECTION_TEMP)
-                # Nulificar las fechas tentativas de reservacion
-                for turn in reservation.turns:
-                    TurnModel.remove_allocation_dates(reservation, turn)
-                return payment
-
+                return cls.commit_reservation_payment(payment, amount, license_price, reservation, promo)
 
     @staticmethod
     def calculate_turns_price(turns_size, prices_size, prices):
@@ -254,3 +205,24 @@ class Payment(BaseModel):
                 "test": True
             }
         return params
+
+    @staticmethod
+    def commit_reservation_payment(payment, amount, license_price, reservation: Reservation, promo):
+        payment.status = "APROBADO"
+        payment.amount = amount
+        payment.license_price = license_price
+        payment.date = datetime.datetime.now().astimezone(get_localzone())
+        # Cambiar el status de la promoción utilizada
+        if promo:
+            promo.status = False
+            promo.update_mongo(PROMO_COLLECTION)
+        payment.promo = promo
+        reservation.payment = payment
+        # Guardar en la coleccion de reservaciones reales
+        reservation.save_to_mongo(COLLECTION)
+        # Borrar de la coleccion de reservaciones temporales
+        reservation.delete_from_mongo(COLLECTION_TEMP)
+        # Nulificar las fechas tentativas de reservacion
+        for turn in reservation.turns:
+            TurnModel.remove_allocation_dates(reservation, turn)
+        return payment

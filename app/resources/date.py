@@ -13,6 +13,7 @@ import calendar
 
 class Dates(Resource):
     @staticmethod
+    @Utils.admin_login_required
     def get(start_date, end_date):
         """
         Retrieves all date objects in the given range
@@ -26,6 +27,7 @@ class Dates(Resource):
             return Response(message=e.message).json(), 401
 
     @staticmethod
+    @Utils.login_required
     def post():
         """
         Inserts date objects to the collection in the month and year given in the parameters
@@ -34,7 +36,7 @@ class Dates(Resource):
         try:
             data = PARSER.parse_args()
             month_dates = calendar.monthrange(data.get('year'), data.get('month'))[1]
-            for i in range(month_dates):
+            for i in range(1):
                 DateModel.add(data, i+1)
             return Response(success=True, message="Registro del mes exitoso").json(), 200
         except ReservationErrors as e:
@@ -55,7 +57,7 @@ class Dates(Resource):
             return Response(message=e.message).json(), 401
 
 
-class AvailableDates(Resource):
+class AvailableDatesUser(Resource):
     @staticmethod
     @Utils.login_required
     def get(start_date, end_date):
@@ -67,12 +69,28 @@ class AvailableDates(Resource):
         """
         try:
             reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-            return DateModel.get_available_dates(reservation, start_date, end_date), 200
+            return DateModel.get_available_dates_user(reservation, start_date, end_date), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
 
 
-class AvailableSchedules(Resource):
+class AvailableDatesAdmin(Resource):
+    @staticmethod
+    @Utils.login_required
+    def get(start_date, end_date):
+        """
+        Retrieves the dates with their status of availability in a given range
+        :param start_date: The start date in range
+        :param end_date: The end date in range
+        :return: JSON object with the available dates in the given range
+        """
+        try:
+            return DateModel.get_available_dates_admin(start_date, end_date), 200
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 401
+
+
+class AvailableSchedulesUser(Resource):
     @staticmethod
     @Utils.login_required
     def get(date):
@@ -83,6 +101,21 @@ class AvailableSchedules(Resource):
         """
         try:
             reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-            return DateModel.get_available_schedules(reservation, date), 200
+            return DateModel.get_available_schedules_user(reservation, date), 200
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 401
+
+
+class AvailableSchedulesAdmin(Resource):
+    @staticmethod
+    @Utils.login_required
+    def get(date):
+        """
+        Retrieves the schedules with their status of availability in a given date
+        :param date: The date to be processed
+        :return: JSON object with the available schedules in the given range
+        """
+        try:
+            return DateModel.get_available_schedules_admin(date), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401

@@ -32,7 +32,7 @@ class Turn(BaseModel):
         :return: A brand new turn object
         """
         allocation_date = new_turn.pop('date')
-        #print(allocation_date)
+        # print(allocation_date)
         turn = cls(**new_turn)
         reservation.date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d") + datetime.timedelta(days=1)
         reservation.turns.append(turn)
@@ -54,18 +54,21 @@ class Turn(BaseModel):
 
     @classmethod
     def check_and_add(cls, reservation: Reservation, new_turn):
-        available_schedules = DateModel.get_available_schedules(reservation, new_turn.get('date'))
+        available_schedules = DateModel.get_available_schedules_user(reservation, new_turn.get('date'))
         still_available = cls.check_turn_availability(available_schedules, new_turn)
-        #print(still_available)
+        # print(still_available)
         if still_available:
-            turn_positions = available_schedules[int(new_turn.get('schedule')) - 11].get('turns')[int(new_turn.get('turn_number')) - 1].get('positions')
+            turn_positions = \
+                list(filter(lambda schedule: schedule['schedule'] == new_turn.get('schedule'), available_schedules))[
+                    0].get(
+                    'turns')[int(new_turn.get('turn_number')) - 1].get('positions')
             user_positions = new_turn.get('positions')
-            #print(turn_positions)
-            #print(user_positions)
+            # print(turn_positions)
+            # print(user_positions)
             positions_available = cls.check_positions_availability(turn_positions, user_positions)
             if positions_available:
                 allocation_date = new_turn.get('date')
-                #print(allocation_date)
+                # print(allocation_date)
                 DateModel.update_temp(allocation_date, new_turn, reservation.type)
                 if reservation.turns != [] and reservation.turns is not None and reservation.turns[0].turn_number == 0:
                     # Actualizar el turno que ya existia por default
@@ -136,9 +139,9 @@ class Turn(BaseModel):
                             if turn.pilots is None or turn.pilots == []:
                                 turn.type = None
                             new_date.update_mongo(COLLECTION)
-        available_dates = DateModel.get_available_dates(reservation, updated_turn.get('date'), updated_turn.get('date'))
+        available_dates = DateModel.get_available_dates_user(reservation, updated_turn.get('date'), updated_turn.get('date'))
         if cls.check_date_availability(available_dates, updated_turn):
-            available_schedules = DateModel.get_available_schedules(reservation, updated_turn.get('date'))
+            available_schedules = DateModel.get_available_schedules_user(reservation, updated_turn.get('date'))
             if cls.check_schedule_availability(available_schedules, updated_turn):
                 return True
             else:
@@ -203,4 +206,3 @@ class AbstractTurn(BaseModel):
         turn = cls(**new_turn)
         schedule.turns.append(turn)
         return turn
-

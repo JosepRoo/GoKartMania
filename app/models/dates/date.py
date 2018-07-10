@@ -56,7 +56,7 @@ class Date(BaseModel):
         return dates
 
     @classmethod
-    def get_available_dates(cls, reservation: Reservation, first_date, last_date):
+    def get_available_dates_user(cls, reservation: Reservation, first_date, last_date):
         """
         Shows the date objects in the given range with the status of availability
         :param reservation: Reservation object
@@ -71,7 +71,18 @@ class Date(BaseModel):
         return available_dates
 
     @classmethod
-    def get_available_schedules(cls, reservation: Reservation, date):
+    def get_available_dates_admin(cls, first_date, last_date):
+        """
+        Shows the date objects in the given range with the status of availability
+        :param first_date: The start date in range
+        :param last_date: The end date in range
+        :return: JSON object with dates in range with their status
+        """
+        dates_status = cls.build_dates_status(first_date, last_date)
+        return [{'date': date['date'], 'status': date['status']} for date in dates_status]
+
+    @classmethod
+    def get_available_schedules_user(cls, reservation: Reservation, date):
         """
         Shows the schedule objects in the given date with the status of availability
         :param reservation: Reservation object
@@ -96,6 +107,16 @@ class Date(BaseModel):
                 schedule = {'schedule': schedule, 'cupo': schedule_status, 'turns': turns}
                 availability_arr.append(schedule)
         return availability_arr
+
+    @classmethod
+    def get_available_schedules_admin(cls, date):
+        """
+        Shows the schedule objects in the given date with the status of availability
+        :param date: The date to be processed
+        :return: JSON object with schedules, turns, and positions in the specified date with their status
+        """
+        dates_status = cls.build_dates_status(date, date)
+        return [{'schedules': date['schedules']} for date in dates_status]
 
     @classmethod
     def build_availability_dict(cls, reservation: Reservation, first_date, last_date):
@@ -166,6 +187,45 @@ class Date(BaseModel):
             else:
                 availability_dict[date_str]["cupo"] = 1
         return availability_dict
+
+    @classmethod
+    def build_dates_status(cls, first_date, last_date):
+        """
+        Builds a dictionary that contains the status of availability for each day, schedule, turn, and position
+        :param first_date: The start date in range
+        :param last_date: The end date in range
+        :return: JSON object with dates, schedules, turns, and positions in the specified range, with their status
+        """
+        dates = [date.json() for date in cls.get_dates_in_range(first_date, last_date)]
+        dates_status = []
+        for date in dates:
+            schedules = []
+            for schedule in date['schedules']:
+                turns = []
+                for turn in schedule['turns']:
+                    if turn['type'] is None:
+                        turn_status = 2
+                    else:
+                        if len(turn['pilots']) == 8:
+                            turn_status = 0
+                        else:
+                            turn_status = 1
+                    turns.append({"turn": turn['turn_number'], "type": turn['type'], "status": turn_status})
+                if len(list(filter(lambda race: race['status'] == 0, turns))) == 5:
+                    schedule_status = 0
+                elif len(list(filter(lambda race: race['status'] == 2, turns))) == 5:
+                    schedule_status = 2
+                else:
+                    schedule_status = 1
+                schedules.append({'schedule': schedule['hour'], 'status': schedule_status, 'turns': turns})
+            if len(list(filter(lambda day: day['status'] == 0, schedules))) == 11:
+                date_status = 0
+            elif len(list(filter(lambda day: day['status'] == 2, schedules))) == 11:
+                date_status = 2
+            else:
+                date_status = 1
+            dates_status.append({'date': date['date'], 'status': date_status, 'schedules': schedules})
+        return dates_status
 
     @classmethod
     def auto_fill(cls, first_date, last_date):

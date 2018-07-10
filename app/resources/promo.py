@@ -1,6 +1,6 @@
 from flask_restful import Resource
-
 from app import Response
+from app.common.utils import Utils
 from app.models.promos.errors import PromotionErrors
 from app.models.promos.promotion import Promotion as PromoModel
 from app.models.promos.constants import PARSER
@@ -8,6 +8,7 @@ from app.models.promos.constants import PARSER
 
 class Promos(Resource):
     @staticmethod
+    # @Utils.login_required
     def post():
         """
         Inserts a new promotion to the Promos Collection
