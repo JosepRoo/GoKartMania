@@ -84,17 +84,17 @@ class Date(BaseModel):
             availability[date].pop('cupo')
             now = datetime.datetime.now().astimezone(get_localzone())
             for schedule in availability[date]:
-                if int(schedule) > now.hour:
-                    turns = []
-                    schedule_status = availability[date][schedule].pop('cupo')
-                    for turn in availability[date][schedule]:
-                        turn_status = availability[date][schedule][turn].pop('cupo')
-                        turns.append({"turn": turn, "status": turn_status,
-                                      "positions": [
-                                          {"position": position[-1], "status": availability[date][schedule][turn][position]}
-                                          for position in availability[date][schedule][turn]]})
-                    schedule = {'schedule': schedule, 'cupo': schedule_status, 'turns': turns}
-                    availability_arr.append(schedule)
+                # if int(schedule) > now.hour:
+                turns = []
+                schedule_status = availability[date][schedule].pop('cupo')
+                for turn in availability[date][schedule]:
+                    turn_status = availability[date][schedule][turn].pop('cupo')
+                    turns.append({"turn": turn, "status": turn_status,
+                                  "positions": [
+                                      {"position": position[-1], "status": availability[date][schedule][turn][position]}
+                                      for position in availability[date][schedule][turn]]})
+                schedule = {'schedule': schedule, 'cupo': schedule_status, 'turns': turns}
+                availability_arr.append(schedule)
         return availability_arr
 
     @classmethod
