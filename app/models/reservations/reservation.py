@@ -5,7 +5,6 @@ from app.models.baseModel import BaseModel
 from app.common.database import Database
 from app.models.reservations.constants import COLLECTION_TEMP, TIMEOUT
 from app.models.locations.constants import COLLECTION
-from app.models.locations.location import Location as LocationModel
 from app.models.reservations.errors import ReservationNotFound, WrongReservationType
 
 """
@@ -37,6 +36,8 @@ class Reservation(BaseModel):
         """
         from app.models.turns.turn import Turn as TurnModel
         from app.models.pilots.pilot import Pilot as PilotModel
+        from app.models.locations.location import Location as LocationModel
+
         id_location = new_reservation.pop('id_location')
         location = Database.find_one(COLLECTION, {'_id': id_location})
         now = datetime.datetime.now().astimezone(get_localzone())

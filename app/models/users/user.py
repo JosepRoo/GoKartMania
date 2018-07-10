@@ -184,13 +184,13 @@ class User(BaseModel):
                           <table width="100%">
                             <tr>
                               <td align="left" style="font-weight: 400; padding-bottom:15px; font-size: 20px; color: white">
-                                 Gracias por tu compra en GoKartMania. <br> A continuación se desglosan los datos de su <span class="priamry">reservación</span>.
+                                 Gracias por tu compra en GoKartMania. <br> A continuación se desglosan los datos de su <span class="primary">reservación</span>.
                                   <p>
-                                    <span style="font-weight: 700;">Número de confirmación:</span> {}</p>
+                                    <span style="font-weight: 700;">Número de confirmación:</span> <span class="primary">{}</span></p>
                                   <p>
-                                    <span style="font-weight: 700;">Ubicación:</span> <span class="priamry">{}</span></p>
+                                    <span style="font-weight: 700;">Ubicación:</span> <span class="primary">{}</span></p>
                                   <p>
-                                    <span style="font-weight: 700;">Fecha:</span> <span class="priamry"></span>{}</span></p>
+                                    <span style="font-weight: 700;">Fecha:</span> <span class="primary">{}</span></p>
                                   <p>""".format(reservation._id, reservation.location.name,
                                                 reservation.date.strftime("%Y-%m-%d"))
         email_html += """
@@ -206,9 +206,42 @@ class User(BaseModel):
                                     </div>""".format(pilots_detail)
         email_html += """
                                   <p>
-                                    <span style="font-weight: 700;">Precio total: <span class="primary">${}</span></span></p>
+                                    <span style="font-weight: 700;">Desglose de tu compra:</span>
+                                  </p>
+                                  <div style="padding-left:25px">
+                                    <p>
+                                      Costo de licencia: <span class="primary">${}</span>
+                                    </p>
+                                    <p>
+                                      Costo de las carreras: <span class="primary">${}</span>
+                                    </p>
+                                    <p>
+                                      Subtotal: <span class="primary">${}</span>
+                                    </p>""".format(reservation.payment.license_price,
+                                                   reservation.payment.turns_price,
+                                                   reservation.payment.license_price + reservation.payment.turns_price)
+        if reservation.payment.promo:
+            email_html += """
+                                    <p>
+                                      Descuento: <span class="primary">${}</span>
+                                    </p>""".format(reservation.payment.promo.discount)
+        else:
+            email_html += """
+                                    <p>
+                                      Descuento: <span class="primary">$0</span>
+                                    </p>"""
+        email_html += """
+                                    <p>
+                                      Total: <span class="primary">${}</span>
+                                    </p>
+                                  </div>
+                                  <p>
+                                  
+                                  </p>
                                     <br>
-                                    <span align="center" style="font-weight: 700;">Presenta en taquilla el siguiente <span class="primary">código QR</span> para comenzar tu carrera.</span></p>
+                                  <p>
+                                    <span align="center" style="font-weight: 700;">Presenta en taquilla el siguiente <span class="primary">código QR</span> para comenzar tu carrera.</span>
+                                  </p>
                                     
                               </td>
                             </tr>
@@ -222,7 +255,7 @@ class User(BaseModel):
                           <table width="100%">
                             <tr>
                               <td align="center" style="font-weight: 400; padding-bottom:15px; font-size: 20px; color: white; text-align: center;">
-                                <img src="{}">
+                                <img src="138.197.209.15/qr/{}">
                                 <br>
                                 <br>
                                 <span style="font-weight: 700; font-size: 32px; text-align: center;">En sus marcas. Listos.
@@ -254,10 +287,8 @@ class User(BaseModel):
         """.format(qr_code)
 
         email.html(email_html)
-        #print(qr_code)
 
         try:
             email.send()
-            return email
         except EmailErrors as e:
             raise FailedToSendEmail(e)

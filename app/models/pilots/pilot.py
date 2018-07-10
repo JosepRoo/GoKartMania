@@ -80,7 +80,7 @@ class Pilot(BaseModel):
         """
         Removes from the reservations array of pilots the pilot with the given id.
         :param reservation: Reservation object
-        :param pilot_id: The id of the pilot to be read from the reservation
+        :param pilot_id: The id of the pilot to be deleted from the reservation
         :return: The remaining pilots of the reservation
         """
         for pilot in reservation.pilots:
@@ -90,7 +90,8 @@ class Pilot(BaseModel):
                 return reservation.pilots
         raise PilotNotFound("El piloto con el ID dado no existe")
 
-    def send_confirmation_message(self, reservation: Reservation, qr_code):
+    @staticmethod
+    def send_confirmation_message(reservation: Reservation, qr_code):
         """
         Sends an email to the reservation pilots with the summary of their turns
         :param qr_code:
@@ -99,21 +100,22 @@ class Pilot(BaseModel):
         """
         for pilot in reservation.pilots:
             if pilot.licensed:
-                email = Email(to=pilot.email, subject='confirmacion de reservacion', qr_code=qr_code)
-                # email = Email(to='areyna@sitsolutions.org', subject='confirmacion de reservacion', qr_code=qr_code)
+                print(pilot.email, pilot.name, pilot.last_name)
+                email = Email(to=pilot.email, subject='Confirmación de reservación', qr_code=qr_code)
                 turns_detail = ""
                 for turn in reservation.turns:
-                    turns_detail += "<p>" + turn.schedule + " hrs - Turno " + turn.turn_number + "\n</p>"
+                    turns_detail += "<p>" + turn.schedule + " hrs - Turno " + turn.turn_number + "</p>"
                     for key in turn.positions:
-                        if pilot._id == turn.positions.get(key):
-                            turns_detail += "<p>Tu GoKart es el: " + key[-1] + "\n</p>"
-                    turns_detail += "\n"
+                        for driver in reservation.pilots:
+                            if driver._id == turn.positions.get(key):
+                                turns_detail += "<p>Posición " + key[-1] + ": " + driver.name + "</p>"
+                    turns_detail += "<br>"
 
                 pilots_detail = ""
-                pilots_detail += "<p>Nombre: " + pilot.name + "\n</p>"
-                pilots_detail += "<p>Apellido: " + pilot.last_name + "\n</p>"
-                pilots_detail += "<p>Apodo: " + pilot.nickname + "\n</p>"
-                pilots_detail += "\n"
+                pilots_detail += "<p>Nombre: " + pilot.name + "</p>"
+                pilots_detail += "<p>Apellido: " + pilot.last_name + "</p>"
+                pilots_detail += "<p>Apodo: " + pilot.nickname + "</p>"
+                pilots_detail += "<br>"
 
                 email.text("Estimado {}:\n"
                            "Gracias por usar el servicio de Reservaciones de GoKartMania.\n"
@@ -131,40 +133,161 @@ class Pilot(BaseModel):
                            "Total de la compra:\n"
                            "${}\n\n"
                            "Presenta en taquilla el codigo adjunto para comenzar tu carrera.\n\n"
-                           "En sus marcas. Listos. ¡Fuera!".format(self.name, reservation._id,
+                           "En sus marcas. Listos. ¡Fuera!".format(pilot.name, reservation._id,
                                                                    reservation.location.name,
                                                                    reservation.date.strftime("%Y-%m-%d"),
                                                                    turns_detail, pilots_detail,
                                                                    reservation.payment.amount))
 
-                email.html("<html>"
-                           "    <head>Tu reservacion.</head>"
-                           "    <body>"
-                           "        <h1>Estimado {}:\n</h1>"
-                           "        <p>Gracias por usar el servicio de Reservaciones de GoKartMania.\n</p>"
-                           "        <p>A continuacion se desglosan los datos de su compra:\n\n</p>"
-                           "        <strong>Numero de confirmacion:\n</strong>"
-                           "        <p>{}\n\n</p>"
-                           "        <strong>Ubicacion:\n</strong>"
-                           "        <p>{}\n\n</p>"
-                           "        <strong>Fecha:\n</strong>"
-                           "        <p>{}\n\n</p>"
-                           "        <strong>Detalle de los turnos:\n</strong>"
-                           "        {}\n"
-                           "        <strong>Tus datos:\n</strong>"
-                           "        {}\n"
-                           "        <strong>Total de la compra:\n</strong>"
-                           "        <p>${}\n\n</p>"
-                           "        <p>Presenta en taquilla el codigo adjunto para comenzar tu carrera.\n\n</p>"
-                           "        <p>En sus marcas. Listos. ¡Fuera!</p>"
-                           "    </body>"
-                           "</html>".format(self.name, reservation._id, reservation.location.name,
-                                            reservation.date.strftime("%Y-%m-%d"), turns_detail, pilots_detail,
-                                            reservation.payment.amount))
+                email_html = """
+                <html>
+                <head>
+                  <meta charset='utf-8' />
+                  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+                  <title>GoKartMania</title>
+                  <meta name='viewport' content='width=device-width, initial-scale=1'>
+                  <link rel='stylesheet' type='text/css' media='screen' href='main.css' />
+                  <script src='main.js'></script>
+                  <style>
+                      @import url('https://fonts.googleapis.com/css?family=Open+Sans:100,300,400,700');
+                      @import url('https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700');
+                    body {
+                      font-family: 'Open Sans', sans-serif;
+                    		margin-top: 0px;
+                			margin-right: 0px;
+                			margin-bottom: 0px;
+                			margin-left: 0px;
+                			color: white;
+                    }
+                    span {
+                        color: white;
+                    }
+                    .primary {
+                      color: #B9261A;
+                    }
+                  </style>
+                </head>
+                <body>
 
+                  <table  border='0' cellpadding='0' cellspacing='0' height='100%' width='100%'>
+                    <tr>
+                      <td  align='center' valign='top'>
+                        <table style='background-color: black;' border='0' cellpadding='20' cellspacing='0' width='600'>
+                          <tr>
+                            <td  align='center' valign='top' style='padding-bottom: 0px;'>
+                              <table border='0' cellpadding='20' cellspacing='0' width='100%'>
+                                <tr>
+                                  <td align='center' valign='top' style='padding-top: 0px;'>
+                                    <table width='100%' border='0' cellspacing='0' cellpadding='0'>
+                                      <tr>
+                                        <td>
+                                          <table>
+                                            <tr>
+                                              <td style='text-align:center;' align='center'>
+                                                <a href='http://gokartmania.com.mx/'>
+                                                  <img style='padding-left:110px;' src='http://138.197.209.15/assets/logoBlanco.png'>
+                                                  <a/>
+                                              </td>
+                                            </tr>
+                                          </table>
+                                        </td>
+                                      </tr>
+                                    </table>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style='background-color: #B9261A; height:10px;'></td>
+                          </tr>
+                          <tr>
+                            <td align='center' valign='top' style='padding-top: 0px;'>
+                              <table border='0' cellpadding='20' cellspacing='0' width='100%'>
+                                <tr>
+                                  <td align='center' valign='top' style='padding-top: 0px;'>
+                                    <table width='100%' border='0' cellspacing='0' cellpadding='0'>
+                                      <tr>
+                                        <td align='left' style='padding-top: 0px !important; font-weight: 700; padding-bottom:15px; font-size: 20px; color: white'>
+                                          <br>"""
+                email_html += """
+                                           <p style='font-size:28px;'>¡Hola <span class='primary'>{}</span>!</p>""".format(pilot.name)
+                email_html += """
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td>
+                                          <table width="100%">
+                                            <tr>
+                                              <td align="left" style="font-weight: 400; padding-bottom:15px; font-size: 20px; color: white">
+                                                 Gracias por tu compra en GoKartMania. <br> A continuación se desglosan los datos de su <span class="primary">compra</span>.
+                                                  <p>
+                                                    <span style="font-weight: 700;">Número de confirmación:</span> <span class="primary">{}</span></p>
+                                                  <p>
+                                                    <span style="font-weight: 700;">Ubicación:</span> <span class="primary">{}</span></p>
+                                                  <p>
+                                                    <span style="font-weight: 700;">Fecha:</span> <span class="primary">{}</span></p>
+                                                  <p>""".format(reservation._id, reservation.location.name,
+                                                                reservation.date.strftime("%Y-%m-%d"))
+                email_html += """
+                                                    <span style="font-weight: 700;">Detalle de los turnos:</span></p>
+                                                    <div style="padding-left:25px">
+                                                      {}
+                                                    </div>""".format(turns_detail)
+                email_html += """
+                                                  <p>
+                                                    <span style="font-weight: 700;">Tus datos:</span></p>
+                                                    <div style="padding-left:25px; color: white;">
+                                                      {}
+                                                    </div>""".format(pilots_detail)
+                email_html += """
+                                                  <p>
+                                                    <span align="center" style="font-weight: 700;">Presenta en taquilla el siguiente <span class="primary">código QR</span> para comenzar tu carrera.</span></p>
+                                              </td>
+                                            </tr>
+                                          </table>
+                                          <br />
+                                          <td>
+                                      </tr>
+                                      <tr>
+                                        <td>
+                                          <table width="100%">
+                                            <tr>
+                                              <td align="center" style="font-weight: 400; padding-bottom:15px; font-size: 20px; color: white; text-align: center;">
+                                                <img src="138.197.209.15/qr/{}">
+                                                <br>
+                                                <br>
+                                                <span style="font-weight: 700; font-size: 32px; text-align: center;">En sus marcas. Listos.
+                                                  <span class="primary">¡Fuera!</span>
+                                                </span>
+                                              </td>
+                                            </tr>
+                                          </table>
+                                          <br />
+                                          <td>
+                                      </tr>
+                                    </table>
+                                    </td>
+                                </tr>
+
+                              </table>
+                              </td>
+                          </tr>
+                              <tr>
+                                <td style="background-color: #B9261A; height:10px;"></td>
+                              </tr>
+                        </table>
+                        </td>
+                    </tr>
+                  </table>
+
+                </body>
+                </html>
+                        """.format(qr_code)
+
+                email.html(email_html)
                 try:
                     email.send()
-                    return email
                 except EmailErrors as e:
                     raise FailedToSendEmail(e)
 

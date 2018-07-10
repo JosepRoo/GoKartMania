@@ -4,6 +4,10 @@ import json
 import datetime
 
 from tzlocal import get_localzone
+
+from app.models.promos.errors import PromotionUsed
+from app.models.promos.promotion import Promotion as PromoModel
+from app.models.promos.constants import COLLECTION as PROMO_COLLECTION
 from app.models.reservations.constants import COLLECTION_TEMP, COLLECTION
 from app.models.users.user import User
 from app.models.baseModel import BaseModel
@@ -68,12 +72,17 @@ class Card(BaseModel):
 
 
 class Payment(BaseModel):
-    def __init__(self, status, payment_method, amount=None, date=None, etomin_number=None, id_reference=None, _id=None):
+    def __init__(self, status, payment_method, payment_type, amount=None, license_price=None, turns_price=None,
+                 promo=None, date=None, etomin_number=None, id_reference=None, _id=None):
         self.status = status
         self.payment_method = payment_method
+        self.payment_type = payment_type
         self.amount = amount
+        self.license_price = license_price
+        self.turns_price = turns_price
         self.etomin_number = etomin_number
         self.date = date
+        self.promo = PromoModel(**promo) if promo else promo
         self.id_reference = id_reference
         super().__init__(_id)
 
@@ -87,11 +96,23 @@ class Payment(BaseModel):
         :param new_payment: The new payment to be added to the user
         :return: A brand new payment
         """
-        card = Card.tokenise_card(new_card)
+
+        if len(reservation.turns) == 0:
+            raise PaymentFailed("Esta reservación no cuenta con ningúna carrera.")
+
+        etomin_number = 0
+        if new_payment.get('payment_type') == 'Etomin':
+            card = Card.tokenise_card(new_card)
+            etomin_number = card.token
 
         new_payment["status"] = "PENDIENTE"
 
-        etomin_number = card.token
+        promo_id = new_payment.pop('promo_id')
+        promo = None
+        if promo_id:
+            promo = PromoModel.get_promos(promo_id)[0]
+            if not promo.status:
+                raise PromotionUsed("Esta promoción ya fue utilizada por otro usuario.")
 
         payment = cls(**new_payment)
 
@@ -108,57 +129,128 @@ class Payment(BaseModel):
 
         prices_size = len(prices)
         turns_size = len(reservation.turns)
-        if turns_size != 3:
-            turns_price = prices[prices_size - 1] * (turns_size // prices_size) + prices[turns_size % prices_size - 1]
-        else:
-            turns_price = prices[prices_size - 1]
-        amount = license_price + turns_price
-        #print(license_price, " ", turns_price)
-        params = {
-            "public_key": os.environ.get("ETOMIN_PB_KEY"),
-            "transaction": {
-                "payer": {
-                    "email": user.email
-                },
-                "order": {
-                    "external_reference": payment._id
-                },
-                "payment": {
-                    "amount": amount,
-                    "payment_method": new_payment.get("payment_method"),
-                    "currency": CURRENCY,
-                    "payment_country": PAYMENT_COUNTRY,
-                    "token": etomin_number
-                },
-                "payment_pending": False,
-                "device_session_id": ""
-            },
-            "test": True
-        }
+        turns_price = cls.calculate_turns_price(turns_size, prices_size, prices)
+        payment.turns_price = turns_price
 
-        auth = requests.get(URL)
-        if auth.status_code == 200:
-            obj = json.loads(auth.text)
-            params["transaction"]["device_session_id"] = obj["session_id"]
-            charge = requests.post(URL_CHARGE, params={}, data=json.dumps(params), headers=HEADERS)
-            obj_charge = json.loads(charge.text)
-            if int(obj_charge.get("error")) == 0:
+        if promo and promo.type == 'Carreras':
+            turns_size -= promo.value
+            former_turns_price = turns_price
+            if turns_size > 0:
+                turns_price = cls.calculate_turns_price(turns_size, prices_size, prices)
+                promo.discount = former_turns_price - turns_price
+            else:
+                turns_price = 0
+                promo.discount = former_turns_price - turns_price
+
+        amount = license_price + turns_price
+
+        if promo and promo.type == 'Descuento':
+            promo.discount = amount * (promo.value / 100)
+            amount -= promo.discount
+
+        params = cls.build_etomin_params(user, payment, new_payment, amount, etomin_number)
+
+        if promo and promo.type == 'Reservación':
+            promo.status = False
+            promo.discount = amount
+            promo.update_mongo(PROMO_COLLECTION)
+            payment.promo = promo
+            payment.status = "APROBADO"
+            payment.amount = 0
+            payment.license_price = license_price
+            payment.date = datetime.datetime.now().astimezone(get_localzone())
+            reservation.payment = payment
+            #reservation.save_to_mongo(COLLECTION)
+            #reservation.delete_from_mongo(COLLECTION_TEMP)
+            for turn in reservation.turns:
+                TurnModel.remove_allocation_dates(reservation, turn)
+            return new_payment
+        else:
+            if new_payment.get('payment_type') == 'Etomin':
+                auth = requests.get(URL)
+                if auth.status_code == 200:
+                    obj = json.loads(auth.text)
+                    params["transaction"]["device_session_id"] = obj["session_id"]
+                    charge = requests.post(URL_CHARGE, params={}, data=json.dumps(params), headers=HEADERS)
+                    obj_charge = json.loads(charge.text)
+                    if int(obj_charge.get("error")) == 0:
+                        payment.status = "APROBADO"
+                        payment.amount = amount
+                        payment.license_price = license_price
+                        payment.date = datetime.datetime.now().astimezone(get_localzone())
+                        payment.id_reference = obj_charge.get("authorization_code")
+                        payment.etomin_number = obj_charge.get("card_token")
+                        new_payment["status"] = "APROBADO"
+                        # Cambiar el status de la promoción utilizada
+                        if promo:
+                            promo.status = False
+                            promo.update_mongo(PROMO_COLLECTION)
+                        payment.promo = promo
+                        reservation.payment = payment
+                        # Guardar en la coleccion de reservaciones reales
+                        #reservation.save_to_mongo(COLLECTION)
+                        # Borrar de la coleccion de reservaciones temporales
+                        #reservation.delete_from_mongo(COLLECTION_TEMP)
+                        # Nulificar las fechas tentativas de reservacion
+                        for turn in reservation.turns:
+                            TurnModel.remove_allocation_dates(reservation, turn)
+                        return new_payment
+                    else:
+                        payment.status = "RECHAZADO"
+                        payment.etomin_number = etomin_number
+                        raise PaymentFailed(obj_charge.get("message"))
+            else:
                 payment.status = "APROBADO"
                 payment.amount = amount
+                payment.license_price = license_price
                 payment.date = datetime.datetime.now().astimezone(get_localzone())
-                payment.id_reference = obj_charge.get("authorization_code")
-                payment.etomin_number = obj_charge.get("card_token")
                 new_payment["status"] = "APROBADO"
+                # Cambiar el status de la promoción utilizada
+                if promo:
+                    promo.status = False
+                    promo.update_mongo(PROMO_COLLECTION)
+                payment.promo = promo
                 reservation.payment = payment
                 # Guardar en la coleccion de reservaciones reales
-                reservation.save_to_mongo(COLLECTION)
+                # reservation.save_to_mongo(COLLECTION)
                 # Borrar de la coleccion de reservaciones temporales
-                reservation.delete_from_mongo(COLLECTION_TEMP)
+                # reservation.delete_from_mongo(COLLECTION_TEMP)
                 # Nulificar las fechas tentativas de reservacion
                 for turn in reservation.turns:
                     TurnModel.remove_allocation_dates(reservation, turn)
-                return new_payment
-            else:
-                payment.status = "RECHAZADO"
-                payment.etomin_number = etomin_number
-                raise PaymentFailed(obj_charge.get("message"))
+                return payment
+
+
+    @staticmethod
+    def calculate_turns_price(turns_size, prices_size, prices):
+        if turns_size != 3:
+            return prices[prices_size - 1] * (turns_size // prices_size) + prices[turns_size % prices_size - 1]
+        else:
+            return prices[prices_size - 1]
+
+    @staticmethod
+    def build_etomin_params(user, payment, new_payment, amount, etomin_number):
+        params = {}
+        if new_payment.get('payment_type') == 'Etomin':
+            params = {
+                "public_key": os.environ.get("ETOMIN_PB_KEY"),
+                "transaction": {
+                    "payer": {
+                        "email": user.email
+                    },
+                    "order": {
+                        "external_reference": payment._id
+                    },
+                    "payment": {
+                        "amount": amount,
+                        "payment_method": new_payment.get("payment_method"),
+                        "currency": CURRENCY,
+                        "payment_country": PAYMENT_COUNTRY,
+                        "token": etomin_number
+                    },
+                    "payment_pending": False,
+                    "device_session_id": ""
+                },
+                "test": True
+            }
+        return params

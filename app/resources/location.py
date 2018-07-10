@@ -1,13 +1,9 @@
-from flask import session
 from flask_restful import Resource
 
 from app import Response
 from app.models.locations.errors import LocationErrors
-from app.models.reservations.constants import COLLECTION_TEMP
 from app.models.locations.constants import PARSER
-from app.models.users.errors import UserErrors
 from app.models.locations.location import Location as LocationModel
-from app.models.reservations.reservation import Reservation as ReservationModel
 
 
 class Locations(Resource):

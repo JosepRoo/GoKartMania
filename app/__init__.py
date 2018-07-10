@@ -5,6 +5,7 @@ from app.common.database import Database
 from app.common.response import Response
 from app.resources.date import Dates, AvailableDates, AvailableSchedules
 from app.resources.location import Locations
+from app.resources.promo import Promos
 from app.resources.payment import Payments
 from app.resources.turn import Turns, Turn
 from app.resources.user import User
@@ -37,6 +38,8 @@ def create_app(config_name):
     api.add_resource(Payments, '/user/payments/<string:user_id>')
 
     api.add_resource(Locations, '/locations', '/locations/<string:location_id>')
+
+    api.add_resource(Promos, '/promos', '/promos/<string:promo_id>')
 
     @app.after_request
     def after_request(response):

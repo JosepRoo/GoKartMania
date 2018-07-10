@@ -8,7 +8,7 @@ from app.models.users.user import User as UserModel
 from app.models.reservations.constants import PARSER, COLLECTION_TEMP
 from app.models.reservations.errors import ReservationErrors
 from app.models.reservations.reservation import Reservation as ReservationModel
-from app.common.utils import login_required
+from app.common.utils import Utils
 
 
 class Reservations(Resource):
@@ -27,7 +27,7 @@ class Reservations(Resource):
             return Response(message=e.message).json(), 401
 
     @staticmethod
-    @login_required
+    @Utils.login_required
     def put():
         """
         Updates the current reservation given its new type
@@ -43,7 +43,7 @@ class Reservations(Resource):
             return Response(message=e.message).json(), 401
 
     @staticmethod
-    @login_required
+    @Utils.login_required
     def get():
         """
         Retrieves the information of the current reservation
