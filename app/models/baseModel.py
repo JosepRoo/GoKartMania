@@ -13,6 +13,8 @@ class BaseModel:
     def json(self, exclude=None, date_to_string=True):
         from app.models.locations.location import Location
         from app.models.payments.payment import Payment
+        from app.models.promos.promotion import Promotion
+
         if date_to_string:
             if exclude:
                 return {
@@ -33,6 +35,8 @@ class BaseModel:
                 if isinstance(self.__getattribute__(attrib), Location)
                 else self.__getattribute__(attrib).json()
                 if isinstance(self.__getattribute__(attrib), Payment)
+                else self.__getattribute__(attrib).json()
+                if isinstance(self.__getattribute__(attrib), Promotion)
                 else self.__getattribute__(attrib).strftime("%Y-%m-%d %H:%M")
                 if type(self.__getattribute__(attrib)) is datetime.datetime
                 else self.__getattribute__(attrib)
@@ -57,6 +61,8 @@ class BaseModel:
                 if isinstance(self.__getattribute__(attrib), Location)
                 else self.__getattribute__(attrib).json()
                 if isinstance(self.__getattribute__(attrib), Payment)
+                else self.__getattribute__(attrib).json()
+                if isinstance(self.__getattribute__(attrib), Promotion)
                 else self.__getattribute__(attrib)
                 for attrib in self.__dict__.keys()}
 

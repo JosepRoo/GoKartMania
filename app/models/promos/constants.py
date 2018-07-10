@@ -29,13 +29,18 @@ PARSER.add_argument('description',
                     required=False,
                     help="Este campo no puede ser dejado en blanco."
                     )
-PARSER.add_argument('authorisation',
+PARSER.add_argument('value',
+                    type=int,
+                    required=True,
+                    help="Este campo no puede ser dejado en blanco."
+                    )
+PARSER.add_argument('creator',
                     type=str,
                     required=True,
                     help="Este campo no puede ser dejado en blanco."
                     )
-PARSER.add_argument('value',
-                    type=int,
+PARSER.add_argument('password',
+                    type=str,
                     required=True,
                     help="Este campo no puede ser dejado en blanco."
                     )

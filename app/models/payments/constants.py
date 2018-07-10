@@ -42,6 +42,11 @@ PAYMENT_PARSER.add_argument('payment_method',
                             required=True,
                             help="Este campo no puede ser dejado en blanco."
                             )
+PAYMENT_PARSER.add_argument('payment_type',
+                            type=str,
+                            required=True,
+                            help="Este campo no puede ser dejado en blanco."
+                            )
 PAYMENT_PARSER.add_argument('promo_id',
                             type=str,
                             required=False

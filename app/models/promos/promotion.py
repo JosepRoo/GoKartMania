@@ -1,3 +1,7 @@
+import datetime
+
+from tzlocal import get_localzone
+
 from app.models.baseModel import BaseModel
 from app.common.database import Database
 from app.models.promos.constants import COLLECTION
@@ -9,16 +13,20 @@ This is the promotion model
 
 
 class Promotion(BaseModel):
-    def __init__(self, existence, start_date, end_date, type, value, authorisation,
-                 description=None, status=True, _id=None):
+    def __init__(self, existence, start_date, end_date, type, value, creator, authoriser=None, authorised=False,
+                 description=None, discount=None, status=True, _id=None):
         super().__init__(_id)
         self.existence = existence
         self.start_date = start_date
         self.end_date = end_date
         self.type = type
-        self.authorisation = authorisation
+        self.authoriser = authoriser
+        self.creator = creator
+        self.authorised = authorised
+        self.created_date = datetime.datetime.now().astimezone(get_localzone())
         self.description = description
         self.value = value
+        self.discount = discount
         self.status = status
 
     @classmethod

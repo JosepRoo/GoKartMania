@@ -30,14 +30,15 @@ class Payments(Resource):
         :return: :class:`app.models.payments.Payment`
         """
         try:
-            card_data = CARD_PARSER.parse_args()
-            payment_data = PAYMENT_PARSER.parse_args()
+            card_data, payment_data = {}, PAYMENT_PARSER.parse_args()
+            if payment_data.get('payment_type') == 'Etomin':
+                card_data = CARD_PARSER.parse_args()
             reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
             user = UserModel.get_by_id(user_id, USER_COLLECTION)
-            PaymentModel.add(user, reservation, card_data, payment_data)
+            return PaymentModel.add(user, reservation, card_data, payment_data).json(), 200
             qr_code = QRModel.create(reservation)
             #UserModel.send_confirmation_message(user, reservation, qr_code)
-            #PilotModel.send_confirmation_message(user, reservation, qr_code)
+            #PilotModel.send_confirmation_message(reservation, qr_code)
             #LocationModel.send_confirmation_message(user, reservation, qr_code)
             return Response(success=True, message="Correos de confirmacion exitosamente enviados.").json(), 200
         except ReservationErrors as e:
