@@ -1,3 +1,6 @@
+import datetime
+import os
+
 from flask import session
 from passlib.hash import pbkdf2_sha512
 from app import Response
@@ -21,6 +24,17 @@ class Utils(object):
         :return: A sha512->pbkdf2_sha512 encrypted password
         """
         return pbkdf2_sha512.encrypt(password)
+
+    @staticmethod
+    def generate_password():
+        """
+        Generates a daily-based password for the super-administrator purposes
+        :return: A new encrypted password
+        """
+        current_date = datetime.datetime.now().strftime("%d%m%y")
+        private_key = os.environ.get("GKM_PV_KEY")
+        secret_key = private_key + current_date
+        return secret_key
 
     @staticmethod
     def check_hashed_password(password, hashed_password):
@@ -48,9 +62,19 @@ class Utils(object):
     def login_required(f):
         @wraps(f)
         def wrap(*args, **kwargs):
-            if session.get('reservation'):
+            if session.get('reservation') or session.get('admin_id'):
                 return f(*args, **kwargs)
             else:
-                return Response(message="Uso de variable de sesion no autorizada.").json(), 401
-
+                return Response(message="Uso de variable de sesión no autorizada.").json(), 401
         return wrap
+
+    @staticmethod
+    def admin_login_required(f):
+        @wraps(f)
+        def wrap(*args, **kwargs):
+            if session.get('admin_id'):
+                return f(*args, **kwargs)
+            else:
+                return Response(message="Uso de variable de sesión no autorizada.").json(), 401
+        return wrap
+

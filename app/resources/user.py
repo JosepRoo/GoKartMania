@@ -8,6 +8,7 @@ from app.models.users.user import User as UserModel
 
 class User(Resource):
     @staticmethod
+    @Utils.login_required
     def post():
         """
         Registers a new user manually given its body parameters

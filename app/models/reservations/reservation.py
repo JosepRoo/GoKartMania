@@ -14,7 +14,8 @@ when they complete the process of reservation and the payment is processed.
 
 
 class Reservation(BaseModel):
-    def __init__(self, type, date, location=None, payment=None, turns=list(), pilots=list(), _id=None):
+    def __init__(self, type, date, location=None, payment=None, turns=list(), pilots=list(),
+                 amount=None, license_price=None, turns_price=None, _id=None):
         from app.models.turns.turn import Turn
         from app.models.pilots.pilot import Pilot
         from app.models.payments.payment import Payment
@@ -26,6 +27,9 @@ class Reservation(BaseModel):
         self.turns = [Turn(**turn) for turn in turns] if turns else turns
         self.pilots = [Pilot(**pilot) for pilot in pilots] if pilots else pilots
         self.payment = Payment(**payment) if payment else payment
+        self.amount = amount
+        self.license_price = license_price
+        self.turns_price = turns_price
 
     @classmethod
     def add(cls, new_reservation):
@@ -61,8 +65,12 @@ class Reservation(BaseModel):
         reservation.update_mongo(COLLECTION_TEMP)
         # QR.remove_reservation_qrs()
         # QR.create(reservation)
-        AbstractPilot.remove_allocated_pilots()
+        # AbstractPilot.remove_allocated_pilots()
         return reservation
+
+    def insert_promo(self, promo_id):
+
+        return
 
     @classmethod
     def get_by_id(cls, _id, collection):
@@ -85,3 +93,23 @@ class Reservation(BaseModel):
             delta = now - reservation.date
             if delta > TIMEOUT:
                 reservation.delete_from_mongo(COLLECTION_TEMP)
+
+    def calculate_price(self):
+        from app.models.payments.payment import Payment
+        location = self.location
+        licensed_pilots = [pilot.licensed for pilot in self.pilots].count(True)
+        license_price = licensed_pilots * location.type.get('LICENCIA')
+        if self.type == "Adultos":
+            prices = location.type.get('GOKART')
+        else:
+            prices = location.type.get('CADET')
+        prices_size = len(prices)
+        turns_size = len(self.turns)
+        turns_price = Payment.calculate_turns_price(turns_size, prices_size, prices)
+        self.license_price = license_price
+        self.turns_price = turns_price
+        self.amount = license_price + turns_price
+        self.update_mongo(COLLECTION_TEMP)
+        return self
+
+

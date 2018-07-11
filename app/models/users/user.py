@@ -292,3 +292,19 @@ class User(BaseModel):
             email.send()
         except EmailErrors as e:
             raise FailedToSendEmail(e)
+
+    @classmethod
+    def admin_login(cls, data):
+        email = data.get('email')
+        user = User.get_by_email(email)
+        data.pop('password')
+        if user is None:
+            new_user = cls(**data)
+            del new_user.reservations
+            new_user.save_to_mongo(COLLECTION)
+        else:
+            new_user = cls(**data, _id=user._id)
+            del new_user.reservations
+            new_user.update_mongo(COLLECTION)
+        session['admin_id'] = new_user._id
+        return new_user
