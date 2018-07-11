@@ -32,9 +32,10 @@ class Turn(BaseModel):
         :return: A brand new turn object
         """
         allocation_date = new_turn.pop('date')
-        # print(allocation_date)
         turn = cls(**new_turn)
-        reservation.date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        if allocation_date != datetime.datetime.strftime(reservation.date, "%Y-%m-%d"):
+            print("ENTRO")
+            reservation.date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d") + datetime.timedelta(days=1)
         reservation.turns.append(turn)
         reservation.update_mongo(COLLECTION_TEMP)
         return turn
