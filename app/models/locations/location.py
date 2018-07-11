@@ -68,7 +68,6 @@ class Location(BaseModel):
         """
         # email = Email(to= contacto@gokartmania.com, subject='Confirmación de reservación')
         email = Email(to='areyna@sitsolutions.org', subject='Confirmación de reservación', qr_code=qr_code)
-
         turns_detail = ""
         for turn in reservation.turns:
             turns_detail += "<p>" + turn.schedule + " hrs - Turno " + turn.turn_number + "</p>"
@@ -108,7 +107,7 @@ class Location(BaseModel):
                    "En sus marcas. Listos. ¡Fuera!".format(self.name, reservation._id,
                                                            reservation.location.name,
                                                            reservation.date.strftime("%Y-%m-%d"),
-                                                           turns_detail, pilots_detail, reservation.payment.amount))
+                                                           turns_detail, pilots_detail, reservation.amount))
         email_html = """
         <html>
         <head>
@@ -223,14 +222,14 @@ class Location(BaseModel):
                                             </p>
                                             <p>
                                               Subtotal: <span class="primary">${}</span>
-                                            </p>""".format(reservation.payment.license_price,
-                                                           reservation.payment.turns_price,
-                                                           reservation.payment.license_price + reservation.payment.turns_price)
+                                            </p>""".format(reservation.license_price,
+                                                           reservation.turns_price,
+                                                           reservation.license_price + reservation.turns_price)
         if reservation.payment.promo:
             email_html += """
                                             <p>
                                               Descuento: <span class="primary">${}</span>
-                                            </p>""".format(reservation.payment.promo.discount)
+                                            </p>""".format(reservation.discount)
         else:
             email_html += """
                                             <p>
@@ -253,7 +252,7 @@ class Location(BaseModel):
                                   </table>
                                   <br />
                                   <td>
-                              </tr>""".format(reservation.payment.amount)
+                              </tr>""".format(reservation.amount)
         email_html += """
                               <tr>
                                 <td>

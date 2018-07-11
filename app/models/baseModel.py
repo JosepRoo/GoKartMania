@@ -54,8 +54,7 @@ class BaseModel:
 
             return {
                 attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for
-                         element in
-                         self.__getattribute__(attrib)]
+                         element in self.__getattribute__(attrib)]
                 if type(self.__getattribute__(attrib)) is list
                 else self.__getattribute__(attrib).json()
                 if isinstance(self.__getattribute__(attrib), Location)

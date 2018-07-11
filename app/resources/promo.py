@@ -8,7 +8,7 @@ from app.models.promos.constants import PARSER
 
 class Promos(Resource):
     @staticmethod
-    # @Utils.login_required
+    @Utils.login_required
     def post():
         """
         Inserts a new promotion to the Promos Collection

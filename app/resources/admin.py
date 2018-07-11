@@ -31,12 +31,6 @@ class Admin(Resource):
                             )
         data = parser.parse_args()
         try:
-            if email[email.index('@')+1:] == 'gokartmania.com':
-
-                data = parser.parse_args()
-            if data.get('password') == Utils.generate_password():
-                return AdminModel.admin_login(data).json(), 200
-            else:
-                return Response(message="Credenciales incorrectas").json(), 401
+            return AdminModel.admin_login(data).json(), 200
         except AdminErrors as e:
             return Response(message=e.message).json(), 401

@@ -2,6 +2,7 @@ from flask import session
 from flask_restful import Resource
 
 from app import Response
+from app.models.promos.errors import PromotionErrors
 from app.models.users.constants import COLLECTION
 from app.models.users.errors import UserErrors
 from app.models.users.user import User as UserModel
@@ -67,6 +68,6 @@ class ReservationWithPromo(Resource):
         try:
             data = PROMO.parse_args()
             reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-            return reservation.insert_promo(data).json(), 200
-        except ReservationErrors as e:
+            return reservation.insert_promo(data.get('promo_id')).json(), 200
+        except PromotionErrors as e:
             return Response(message=e.message).json(), 401
