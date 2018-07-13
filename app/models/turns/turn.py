@@ -34,7 +34,6 @@ class Turn(BaseModel):
         allocation_date = new_turn.pop('date')
         turn = cls(**new_turn)
         if allocation_date != datetime.datetime.strftime(reservation.date, "%Y-%m-%d"):
-            print("ENTRO")
             reservation.date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d") + datetime.timedelta(days=1)
         reservation.turns.append(turn)
         reservation.update_mongo(COLLECTION_TEMP)

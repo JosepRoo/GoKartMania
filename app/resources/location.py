@@ -1,6 +1,7 @@
 from flask_restful import Resource
 
 from app import Response
+from app.common.utils import Utils
 from app.models.locations.errors import LocationErrors
 from app.models.locations.constants import PARSER
 from app.models.locations.location import Location as LocationModel
@@ -8,6 +9,7 @@ from app.models.locations.location import Location as LocationModel
 
 class Locations(Resource):
     @staticmethod
+    @Utils.login_required
     def post():
         """
         Inserts a new location to the Locations collection
@@ -20,6 +22,7 @@ class Locations(Resource):
             return Response(message=e.message).json(), 401
 
     @staticmethod
+    @Utils.login_required
     def get(location_id=None):
         """
         Retrieves the information of all the locations in the Locations collection
@@ -31,6 +34,7 @@ class Locations(Resource):
             return Response(message=e.message).json(), 401
 
     @staticmethod
+    @Utils.login_required
     def put():
         """
         Updates the location with the given parameters

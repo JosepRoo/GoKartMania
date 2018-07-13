@@ -182,18 +182,19 @@ class Payment(BaseModel):
         payment.amount = amount
         payment.license_price = license_price
         payment.date = datetime.datetime.now().astimezone(get_localzone())
-        # Cambiar el status de la promoción utilizada
-        for c in promo.coupons:
-            if c._id == coupon._id:
-                promo.coupons.remove(c)
-                coupon.status = False
-                coupon.date_applied = payment.date
-                promo.coupons.append(coupon)
-                promo.update_mongo(PROMO_COLLECTION)
-                break
-        del promo.coupons
-        promo.coupon_applied = coupon._id
-        payment.promo = promo
+        if promo:
+            # Cambiar el status de la promoción utilizada
+            for c in promo.coupons:
+                if c._id == coupon._id:
+                    promo.coupons.remove(c)
+                    coupon.status = False
+                    coupon.date_applied = payment.date
+                    promo.coupons.append(coupon)
+                    promo.update_mongo(PROMO_COLLECTION)
+                    break
+            del promo.coupons
+            promo.coupon_applied = coupon._id
+            payment.promo = promo
         reservation.payment = payment
         # Guardar en la coleccion de reservaciones reales
         reservation.save_to_mongo(COLLECTION)

@@ -4,6 +4,7 @@ from app import Response
 from app.common.utils import Utils
 from app.models.admins.errors import AdminErrors
 from app.models.admins.admin import Admin as AdminModel
+from app.models.reservations.errors import ReservationErrors
 
 
 class Admin(Resource):
@@ -33,4 +34,18 @@ class Admin(Resource):
         try:
             return AdminModel.admin_login(data).json(), 200
         except AdminErrors as e:
+            return Response(message=e.message).json(), 401
+
+
+class WhoReserved(Resource):
+    @staticmethod
+    @Utils.login_required
+    def get(date, schedule, turn):
+        """
+        Find the pilots that reserven in the given date, schedule, and turn
+        :return: Pilots array
+        """
+        try:
+            return [pilot.json() for pilot in AdminModel.who_reserved(date, schedule, turn)], 200
+        except ReservationErrors as e:
             return Response(message=e.message).json(), 401

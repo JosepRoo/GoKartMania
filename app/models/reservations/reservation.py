@@ -4,8 +4,7 @@ from tzlocal import get_localzone
 from app.models.baseModel import BaseModel
 from app.models.promos.promotion import Promotion as PromoModel, Coupons
 from app.common.database import Database
-from app.models.promos.errors import PromotionNotFound, PromotionUnauthorised, PromotionExpired, PromotionUsed
-from app.models.reservations.constants import COLLECTION_TEMP, TIMEOUT
+from app.models.reservations.constants import COLLECTION_TEMP, TIMEOUT, COLLECTION as REAL_RESERVATIONS
 from app.models.locations.constants import COLLECTION
 from app.models.promos.constants import COLLECTION as PROMO_COLLECTION
 from app.models.reservations.errors import ReservationNotFound, WrongReservationType
@@ -30,7 +29,10 @@ class Reservation(BaseModel):
         self.location = Location(**location) if location else location
         self.turns = [Turn(**turn) for turn in turns] if turns else turns
         self.pilots = [Pilot(**pilot) for pilot in pilots] if pilots else pilots
-        self.payment = Payment(**payment) if payment else payment
+        try:
+            self.payment = Payment(**payment) if payment else payment
+        except TypeError:
+            pass
         self.amount = amount
         self.license_price = license_price
         self.turns_price = turns_price
@@ -76,6 +78,20 @@ class Reservation(BaseModel):
         # AbstractPilot.remove_allocated_pilots()
         return reservation
 
+    @staticmethod
+    def delete(reservation_id):
+        """
+        Removes from the Collection the given reservation
+        :param reservation_id: The id of the reservation to be deleted from the collection
+        :return: None
+        """
+        try:
+            reservation = Reservation.get_by_id(reservation_id, COLLECTION_TEMP)
+            reservation.delete_from_mongo(COLLECTION_TEMP)
+        except ReservationNotFound:
+            reservation = Reservation.get_by_id(reservation_id, REAL_RESERVATIONS)
+            reservation.delete_from_mongo(REAL_RESERVATIONS)
+
     @classmethod
     def get_by_id(cls, _id, collection):
         """
@@ -116,7 +132,7 @@ class Reservation(BaseModel):
         self.license_price = license_price
         self.turns_price = turns_price
         self.amount = license_price + turns_price
-        # self.update_mongo(COLLECTION_TEMP)
+        self.update_mongo(COLLECTION_TEMP)
         return self
 
     def insert_promo(self, promo_id):

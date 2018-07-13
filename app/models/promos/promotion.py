@@ -5,6 +5,7 @@ from flask import session
 from tzlocal import get_localzone
 
 from app.common.utils import Utils
+from app.models.admins.errors import InvalidLogin
 from app.models.baseModel import BaseModel
 from app.common.database import Database
 from app.models.promos.constants import COLLECTION
@@ -97,22 +98,14 @@ class Promotion(BaseModel):
         """
         promo = Database.find_one(COLLECTION, {'_id': promo_id})
         if promo is None:
-            raise PromotionNotFound("La ubicación con el ID dado no existe.")
-        promo = cls(**updated_promo, _id=promo_id)
-        promo.update_mongo(COLLECTION)
-        return promo
-
-    @staticmethod
-    def delete(promo_id):
-        """
-        Removes from the Promo Collection the promo with the given id.
-        :param promo_id: The id of the promo to be deleted
-        :return: The remaining promos of the collection
-        """
-        promo = Database.remove(COLLECTION, {"_id": promo_id})
-        if promo is None:
-            raise PromotionNotFound("La promoción con el ID dado no existe.")
-        return promo
+            raise PromotionNotFound("La promo con el ID dado no existe.")
+        password = updated_promo.pop('password')
+        if password == Utils.generate_password():
+            promo = cls(**updated_promo, _id=promo_id, coupons=promo.get('coupons'), creator=promo.get('creator'))
+            promo.authoriser = "Admnistrador"
+            promo.update_mongo(COLLECTION)
+            return promo
+        raise InvalidLogin("Credenciales incorrectas.")
 
     @classmethod
     def get_promos(cls, _id=None):

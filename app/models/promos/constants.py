@@ -39,3 +39,7 @@ PARSER.add_argument('password',
                     required=True,
                     help="Este campo no puede ser dejado en blanco."
                     )
+PARSER.add_argument('authorised',
+                    type=bool,
+                    required=False
+                    )

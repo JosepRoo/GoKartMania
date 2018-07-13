@@ -6,9 +6,13 @@ from app import Database
 from app.models.admins.errors import InvalidEmail, InvalidLogin
 from app.models.baseModel import BaseModel
 from app.models.admins.constants import COLLECTION
+from app.models.dates.constants import COLLECTION as DATES
+from app.models.reservations.constants import COLLECTION as RESERVATIONS
+from app.models.dates.date import Date
 from app.models.emails.email import Email
 from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.promos.promotion import Promotion
+from app.models.reservations.errors import ReservationNotFound
 
 """
 In this user model the email will be used to identify each user although an _id will be created for each instance of it
@@ -163,7 +167,7 @@ class Admin(BaseModel):
                                                 promo.description, promo.value)
         email_html += """
                                   <p>
-                                    <span align="center" style="font-weight: 700;">Entra en el siguiente enlace para confirmar, modificar o eliminar esta promoción:
+                                    <span align="center" style="font-weight: 700;">Entra en el siguiente enlace para confirmar, modificar o desactivar esta promoción:
                                     <span class="primary"><a href='http://gokartmania.com.mx/#/admin/promos/{}'></span></span>
                                   </p>
                               </td>
@@ -218,3 +222,111 @@ class Admin(BaseModel):
             email.send()
         except EmailErrors as e:
             raise FailedToSendEmail(e)
+
+    @staticmethod
+    def who_reserved(date, schedule, turn):
+        for d in Database.find(DATES, {}):
+            prob_date = Date(**d)
+            if datetime.datetime.strftime(prob_date.date, "%Y-%m-%d") == date:
+                for s in prob_date.schedules:
+                    if s.hour == schedule:
+                        for t in s.turns:
+                            if t.turn_number == int(turn):
+                                return t.pilots
+        raise ReservationNotFound("La reservación con los parámetros dados no ha sido encontrada.")
+
+    @staticmethod
+    def get_party_avg_size():
+        expressions = list()
+        expressions.append({"$match": {}})
+        expressions.append({"$project": {
+                "weekday": {"$dayOfWeek": "$date"},
+                "schedules": "$schedules"
+            }})
+        expressions.append({"$unwind": "$schedules"})
+        expressions.append({"$unwind": "$schedules.turns"})
+        expressions.append({"$project": {
+                "pilots_size": {"$size": "$schedules.turns.pilots"},
+                "weekday": 1,
+                "schedules": 1
+            }})
+        expressions.append({"$group": {
+                "_id": {"weekday": "$weekday", "schedule": "$schedules.hour"},
+                "party_size": {"$sum": "$pilots_size"}
+            }})
+        expressions.append({"$sort": {"_id.weekday": 1, "_id.schedule": 1}})
+        result = list(Database.aggregate(DATES, expressions))
+        return result
+
+    @staticmethod
+    def get_busy_hours():
+        expressions = list()
+        expressions.append({"$match": {}})
+        expressions.append({"$project": {
+                "weekday": {"$dayOfWeek": "$date"},
+                "schedules": "$schedules"
+            }})
+        expressions.append({"$unwind": "$schedules"})
+        expressions.append({"$unwind": "$schedules.turns"})
+        expressions.append({"$project": {
+                "pilots_size": {"$size": "$schedules.turns.pilots"},
+                "weekday": 1,
+                "schedules": 1
+            }})
+        expressions.append({"$group": {
+                "_id": {"weekday": "$weekday", "schedule": "$schedules.hour"},
+                "party_size": {"$sum": "$pilots_size"}
+            }})
+        expressions.append({"$sort": {"_id.weekday": 1, "_id.schedule": 1}})
+        expressions.append({"$group": {
+            "_id": {"schedule": "$_id.schedule"},
+            "party_size": {"$sum": "$party_size"}
+        }})
+        expressions.append({"$sort": {"_id.schedule": 1}})
+        result = list(Database.aggregate(DATES, expressions))
+        return result
+
+    @staticmethod
+    def get_licensed_pilots():
+        expressions = list()
+        expressions.append({"$match": {}})
+        expressions.append({"$unwind": "$pilots"})
+        expressions.append({"$match": {"pilots.licensed": True}})
+        expressions.append({"$project": {"pilots": "$pilots"}})
+        expressions.append({"$group": {
+                "_id": {"name": "$pilots.name", "last_name": "$pilots.last_name"}
+            }})
+        result = list(Database.aggregate(RESERVATIONS, expressions))
+        return result
+
+    @staticmethod
+    def get_reservations_income_qty(first_date, last_date):
+        first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
+        last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        expressions = list()
+        expressions.append({'$match': {'date': {'$gte': first_date, '$lte': last_date}}})
+        expressions.append({"$project": {"payment_total": "$payment.amount"}})
+        expressions.append({"$group": {"_id": None, "income": {"$sum": "$payment_total"}, "qty": {"$sum": 1}}})
+        result = list(Database.aggregate(RESERVATIONS, expressions))
+        return result
+
+    @staticmethod
+    def get_reservation_avg_price():
+        expressions = list()
+        expressions.append({'$match': {}})
+        expressions.append({"$project": {"payment_total": "$payment.amount"}})
+        expressions.append({"$group": {"_id": None, "income": {"$sum": "$payment_total"}, "count": {"$sum": 1}}})
+        expressions.append({"$project": {"avg_price": {"$divide": ["$income", "$count"]}}})
+        result = list(Database.aggregate(RESERVATIONS, expressions))
+        return result
+
+    @staticmethod
+    def get_promos_discount_qty(first_date, last_date):
+        first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
+        last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        expressions = list()
+        expressions.append({'$match': {'date': {'$gte': first_date, '$lte': last_date}}})
+        expressions.append({"$match": {"discount": {"$ne": None}}})
+        expressions.append({"$group": {"_id": None, "discount": {"$sum": "$discount"}, "qty": {"$sum": 1}}})
+        result = list(Database.aggregate(RESERVATIONS, expressions))
+        return result

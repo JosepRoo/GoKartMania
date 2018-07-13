@@ -45,6 +45,20 @@ class Reservations(Resource):
 
     @staticmethod
     @Utils.login_required
+    def delete(reservation_id):
+        """
+        Deletes the reservation with the given id in the parameters.
+        :param reservation_id: The id of the reservation to be deleted from the Collection
+        :return: JSON object with the remaining reservation
+        """
+        try:
+            ReservationModel.delete(reservation_id)
+            return Response(success=True, message="Reservación exitosamente eliminada.").json(), 200
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 401
+
+    @staticmethod
+    @Utils.login_required
     def get():
         """
         Retrieves the information of the current reservation

@@ -3,7 +3,7 @@ from flask_restful import Api
 
 from app.common.database import Database
 from app.common.response import Response
-from app.resources.admin import Admin
+from app.resources.admin import Admin, WhoReserved
 from app.resources.date import Dates, AvailableDatesUser, AvailableSchedulesUser, AvailableDatesAdmin, \
     AvailableSchedulesAdmin
 from app.resources.location import Locations
@@ -27,8 +27,9 @@ def create_app(config_name):
 
     api.add_resource(User, '/user')
     api.add_resource(Admin, '/admin')
+    api.add_resource(WhoReserved, '/admin/who_reserved/<string:date>/<string:schedule>/<string:turn>')
 
-    api.add_resource(Reservations, '/user/reservations')
+    api.add_resource(Reservations, '/user/reservations', '/user/reservations/<string:reservation_id>')
     api.add_resource(ReservationWithPromo, '/user/reservations_promo')
 
     api.add_resource(Pilots, '/user/pilots')

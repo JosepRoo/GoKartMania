@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from app import Response
 from app.common.utils import Utils
+from app.models.admins.errors import AdminErrors
 from app.models.promos.errors import PromotionErrors
 from app.models.promos.promotion import Promotion as PromoModel
 from app.models.promos.constants import PARSER
@@ -16,12 +17,13 @@ class Promos(Resource):
         """
         try:
             data = PARSER.parse_args()
-            PromoModel.add(data), 200
+            PromoModel.add(data)
             return Response(success=True, message="Registro satisfactorio de la promoción.").json(), 200
         except PromotionErrors as e:
             return Response(message=e.message).json(), 401
 
     @staticmethod
+    @Utils.login_required
     def get(promo_id=None):
         """
         Retrieves the information of all the promotions in the Promo collection or one in particular
@@ -33,6 +35,7 @@ class Promos(Resource):
             return Response(message=e.message).json(), 401
 
     @staticmethod
+    @Utils.login_required
     def put(promo_id):
         """
         Updates the promo with the given parameters
@@ -43,15 +46,5 @@ class Promos(Resource):
             return PromoModel.update(data, promo_id).json(), 200
         except PromotionErrors as e:
             return Response(message=e.message).json(), 401
-
-    @staticmethod
-    def delete(pilot_id):
-        """
-        Deletes the promo with the given id in the parameters.
-        :param pilot_id: The id of the promo to be deleted from the Promo collection
-        :return: JSON object with the removed promotion
-        """
-        try:
-            return PromoModel.delete(pilot_id), 200
-        except PromotionErrors as e:
+        except AdminErrors as e:
             return Response(message=e.message).json(), 401
