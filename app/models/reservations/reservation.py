@@ -77,7 +77,7 @@ class Reservation(BaseModel):
         # QR.remove_reservation_qrs()
         # QR.create(reservation)
         # AbstractPilot.remove_allocated_pilots()
-        Reservation.remove_temporal_reservations()
+        # Reservation.remove_temporal_reservations()
         return reservation
 
     @staticmethod

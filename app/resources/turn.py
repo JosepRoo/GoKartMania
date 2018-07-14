@@ -31,6 +31,8 @@ class Turns(Resource):
             return Response(message=e.message).json(), 401
         except UserErrors as e:
             return Response(message=e.message).json(), 401
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 401
 
 
 class Turn(Resource):

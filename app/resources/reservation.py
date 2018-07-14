@@ -85,3 +85,5 @@ class ReservationWithPromo(Resource):
             return reservation.insert_promo(data.get('promo_id')).json(), 200
         except PromotionErrors as e:
             return Response(message=e.message).json(), 401
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 401
