@@ -1,8 +1,11 @@
-from flask import Flask
+import datetime
+
+from flask import Flask, session
 from flask_restful import Api
 
 from app.common.database import Database
 from app.common.response import Response
+from app.models.reservations.constants import TIMEOUT
 from app.resources.admin import Admin, WhoReserved, PartyAvgSize, BusyHours, LicensedPilots, ReservationIncomeQty, \
     PromosDiscountQty, ReservationAvgPrice
 from app.resources.date import Dates, AvailableDatesUser, AvailableSchedulesUser, AvailableDatesAdmin, \
@@ -56,6 +59,17 @@ def create_app(config_name):
     api.add_resource(Locations, '/locations', '/locations/<string:location_id>')
 
     api.add_resource(Promos, '/promos', '/promos/<string:promo_id>')
+
+    @app.before_request
+    def check_session_expiration():
+        now = datetime.datetime.now()
+        try:
+            first_active = session['time_created']
+            delta = now - first_active
+            if delta > TIMEOUT:
+                session.clear()
+        except Exception:
+            pass
 
     @app.after_request
     def after_request(response):

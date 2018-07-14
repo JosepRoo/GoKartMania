@@ -64,6 +64,7 @@ class Reservation(BaseModel):
         # Por default, una reservacion debe llevar al menos un turno y al menos un piloto
         # TurnModel.add(reservation, {"schedule": "00", "turn_number": 0, "positions": {}, "date": None})
         # PilotModel.add(reservation, {'name': 'Piloto 1'})
+        session['time_created'] = datetime.datetime.now()
         session['reservation'] = reservation._id
         return reservation
 
@@ -76,6 +77,7 @@ class Reservation(BaseModel):
         # QR.remove_reservation_qrs()
         # QR.create(reservation)
         # AbstractPilot.remove_allocated_pilots()
+        Reservation.remove_temporal_reservations()
         return reservation
 
     @staticmethod
@@ -112,6 +114,7 @@ class Reservation(BaseModel):
             now = datetime.datetime.now().astimezone(get_localzone())
             delta = now - reservation.date
             if delta > TIMEOUT:
+                print(reservation._id)
                 reservation.delete_from_mongo(COLLECTION_TEMP)
 
     def calculate_price(self):
