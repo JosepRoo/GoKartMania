@@ -9,9 +9,23 @@ class PromotionNotFound(PromotionErrors):
     pass
 
 
+class CouponNotFound(PromotionErrors):
+    pass
+
+
 class WrongPromotionType(PromotionErrors):
     pass
 
 
 class PromotionUsed(PromotionErrors):
     pass
+
+
+class PromotionUnauthorised(PromotionErrors):
+    pass
+
+
+class PromotionExpired(PromotionErrors):
+    pass
+
+

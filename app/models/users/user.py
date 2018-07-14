@@ -102,7 +102,7 @@ class User(BaseModel):
                    "En sus marcas. Listos. ¡Fuera!".format(self.name, reservation._id,
                                                            reservation.location.name,
                                                            reservation.date.strftime("%Y-%m-%d"),
-                                                           turns_detail, pilots_detail, reservation.payment.amount))
+                                                           turns_detail, pilots_detail, reservation.amount))
         email_html = """
 <html>
 <head>
@@ -217,14 +217,14 @@ class User(BaseModel):
                                     </p>
                                     <p>
                                       Subtotal: <span class="primary">${}</span>
-                                    </p>""".format(reservation.payment.license_price,
-                                                   reservation.payment.turns_price,
-                                                   reservation.payment.license_price + reservation.payment.turns_price)
+                                    </p>""".format(reservation.license_price,
+                                                   reservation.turns_price,
+                                                   reservation.license_price + reservation.turns_price)
         if reservation.payment.promo:
             email_html += """
                                     <p>
                                       Descuento: <span class="primary">${}</span>
-                                    </p>""".format(reservation.payment.promo.discount)
+                                    </p>""".format(reservation.discount)
         else:
             email_html += """
                                     <p>
@@ -248,7 +248,7 @@ class User(BaseModel):
                           </table>
                           <br />
                           <td>
-                      </tr>""".format(reservation.payment.amount)
+                      </tr>""".format(reservation.amount)
         email_html += """
                       <tr>
                         <td>
@@ -292,19 +292,3 @@ class User(BaseModel):
             email.send()
         except EmailErrors as e:
             raise FailedToSendEmail(e)
-
-    @classmethod
-    def admin_login(cls, data):
-        email = data.get('email')
-        user = User.get_by_email(email)
-        data.pop('password')
-        if user is None:
-            new_user = cls(**data)
-            del new_user.reservations
-            new_user.save_to_mongo(COLLECTION)
-        else:
-            new_user = cls(**data, _id=user._id)
-            del new_user.reservations
-            new_user.update_mongo(COLLECTION)
-        session['admin_id'] = new_user._id
-        return new_user

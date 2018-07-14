@@ -7,6 +7,7 @@ from tzlocal import get_localzone
 
 from app.models.promos.errors import PromotionUsed
 from app.models.promos.promotion import Promotion as PromoModel
+from app.models.promos.promotion import Coupons as CouponsModel
 from app.models.promos.constants import COLLECTION as PROMO_COLLECTION
 from app.models.reservations.constants import COLLECTION_TEMP, COLLECTION
 from app.models.users.user import User
@@ -72,14 +73,11 @@ class Card(BaseModel):
 
 
 class Payment(BaseModel):
-    def __init__(self, status, payment_method, payment_type, amount=None, license_price=None, turns_price=None,
+    def __init__(self, status, payment_method, payment_type,
                  promo=None, date=None, etomin_number=None, id_reference=None, _id=None):
         self.status = status
         self.payment_method = payment_method
         self.payment_type = payment_type
-        self.amount = amount
-        self.license_price = license_price
-        self.turns_price = turns_price
         self.etomin_number = etomin_number
         self.date = date
         self.promo = PromoModel(**promo) if promo else promo
@@ -108,51 +106,21 @@ class Payment(BaseModel):
         new_payment["status"] = "PENDIENTE"
 
         promo_id = new_payment.pop('promo_id')
+        coupon_id = new_payment.pop('coupon_id')
         promo = None
+        coupon = None
         if promo_id:
             promo = PromoModel.get_promos(promo_id)[0]
-            if not promo.status:
+            coupon = CouponsModel.get_coupon_by_id(promo_id, coupon_id)
+            if not coupon.status:
                 raise PromotionUsed("Esta promoción ya fue utilizada por otro usuario.")
 
         payment = cls(**new_payment)
 
-        location = reservation.location
-        licensed_pilots = [pilot.licensed for pilot in reservation.pilots].count(True)
-        license_price = licensed_pilots * location.type.get('LICENCIA')
-
-        # Modificar para Sucursal Tlalnepantla
-        # pues tiene un tercer tipo que no se considera en reservation.type
-        if reservation.type == "Adultos":
-            prices = location.type.get('GOKART')
-        else:
-            prices = location.type.get('CADET')
-
-        prices_size = len(prices)
-        turns_size = len(reservation.turns)
-        turns_price = cls.calculate_turns_price(turns_size, prices_size, prices)
-        payment.turns_price = turns_price
-
-        if promo and promo.type == 'Carreras':
-            turns_size -= promo.value
-            former_turns_price = turns_price
-            if turns_size > 0:
-                turns_price = cls.calculate_turns_price(turns_size, prices_size, prices)
-                promo.discount = former_turns_price - turns_price
-            else:
-                turns_price = 0
-                promo.discount = former_turns_price - turns_price
-
-        amount = license_price + turns_price
-
-        if promo and promo.type == 'Descuento':
-            promo.discount = amount * (promo.value / 100)
-            amount -= promo.discount
-
-        params = cls.build_etomin_params(user, payment, new_payment, amount, etomin_number)
+        params = cls.build_etomin_params(user, payment, new_payment, reservation.amount, etomin_number)
 
         if promo and promo.type == 'Reservación':
-            promo.discount = amount
-            return cls.commit_reservation_payment(payment, 0, license_price, reservation, promo)
+            return cls.commit_reservation_payment(payment, 0, reservation.license_price, reservation, promo, coupon)
         else:
             if new_payment.get('payment_type') == 'Etomin':
                 auth = requests.get(URL)
@@ -164,13 +132,15 @@ class Payment(BaseModel):
                     if int(obj_charge.get("error")) == 0:
                         payment.id_reference = obj_charge.get("authorization_code")
                         payment.etomin_number = obj_charge.get("card_token")
-                        return cls.commit_reservation_payment(payment, amount, license_price, reservation, promo)
+                        return cls.commit_reservation_payment(payment, reservation.amount, reservation.license_price,
+                                                              reservation, promo, coupon)
                     else:
                         payment.status = "RECHAZADO"
                         payment.etomin_number = etomin_number
                         raise PaymentFailed(obj_charge.get("message"))
             else:
-                return cls.commit_reservation_payment(payment, amount, license_price, reservation, promo)
+                return cls.commit_reservation_payment(payment, reservation.amount, reservation.license_price,
+                                                      reservation, promo, coupon)
 
     @staticmethod
     def calculate_turns_price(turns_size, prices_size, prices):
@@ -207,16 +177,24 @@ class Payment(BaseModel):
         return params
 
     @staticmethod
-    def commit_reservation_payment(payment, amount, license_price, reservation: Reservation, promo):
+    def commit_reservation_payment(payment, amount, license_price, reservation: Reservation, promo, coupon):
         payment.status = "APROBADO"
         payment.amount = amount
         payment.license_price = license_price
         payment.date = datetime.datetime.now().astimezone(get_localzone())
-        # Cambiar el status de la promoción utilizada
         if promo:
-            promo.status = False
-            promo.update_mongo(PROMO_COLLECTION)
-        payment.promo = promo
+            # Cambiar el status de la promoción utilizada
+            for c in promo.coupons:
+                if c._id == coupon._id:
+                    promo.coupons.remove(c)
+                    coupon.status = False
+                    coupon.date_applied = payment.date
+                    promo.coupons.append(coupon)
+                    promo.update_mongo(PROMO_COLLECTION)
+                    break
+            del promo.coupons
+            promo.coupon_applied = coupon._id
+            payment.promo = promo
         reservation.payment = payment
         # Guardar en la coleccion de reservaciones reales
         reservation.save_to_mongo(COLLECTION)

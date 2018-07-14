@@ -108,7 +108,6 @@ class Pilots(Resource):
                 for item in list(pilot.keys()):
                     if item not in [a.name for a in PARSER.args]:
                         del pilot[item]
-                print(pilot)
                 for argument in [a.name for a in PARSER.args if a.required]:
                     if argument not in pilot.keys():
                         msg = {argument: "Este campo no puede ser dejado en blanco."}

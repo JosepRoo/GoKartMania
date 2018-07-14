@@ -2,6 +2,7 @@ from flask import session
 from flask_restful import Resource
 
 from app import Response
+from app.models.promos.errors import PromotionErrors
 from app.models.users.constants import COLLECTION
 from app.models.users.errors import UserErrors
 from app.models.users.user import User as UserModel
@@ -44,6 +45,20 @@ class Reservations(Resource):
 
     @staticmethod
     @Utils.login_required
+    def delete(reservation_id):
+        """
+        Deletes the reservation with the given id in the parameters.
+        :param reservation_id: The id of the reservation to be deleted from the Collection
+        :return: JSON object with the remaining reservation
+        """
+        try:
+            ReservationModel.delete(reservation_id)
+            return Response(success=True, message="Reservación exitosamente eliminada.").json(), 200
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 401
+
+    @staticmethod
+    @Utils.login_required
     def get():
         """
         Retrieves the information of the current reservation
@@ -67,6 +82,6 @@ class ReservationWithPromo(Resource):
         try:
             data = PROMO.parse_args()
             reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-            return reservation.insert_promo(data).json(), 200
-        except ReservationErrors as e:
+            return reservation.insert_promo(data.get('promo_id')).json(), 200
+        except PromotionErrors as e:
             return Response(message=e.message).json(), 401

@@ -297,5 +297,5 @@ class Date(BaseModel):
         """
         now = datetime.datetime.now().astimezone(get_localzone())
         month_dates = calendar.monthrange(now.year, now.month)[1]
-        for i in range(1):
+        for i in range(month_dates):
             Date.add({'year': now.year, 'month': now.month}, i + 1)

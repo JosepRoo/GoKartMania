@@ -100,7 +100,6 @@ class Pilot(BaseModel):
         """
         for pilot in reservation.pilots:
             if pilot.licensed:
-                print(pilot.email, pilot.name, pilot.last_name)
                 email = Email(to=pilot.email, subject='Confirmación de reservación', qr_code=qr_code)
                 turns_detail = ""
                 for turn in reservation.turns:
