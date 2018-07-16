@@ -52,7 +52,7 @@ export class PaymentComponent implements OnInit {
       cvv: ['', [Validators.required, CreditCardValidator.validateCardCvc]],
       promo_id: [],
       coupon_id: [],
-      paymentType: ['Etomin', Validators.required],
+      payment_type: ['Etomin', Validators.required],
       user_name: ['', Validators.required],
       user_email: ['', [Validators.required, Validators.email]],
       user_id: []

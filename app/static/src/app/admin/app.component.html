@@ -1,1 +1,38 @@
-<router-outlet></router-outlet>
+<!--Navbar-->
+<mdb-navbar SideClass="navbar navbar-expand-lg navbar-dark grey darken-3">
+
+  <!-- Navbar brand -->
+  <mdb-navbar-brand>
+    <img style="height: 50px;" class="img-fluid" src="../assets/logoBlanco.png">
+  </mdb-navbar-brand>
+
+  <!-- Collapsible content -->
+  <links>
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li routerLinkActive="active" class="nav-item">
+        <a class="nav-link waves-light" routerLink="./home" mdbWavesEffect>Dashboard
+        </a>
+      </li>
+      <li routerLinkActive="active" class="nav-item">
+        <a class="nav-link waves-light" routerLink="./promos" mdbWavesEffect>Promociones</a>
+      </li>
+      <li routerLinkActive="active" class="nav-item">
+        <a class="nav-link waves-light" routerLink="./pilots" mdbWavesEffect>Pilotos</a>
+      </li>
+
+    </ul>
+    <!-- Links -->
+  </links>
+  <!-- Collapsible content -->
+
+</mdb-navbar>
+
+<mat-divider></mat-divider>
+<!--/.Navbar-->
+
+<div style="height: 100vh !important; background-color: rgba(94, 93, 93, 0.479)">
+  <br>
+  <router-outlet></router-outlet>
+</div>

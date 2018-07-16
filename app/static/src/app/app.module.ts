@@ -1,3 +1,5 @@
+import { AdminService } from './admin/services/admin.service';
+import { AdminReservationsService } from './admin/services/admin-reservations.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { AppRoutingModule } from './app-routing';
@@ -19,6 +21,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatCardModule } from '@angular/material/card';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTableModule } from '@angular/material/table';
 
 // Calendar
 import { CalendarModule } from 'angular-calendar';
@@ -35,6 +41,7 @@ import { NgXCreditCardsModule } from 'ngx-credit-cards';
 // Services
 import { ReservationService } from './client/services/reservation.service';
 import { DatesService } from './client/services/dates.service';
+import { PromosService } from './admin/services/promos.service';
 
 // Components
 import { AppComponent } from './app.component';
@@ -49,12 +56,18 @@ import { CalendarComponent } from './client/calendar/calendar.component';
 import { PaymentComponent } from './client/payment/payment.component';
 import { ConfirmComponent } from './client/confirm/confirm.component';
 import { HomeComponent } from './admin/home/home.component';
+import { AdminComponent } from './admin/app.component';
+import { LogInComponent } from './log-in/log-in.component';
+import { PromosComponent } from './admin/promos/promos.component';
+import { ReservationsComponent } from './admin/reservations/reservations.component';
 
 registerLocaleData(localeEs, 'es');
 
 @NgModule({
   declarations: [
     AppComponent,
+    ClientComponent,
+    AdminComponent,
     ReservationComponent,
     NavbarComponent,
     InstructionsComponent,
@@ -65,7 +78,9 @@ registerLocaleData(localeEs, 'es');
     PaymentComponent,
     ConfirmComponent,
     HomeComponent,
-    ClientComponent
+    LogInComponent,
+    PromosComponent,
+    ReservationsComponent
   ],
   imports: [
     BrowserModule,
@@ -79,14 +94,18 @@ registerLocaleData(localeEs, 'es');
     MatCheckboxModule,
     MatDatepickerModule,
     MatMomentDateModule,
+    MatCardModule,
     MatBadgeModule,
+    MatToolbarModule,
     MatIconModule,
     MatSelectModule,
     MatProgressSpinnerModule,
     MatRadioModule,
     MatDividerModule,
+    MatTableModule,
     NgXCreditCardsModule,
     CalendarModule.forRoot(),
+    MatSidenavModule,
     MDBBootstrapModule.forRoot(),
     AppRoutingModule
   ],
@@ -94,6 +113,9 @@ registerLocaleData(localeEs, 'es');
   providers: [
     ReservationService,
     DatesService,
+    PromosService,
+    AdminReservationsService,
+    AdminService,
     DatePipe,
     { provide: LOCALE_ID, useValue: 'es' }
   ],

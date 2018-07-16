@@ -185,18 +185,18 @@
           <div class="col-5 col-sm-4 text-center">
             <mat-form-field>
               <mat-select placeholder="Mes de expiración" formControlName="month" required>
-                <mat-option [value]="01">01</mat-option>
-                <mat-option [value]="02">02</mat-option>
-                <mat-option [value]="03">03</mat-option>
-                <mat-option [value]="04">04</mat-option>
-                <mat-option [value]="05">05</mat-option>
-                <mat-option [value]="06">06</mat-option>
-                <mat-option [value]="07">07</mat-option>
-                <mat-option [value]="08">08</mat-option>
-                <mat-option [value]="09">09</mat-option>
-                <mat-option [value]="10">10</mat-option>
-                <mat-option [value]="11">11</mat-option>
-                <mat-option [value]="12">12</mat-option>
+                <mat-option [value]="'01'">01</mat-option>
+                <mat-option [value]="'02'">02</mat-option>
+                <mat-option [value]="'03'">03</mat-option>
+                <mat-option [value]="'04'">04</mat-option>
+                <mat-option [value]="'05'">05</mat-option>
+                <mat-option [value]="'06'">06</mat-option>
+                <mat-option [value]="'07'">07</mat-option>
+                <mat-option [value]="'08'">08</mat-option>
+                <mat-option [value]="'09'">09</mat-option>
+                <mat-option [value]="'10'">10</mat-option>
+                <mat-option [value]="'11'">11</mat-option>
+                <mat-option [value]="'12'">12</mat-option>
               </mat-select>
               <mat-error *ngIf="payment.controls.month.hasError('required')">El mes es necesario</mat-error>
             </mat-form-field>
@@ -204,12 +204,12 @@
           <div class="col-5 col-sm-4 text-center">
             <mat-form-field>
               <mat-select placeholder="Año de expiración" formControlName="year" required>
-                <mat-option [value]="2018">2018</mat-option>
-                <mat-option [value]="2019">2019</mat-option>
-                <mat-option [value]="2020">2020</mat-option>
-                <mat-option [value]="2021">2021</mat-option>
-                <mat-option [value]="2022">2022</mat-option>
-                <mat-option [value]="2023">2023</mat-option>
+                <mat-option [value]="'2018'">2018</mat-option>
+                <mat-option [value]="'2019'">2019</mat-option>
+                <mat-option [value]="'2020'">2020</mat-option>
+                <mat-option [value]="'2021'">2021</mat-option>
+                <mat-option [value]="'2022'">2022</mat-option>
+                <mat-option [value]="'2023'">2023</mat-option>
               </mat-select>
               <mat-error *ngIf="payment.controls.year.hasError('required')">El año es necesario</mat-error>
             </mat-form-field>
