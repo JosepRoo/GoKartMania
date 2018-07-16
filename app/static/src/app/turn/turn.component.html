@@ -32,8 +32,8 @@
         <span class="tittle-banner">Cargando</span>
       </div>    
 
-      <app-calendar [prevBtnDisabled]="preventBack" [date]="startDate" *ngIf="availableDates" [availableDates]="availableDates"
-        (onSelectedDate)="onSelectedDate($event)" (onDateChange)="onDateChange($event)"></app-calendar>
+      <app-calendar [prevBtnDisabled]="preventBack" [date]="startDate" *ngIf="availableDates && !alreadyDate" [availableDates]="availableDates"
+        (onSelectedDate)="onSelectedDate($event, 0)" (onDateChange)="onDateChange($event)"></app-calendar>
 
       <mat-divider *ngIf="availableDates"></mat-divider>
       <br>
@@ -100,7 +100,7 @@
   <br *ngIf="availableDates">
 
     <!-- start continue button -->
-    <a (click)="submitSendTurn()">
+    <a (click)="submitSendTurn()" *ngIf="availableDates">
       <div class="row justify-content-center banner-background">
         <div class="col-11 col-sm-8 col-md-5 text-center">
           <button #formButton style="visibility: hidden;" type="submit"></button>

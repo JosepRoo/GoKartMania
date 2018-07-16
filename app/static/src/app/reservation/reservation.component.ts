@@ -13,7 +13,7 @@ export class ReservationComponent implements OnInit {
     pilots: Array<{}>;
     date: Date;
   };
-  stages = ['pilots', 'turns'];
+  stages = ['pilots', 'turns', 'payment', 'confirm'];
   selectedStage = 0;
 
   constructor() {
@@ -42,5 +42,21 @@ export class ReservationComponent implements OnInit {
   goBackward() {
     this.selectedStage = this.selectedStage - 1;
     this.state = this.stages[this.selectedStage];
+  }
+
+  goBackwardTurn(reservation) {
+    this.reservation.pilots = reservation.pilots;
+    this.reservation.date = reservation.date;
+    this.selectedStage = this.selectedStage - 1;
+    this.state = this.stages[this.selectedStage];
+  }
+
+  getReservationTurn(res) {
+    console.log(res);
+    this.goForward();
+  }
+
+  paymentDone() {
+    this.goForward();
   }
 }

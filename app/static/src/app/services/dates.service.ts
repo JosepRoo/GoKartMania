@@ -15,6 +15,7 @@ import 'rxjs/add/observable/throw';
 export class DatesService {
   private availableDatesApi: string = environment.api + '/available_dates';
   private availableSchedulesApi: string = environment.api + '/available_schedules';
+  private availableTurnsApi: string = environment.api + '/user/turns';
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
     Accept: 'application/json'
@@ -49,6 +50,26 @@ export class DatesService {
   getAvailableSchedules(date): Observable<any[]> {
     return this.http
       .get<any>(this.availableSchedulesApi + '/' + date, {
+        headers: this.headers
+      })
+      .pipe(res => {
+        return res;
+      })
+      .catch(e => {
+        if (e.status === 401) {
+          this.location.replaceState('/');
+          this.router.navigate(['/instrucciones']);
+          return Observable.throw(e.error.message);
+        }
+        if (e.status === 400) {
+          return Observable.throw(e.error.message);
+        }
+      });
+  }
+
+  createTurn(turn): Observable<any> {
+    return this.http
+      .post<any>(this.availableTurnsApi, turn, {
         headers: this.headers
       })
       .pipe(res => {

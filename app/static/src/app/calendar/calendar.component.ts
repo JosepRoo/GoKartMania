@@ -75,7 +75,8 @@ export class CalendarComponent implements OnInit {
   selectedDayViewDate: Date;
   dayView: DayViewHour[];
   minDate: Date = new Date();
-  maxDate: Date = addMonths(new Date(), 12);
+  maxDate: Date = addMonths(new Date(), 2);
+  monthLimit;
   @Input() prevBtnDisabled: Boolean;
   nextBtnDisabled: Boolean = false;
   // tslint:disable-next-line:no-output-on-prefix
@@ -90,6 +91,7 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit() {
     this.viewDate = new Date(this.date.getFullYear(), this.date.getMonth(), 1);
+    this.monthLimit = false;
   }
 
   increment(): void {
@@ -119,15 +121,10 @@ export class CalendarComponent implements OnInit {
   }
 
   dateOrViewChanged(): void {
-    const now = new Date();
-    // this.prevBtnDisabled = (this.viewDate.getMonth() === now.getMonth());
-    this.nextBtnDisabled = !this.dateIsValid(
-      startOfPeriod(this.view, addPeriod(this.view, this.viewDate, 1))
-    );
     if (this.viewDate < this.minDate) {
       this.changeDate(this.minDate);
-    } else if (this.viewDate > this.maxDate) {
-      this.changeDate(this.maxDate);
+    } else if (this.viewDate >= this.maxDate) {
+      this.monthLimit = true;
     } else {
       this.onDateChange.emit(this.viewDate);
     }

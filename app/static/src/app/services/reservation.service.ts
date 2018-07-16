@@ -14,9 +14,12 @@ import 'rxjs/add/observable/throw';
 })
 export class ReservationService {
   private reservationApi: string = environment.api + '/user/reservations';
+  private promosApi: string = environment.api + '/user/reservations_promo';
+  private userApi: string = environment.api + '/user';
+  private paymentsApi: string = environment.api + '/user/payments';
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
-    'Accept': 'application/json'
+    Accept: 'application/json'
   });
 
   constructor(
@@ -37,6 +40,76 @@ export class ReservationService {
         if (e.status === 401) {
           this.location.replaceState('/');
           this.router.navigate(['/instrucciones']);
+          return Observable.throw(e.error.message);
+        }
+        if (e.status === 400) {
+          return Observable.throw(e.error.message);
+        }
+      });
+  }
+
+  getReservation(): Observable<any> {
+    return this.http
+      .get<any>(this.reservationApi, {
+        headers: this.headers
+      })
+      .pipe(res => {
+        return res;
+      })
+      .catch(e => {
+        if (e.status === 401) {
+          this.location.replaceState('/');
+          this.router.navigate(['/instrucciones']);
+          return Observable.throw(e.error.message);
+        }
+        if (e.status === 400) {
+          return Observable.throw(e.error.message);
+        }
+      });
+  }
+
+  putPromo(promo): Observable<any> {
+    return this.http
+      .put<any>(this.promosApi, promo, { headers: this.headers })
+      .pipe(res => {
+        return res;
+      })
+      .catch(e => {
+        if (e.status === 401) {
+          return Observable.throw(e.error.message);
+        }
+        if (e.status === 400) {
+          return Observable.throw(e.error.message);
+        }
+      });
+  }
+
+  postUser(user): Observable<any> {
+    return this.http
+      .post<any>(this.userApi, user, { headers: this.headers })
+      .pipe(res => {
+        return res;
+      })
+      .catch(e => {
+        if (e.status === 401) {
+          return Observable.throw(e.error.message);
+        }
+        if (e.status === 400) {
+          return Observable.throw(e.error.message);
+        }
+      });
+  }
+
+  postPayment(payment): Observable<any> {
+    return this.http
+      .post<any>(this.paymentsApi + '/' + payment.user_id, payment, {
+        headers: this.headers
+      })
+      .pipe(res => {
+        return res;
+      })
+      .catch(e => {
+        if (e.status === 401) {
           return Observable.throw(e.error.message);
         }
         if (e.status === 400) {
