@@ -50,6 +50,7 @@ class Reservation(BaseModel):
         """
         from app.models.turns.turn import Turn as TurnModel
         from app.models.pilots.pilot import Pilot as PilotModel
+
         from app.models.locations.location import Location as LocationModel
 
         id_location = new_reservation.pop('id_location')
@@ -72,6 +73,7 @@ class Reservation(BaseModel):
     def update(cls, reservation, type):
         from app.models.qrs.qr import QR
         from app.models.pilots.pilot import AbstractPilot
+        from app.models.dates.date import Date
         reservation.type = type
         reservation.update_mongo(COLLECTION_TEMP)
         # QR.remove_reservation_qrs()

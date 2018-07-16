@@ -295,7 +295,10 @@ class Date(BaseModel):
         Adds to the Date Collection a whole month
         :return: None
         """
-        now = datetime.datetime.now().astimezone(get_localzone())
+        expressions = list()
+        expressions.append({"$group": {"_id": None, "maxDate": {"$max": "$date"}}})
+        result = list(Database.aggregate(COLLECTION_DATES, expressions))
+        now = result[0].get('maxDate') + datetime.timedelta(days=1)
         month_dates = calendar.monthrange(now.year, now.month)[1]
         for i in range(month_dates):
             Date.add({'year': now.year, 'month': now.month}, i + 1)
