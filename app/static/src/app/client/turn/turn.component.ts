@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 import 'rxjs/add/operator/map';
 
 // services
-import { DatesService } from './../services/dates.service';
+import { DatesService } from '../services/dates.service';
 import { CalendarComponent } from '../calendar/calendar.component';
 
 @Component({

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { HttpHeaders } from '@angular/common/http';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/catch';
@@ -12,10 +12,11 @@ import 'rxjs/add/observable/throw';
 @Injectable({
   providedIn: 'root'
 })
-export class DatesService {
-  private availableDatesApi: string = environment.api + '/available_dates';
-  private availableSchedulesApi: string = environment.api + '/available_schedules';
-  private availableTurnsApi: string = environment.api + '/user/turns';
+export class ReservationService {
+  private reservationApi: string = environment.api + '/user/reservations';
+  private promosApi: string = environment.api + '/user/reservations_promo';
+  private userApi: string = environment.api + '/user';
+  private paymentsApi: string = environment.api + '/user/payments';
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
     Accept: 'application/json'
@@ -27,9 +28,9 @@ export class DatesService {
     private location: Location
   ) {}
 
-  getAvailableDates(startDate, endDate): Observable<any[]> {
+  addReservation(reservation): Observable<any[]> {
     return this.http
-      .get<any>(this.availableDatesApi + '/' + startDate + '/' + endDate, {
+      .post<any>(this.reservationApi, reservation, {
         headers: this.headers
       })
       .pipe(res => {
@@ -47,9 +48,9 @@ export class DatesService {
       });
   }
 
-  getAvailableSchedules(date): Observable<any[]> {
+  getReservation(): Observable<any> {
     return this.http
-      .get<any>(this.availableSchedulesApi + '/' + date, {
+      .get<any>(this.reservationApi, {
         headers: this.headers
       })
       .pipe(res => {
@@ -67,9 +68,41 @@ export class DatesService {
       });
   }
 
-  createTurn(turn): Observable<any> {
+  putPromo(promo): Observable<any> {
     return this.http
-      .post<any>(this.availableTurnsApi, turn, {
+      .put<any>(this.promosApi, promo, { headers: this.headers })
+      .pipe(res => {
+        return res;
+      })
+      .catch(e => {
+        if (e.status === 401) {
+          return Observable.throw(e.error.message);
+        }
+        if (e.status === 400) {
+          return Observable.throw(e.error.message);
+        }
+      });
+  }
+
+  postUser(user): Observable<any> {
+    return this.http
+      .post<any>(this.userApi, user, { headers: this.headers })
+      .pipe(res => {
+        return res;
+      })
+      .catch(e => {
+        if (e.status === 401) {
+          return Observable.throw(e.error.message);
+        }
+        if (e.status === 400) {
+          return Observable.throw(e.error.message);
+        }
+      });
+  }
+
+  postPayment(payment): Observable<any> {
+    return this.http
+      .post<any>(this.paymentsApi + '/' + payment.user_id, payment, {
         headers: this.headers
       })
       .pipe(res => {
@@ -77,8 +110,6 @@ export class DatesService {
       })
       .catch(e => {
         if (e.status === 401) {
-          this.location.replaceState('/');
-          this.router.navigate(['/instrucciones']);
           return Observable.throw(e.error.message);
         }
         if (e.status === 400) {

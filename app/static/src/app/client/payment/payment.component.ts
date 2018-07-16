@@ -1,4 +1,4 @@
-import { ReservationService } from './../services/reservation.service';
+import { ReservationService } from '../services/reservation.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   Component,
