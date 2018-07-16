@@ -117,14 +117,13 @@ class Payment(BaseModel):
 
         payment = cls(**new_payment)
 
-        params = cls.build_etomin_params(user, payment, new_payment, reservation.amount, etomin_number)
-
         if promo and promo.type == 'Reservación':
             return cls.commit_reservation_payment(payment, 0, reservation.license_price, reservation, promo, coupon)
         else:
             if new_payment.get('payment_type') == 'Etomin':
                 auth = requests.get(URL)
                 if auth.status_code == 200:
+                    params = cls.build_etomin_params(user, payment, new_payment, reservation.amount, etomin_number)
                     obj = json.loads(auth.text)
                     params["transaction"]["device_session_id"] = obj["session_id"]
                     charge = requests.post(URL_CHARGE, params={}, data=json.dumps(params), headers=HEADERS)
@@ -151,29 +150,27 @@ class Payment(BaseModel):
 
     @staticmethod
     def build_etomin_params(user, payment, new_payment, amount, etomin_number):
-        params = {}
-        if new_payment.get('payment_type') == 'Etomin':
-            params = {
-                "public_key": os.environ.get("ETOMIN_PB_KEY"),
-                "transaction": {
-                    "payer": {
-                        "email": user.email
-                    },
-                    "order": {
-                        "external_reference": payment._id
-                    },
-                    "payment": {
-                        "amount": amount,
-                        "payment_method": new_payment.get("payment_method"),
-                        "currency": CURRENCY,
-                        "payment_country": PAYMENT_COUNTRY,
-                        "token": etomin_number
-                    },
-                    "payment_pending": False,
-                    "device_session_id": ""
+        params = {
+            "public_key": os.environ.get("ETOMIN_PB_KEY"),
+            "transaction": {
+                "payer": {
+                    "email": user.email
                 },
-                "test": True
-            }
+                "order": {
+                    "external_reference": payment._id
+                },
+                "payment": {
+                    "amount": amount,
+                    "payment_method": new_payment.get("payment_method"),
+                    "currency": CURRENCY,
+                    "payment_country": PAYMENT_COUNTRY,
+                    "token": etomin_number
+                },
+                "payment_pending": False,
+                "device_session_id": ""
+            },
+            "test": True
+        }
         return params
 
     @staticmethod

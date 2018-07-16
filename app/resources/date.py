@@ -25,6 +25,8 @@ class Dates(Resource):
             return [date.json() for date in DateModel.get_dates_in_range(start_date, end_date)], 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
     @staticmethod
     @Utils.login_required
@@ -41,6 +43,8 @@ class Dates(Resource):
             return Response(success=True, message="Registro del mes exitoso").json(), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
     @staticmethod
     def put(start_date, end_date):
@@ -55,6 +59,8 @@ class Dates(Resource):
             return Response(success=True, message="Actualizacion del mes exitosa").json(), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
 
 class AvailableDatesUser(Resource):
@@ -72,6 +78,8 @@ class AvailableDatesUser(Resource):
             return DateModel.get_available_dates_user(reservation, start_date, end_date), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
 
 class AvailableDatesAdmin(Resource):
@@ -88,6 +96,8 @@ class AvailableDatesAdmin(Resource):
             return DateModel.get_available_dates_admin(start_date, end_date), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
 
 class AvailableSchedulesUser(Resource):
@@ -104,6 +114,8 @@ class AvailableSchedulesUser(Resource):
             return DateModel.get_available_schedules_user(reservation, date), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
 
 class AvailableSchedulesAdmin(Resource):
@@ -119,3 +131,5 @@ class AvailableSchedulesAdmin(Resource):
             return DateModel.get_available_schedules_admin(date), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500

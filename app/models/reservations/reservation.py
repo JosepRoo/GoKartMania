@@ -91,8 +91,11 @@ class Reservation(BaseModel):
             reservation = Reservation.get_by_id(reservation_id, COLLECTION_TEMP)
             reservation.delete_from_mongo(COLLECTION_TEMP)
         except ReservationNotFound:
-            reservation = Reservation.get_by_id(reservation_id, REAL_RESERVATIONS)
-            reservation.delete_from_mongo(REAL_RESERVATIONS)
+            try:
+                reservation = Reservation.get_by_id(reservation_id, REAL_RESERVATIONS)
+                reservation.delete_from_mongo(REAL_RESERVATIONS)
+            except ReservationNotFound:
+                raise ReservationNotFound("La reservacion con el ID dado no existe.")
 
     @classmethod
     def get_by_id(cls, _id, collection):
@@ -114,7 +117,6 @@ class Reservation(BaseModel):
             now = datetime.datetime.now().astimezone(get_localzone())
             delta = now - reservation.date
             if delta > TIMEOUT:
-                print(reservation._id)
                 reservation.delete_from_mongo(COLLECTION_TEMP)
 
     def calculate_price(self):

@@ -317,7 +317,7 @@ class AbstractPilot(BaseModel):
         Removes the allocated date-schedule-turn-pilots that have already concluded their TIMEOUT
         :return: None
         """
-        timeout = datetime.datetime.utcnow() - datetime.timedelta(minutes=5)
+        timeout = datetime.datetime.utcnow() - datetime.timedelta(minutes=15)
         Database.DATABASE[COLLECTION].update_many({},
                                                   {'$pull': {'schedules.$[].turns.$[].pilots': {
                                                       'allocation_date': {'$lte': timeout}}}})

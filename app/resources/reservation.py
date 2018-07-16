@@ -6,8 +6,8 @@ from app.models.promos.errors import PromotionErrors
 from app.models.users.constants import COLLECTION
 from app.models.users.errors import UserErrors
 from app.models.users.user import User as UserModel
-from app.models.reservations.constants import PARSER, COLLECTION_TEMP, PROMO
-from app.models.reservations.errors import ReservationErrors
+from app.models.reservations.constants import PARSER, COLLECTION_TEMP, PROMO, COLLECTION as REAL_RESERVATIONS
+from app.models.reservations.errors import ReservationErrors, ReservationNotFound
 from app.models.reservations.reservation import Reservation as ReservationModel
 from app.common.utils import Utils
 
@@ -26,6 +26,8 @@ class Reservations(Resource):
             return Response(message=e.message).json(), 401
         except UserErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
     @staticmethod
     @Utils.login_required
@@ -42,6 +44,8 @@ class Reservations(Resource):
             return Response(message=e.message).json(), 401
         except UserErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
     @staticmethod
     @Utils.login_required
@@ -56,6 +60,8 @@ class Reservations(Resource):
             return Response(success=True, message="Reservación exitosamente eliminada.").json(), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
     @staticmethod
     @Utils.login_required
@@ -67,8 +73,16 @@ class Reservations(Resource):
         try:
             reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
             return reservation.calculate_price().json(), 200
+        except ReservationNotFound:
+            try:
+                reservation = ReservationModel.get_by_id(session['reservation'], REAL_RESERVATIONS)
+                return reservation.json(), 200
+            except ReservationErrors as e:
+                return Response(message=e.message).json(), 401
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
 
 class ReservationWithPromo(Resource):
@@ -87,3 +101,5 @@ class ReservationWithPromo(Resource):
             return Response(message=e.message).json(), 401
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500

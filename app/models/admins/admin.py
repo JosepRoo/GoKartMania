@@ -60,8 +60,7 @@ class Admin(BaseModel):
         Sends an email to the super-admin in order to authorise a given promotion
         :return: POST method requesting an email to be sent to the user making the reservation
         """
-        # email = Email(to=self.email, subject='confirmacion de reservacion')
-        email = Email(to='areyna@sitsolutions.org', subject='Confirmacion de promoción', qr_code=None)
+        email = Email(to='jromagosa@sitsolutions.org', subject='Confirmación de promoción', qr_code=None)
 
         email_html = """
 <html>

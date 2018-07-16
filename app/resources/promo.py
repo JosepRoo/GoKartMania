@@ -21,6 +21,8 @@ class Promos(Resource):
             return Response(success=True, message="Registro satisfactorio de la promoción.").json(), 200
         except PromotionErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
     @staticmethod
     @Utils.login_required
@@ -33,6 +35,8 @@ class Promos(Resource):
             return [promo.json() for promo in PromoModel.get_promos(promo_id)], 200
         except PromotionErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
     @staticmethod
     @Utils.login_required
@@ -48,3 +52,5 @@ class Promos(Resource):
             return Response(message=e.message).json(), 401
         except AdminErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
