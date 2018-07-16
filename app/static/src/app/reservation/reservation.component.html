@@ -1,8 +1,0 @@
-<div [ngSwitch]="state" class="background">
-  <div *ngSwitchCase="'pilots'">
-    <app-pilots (pilotsSelected)="getReservation($event)"></app-pilots>
-  </div>
-  <div *ngSwitchCase="'turns'">
-    <app-turn (goBack)="goBackward()" [reservation]="reservation"></app-turn>
-  </div>
-</div>

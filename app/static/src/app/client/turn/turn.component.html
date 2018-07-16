@@ -1,0 +1,114 @@
+<form [formGroup]="turn" (ngSubmit)="sendTurn()">
+
+<!-- start tittle banner -->
+  <div class="row justify-content-center banner-background">
+    <div class="col-11 col-sm-8 col-md-5 text-center">
+      <span class="tittle-banner">2. Selecciona el día y turno</span>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-11 col-sm-8">
+      <a (click)="goBack.emit()"><p style="color:white; font-weight: 700; font-style: italic; padding:20px; margin:0px;"> <mat-icon style="display: inline-flex;vertical-align: middle;">keyboard_backspace</mat-icon> Regresar</p></a>
+    </div>
+  </div>
+  <!-- end title banner -->
+
+  <div class="row justify-content-center" *ngIf="error.show">
+    <div class="col-11">
+      <div class="alert alert-danger error" role="alert">
+        {{error.text}}
+      </div>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-8 text-center">
+      <div *ngIf="!availableDates">
+        <mat-spinner style="margin:0 auto; margin-top: 150px;"></mat-spinner>
+        <br>
+        <span class="tittle-banner">Cargando</span>
+      </div>    
+
+      <app-calendar [prevBtnDisabled]="preventBack" [date]="startDate" *ngIf="availableDates && !alreadyDate" [availableDates]="availableDates"
+        (onSelectedDate)="onSelectedDate($event, 0)" (onDateChange)="onDateChange($event)"></app-calendar>
+
+      <mat-divider *ngIf="availableDates"></mat-divider>
+      <br>
+
+      <div class="row justify-content-center justify-content-sm-start" *ngIf="selectedDay && availableDates">
+        <div class="col-10 col-sm-12 text-left">
+          <label style="color:white; font-size: 22px;">{{this.selectedDay | date: 'mediumDate'}}</label>
+        </div>
+        <div class="col-10 col-sm-6">
+          <mat-form-field>
+            <mat-select placeholder="Horario" formControlName="schedule">
+              <mat-option (click)="assignTurn(schedule)" *ngFor="let schedule of availableSchedules" [value]="schedule.schedule">{{schedule.schedule}}:00 hrs.</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-10 col-sm-6" *ngIf="turn.controls.schedule.value">
+          <mat-form-field>
+            <mat-select placeholder="Turno" formControlName="turn_number">
+              <mat-option (click)="assignPositions(turn)" *ngFor="let turn of availableTurns; let i = index;" [value]="turn.turn">Turno {{turn.turn}} ( aprox. {{getHour()}}:{{(i+1) * 10}}hrs. )</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+
+  <div *ngIf="turn.controls.turn_number.value && availableDates" class="row justify-content-center banner-background">
+    <div class="col-11 col-sm-8 col-md-5 text-center">
+      <span class="tittle-banner">3. Selecciona tus gokarts</span>
+    </div>
+  </div>
+
+  <br>
+
+  <div *ngIf="turn.controls.turn_number.value && availableDates" class="row justify-content-center">
+    <div class="col-11 col-sm-10 col-md-8">
+      <div class="row" style="margin-top:20px; margin-bottom:20px;">
+        <div *ngFor="let position of availablePositions" class="col-6 col-sm-4 col-md-3 text-center" style="padding:10px;">
+          <a (click)="selectPosition(position)">
+            <div *ngIf="position.clicked" class="position" style="background-image: url('./assets/position-clicked.png')">
+              <label style="margin-top:25px;" class="tittle-banner">{{position.position}}</label>
+            </div>
+            <div *ngIf="!position.clicked" class="position" style="background-image: url('./assets/position-empty.png')">
+              <label style="margin-top:25px;" class="tittle-banner">{{position.position}}</label>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br *ngIf="error.show">
+
+  <div class="row justify-content-center" *ngIf="error.show">
+    <div class="col-11">
+      <div class="alert alert-danger error" role="alert">
+        {{error.text}}
+      </div>
+    </div>
+  </div>
+
+  <br *ngIf="availableDates">
+
+    <!-- start continue button -->
+    <a (click)="submitSendTurn()" *ngIf="availableDates">
+      <div class="row justify-content-center banner-background">
+        <div class="col-11 col-sm-8 col-md-5 text-center">
+          <button #formButton style="visibility: hidden;" type="submit"></button>
+          <span class="tittle-banner">Continuar</span>
+          <mat-icon style="padding-left:10px; color: white !important;">arrow_forward</mat-icon>
+        </div>
+      </div>
+    </a>
+      <!-- end continue button -->
+
+</form>

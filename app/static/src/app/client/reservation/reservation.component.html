@@ -1,0 +1,14 @@
+<div [ngSwitch]="state" class="background">
+  <div *ngSwitchCase="'pilots'">
+    <app-pilots (pilotsSelected)="getReservation($event)"></app-pilots>
+  </div>
+  <div *ngSwitchCase="'turns'">
+    <app-turn (reservationOutput)="getReservationTurn($event)" (goBack)="goBackward()" [reservation]="reservation"></app-turn>
+  </div>
+  <div *ngSwitchCase="'payment'">
+    <app-payment (paymentDone)="paymentDone()" (goBack)="goBackwardTurn($event)"></app-payment>
+  </div>
+  <div *ngSwitchCase="'confirm'">
+    <app-confirm></app-confirm>
+  </div>
+</div>

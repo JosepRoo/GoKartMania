@@ -1,0 +1,255 @@
+<div *ngIf="!loading" class="row justify-content-center banner-background">
+  <div class="col-11 col-sm-8 col-md-5 text-center">
+    <span class="tittle-banner">4. Su reservación</span>
+  </div>
+</div>
+
+<br>
+
+<div *ngIf="!loading && reservation?.license_price" class="row row-data justify-content-center">
+  <div class="col-8 col-sm-6">
+    <span class="tittle-banner text-left">Licencias:
+      <span class="pull-right" style="color:#B9261A;">{{reservation?.license_price/100}}</span>
+    </span>
+  </div>
+</div>
+
+<div *ngIf="!loading && reservation?.license_price" class="row row-data justify-content-center">
+  <div class="col-8 col-sm-6">
+    <span class="tittle-banner text-left">Precio:
+      <span class="pull-right" style="color:#B9261A;">{{reservation?.license_price | currency: 'MX'}}</span>
+    </span>
+  </div>
+</div>
+
+<div *ngIf="!loading" class="row justify-content-center">
+  <div class="col-8 col-sm-6">
+    <mat-divider></mat-divider>
+  </div>
+</div>
+
+<div *ngFor="let turn of reservation?.turns">
+  <div *ngIf="!loading" class="row row-data justify-content-center">
+    <div class="col-8 col-sm-6">
+      <span class="tittle-banner text-left">Fecha:
+        <span class="pull-right" style="color:#B9261A;">{{reservation?.date | date: 'mediumDate'}}</span>
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading" class="row row-data justify-content-center">
+    <div class="col-8 col-sm-6">
+      <span class="tittle-banner text-left">Horario:
+        <span class="pull-right" style="color:#B9261A;">{{turn?.schedule}}:00 hrs</span>
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading" class="row row-data justify-content-center">
+    <div class="col-8 col-sm-6">
+      <span class="tittle-banner text-left">Turno:
+        <span class="pull-right" style="color:#B9261A;">{{turn?.turn_number}}</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- <div *ngIf="!loading" class="row row-data justify-content-center">
+    <div class="col-8 col-sm-6 text-center">
+      <span class="tittle-banner">GOKARTS
+      </span>
+    </div>
+  </div> -->
+
+  <div *ngIf="!loading" class="row justify-content-center">
+    <div class="col-8 col-sm-6">
+      <mat-divider></mat-divider>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!loading" class="row row-data justify-content-center">
+  <div class="col-8 col-sm-6">
+    <span class="tittle-banner text-left">Total:
+      <span class="pull-right" style="color:#B9261A;"> <strike *ngIf="reservation?.price_before_promo && (reservation.price_before_promo !== reservation.amount)" style="color:gray">{{reservation?.price_before_promo | currency: 'MX'}}</strike> {{reservation?.amount | currency: 'MX'}}</span>
+    </span>
+  </div>
+</div>
+
+<div *ngIf="!loading" class="row justify-content-center">
+  <div class="col-8 col-sm-6 text-center">
+    <div class="alert alert-danger error" role="alert" *ngIf="promo.error">
+      El cupón es incorrecto
+    </div>
+    <mat-form-field>
+      <input matInput [(ngModel)]="promo.promo_id" placeholder="Cupón de descuento">
+    </mat-form-field>
+  </div>
+</div>
+
+
+<div *ngIf="!loading" class="row justify-content-center">
+  <div class="col-8 col-sm-6 text-center">
+    <button (click)="applyPromo()" mat-raised-button color="primary" class="btn btn-block">Aplicar Promo</button>
+  </div>
+</div>
+
+<br>
+
+<a *ngIf="!loading" (click)="goBack.emit({pilots: reservation.pilots, date: reservation.date})">
+  <div class="row justify-content-center button-background">
+    <div class="col-11 col-sm-8 col-md-6 text-center">
+      <span class="tittle-button">Agregar otra reservación</span>
+    </div>
+  </div>
+</a>
+
+<div *ngIf="loading" class="text-center">
+  <mat-spinner style="margin:0 auto; margin-top: 150px;"></mat-spinner>
+  <br>
+  <br>
+  <span class="tittle-banner">Cargando</span>
+</div>
+
+<div *ngIf="!loading" class="row justify-content-center banner-background">
+  <div class="col-11 col-sm-8 col-md-6 text-center">
+    <span class="tittle-banner">5. Datos de pago</span>
+  </div>
+</div>
+
+<br>
+
+<form style="min-height: 230px !important;" *ngIf="!loading" [formGroup]="payment" (ngSubmit)="sendPayment()">
+  <div class="row justify-content-center">
+    <div class="col-9 col-sm-4 col-md-3 text-center">
+      <mat-form-field>
+        <input matInput placeholder="Nombre completo" formControlName="user_name" required>
+        <mat-error *ngIf="payment.controls.user_name.hasError('required')">El nombre es necesario</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="col-9 col-sm-4 col-md-3 text-center">
+      <mat-form-field>
+        <input matInput placeholder="Correo electrónico" formControlName="user_email" required>
+        <mat-error *ngIf="payment.controls.user_email.hasError('required')">El correo es necesario</mat-error>
+        <mat-error *ngIf="payment.controls.user_email.errors?.email">El correo es incorrecto</mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-11 col-sm-8">
+      <mat-radio-group formControlName="payment_method">
+        <div class="row justify-content-center">
+          <div class="col-5 col-md-3 col-lg-2 pay-method">
+            <mat-radio-button color="primary" value="MASTERCARD" class="tittle-banner">
+              <img style="margin: 0 auto; padding:5px;" src="../assets/mastercard.png" class="img-fluid" alt="Mastercard Logo">
+            </mat-radio-button>
+          </div>
+          <div class="col-5 col-md-3 col-lg-2 pay-method">
+            <mat-radio-button color="primary" value="VISA" class="tittle-banner">
+              <img style="margin: 0 auto; padding:5px;" src="../assets/visa.png" class="img-fluid" alt="Visa Logo">
+            </mat-radio-button>
+          </div>
+          <div class="col-5 col-md-3 col-lg-2 pay-method">
+            <mat-radio-button color="primary" value="AMEX" class="tittle-banner">
+              <img style="margin: 0 auto; padding:5px;" src="../assets/american.png" class="img-fluid" alt="American express Logo">
+            </mat-radio-button>
+          </div>
+          <div class="col-5 col-md-3 col-lg-2 pay-method">
+            <mat-radio-button color="primary" value="PAYPAL" class="tittle-banner">
+              <img style="margin: 0 auto; padding:5px;" src="https://www.troopsf.com/file/paypal-logo-3.png" class="img-fluid" alt="American express Logo">
+            </mat-radio-button>
+          </div>
+        </div>
+        <!-- <mat-error *ngIf="payment.controls.payment_method.hasError('required')">El método de pago es necesario</mat-error> -->
+      </mat-radio-group>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-11 col-sm-8">
+      <div class="container-fluid" *ngIf="payment.controls.payment_method.value && payment.controls.payment_method.value != 'PAYPAL'">
+        <div class="row justify-content-center">
+          <div class="col-11 col-sm-6 text-center">
+            <mat-form-field>          
+              <input matInput placeholder="Nombre que aparece en la tarjeta" formControlName="name" required>
+              <mat-error *ngIf="payment.controls.name.hasError('required')">El nombre es necesario</mat-error>          
+            </mat-form-field>
+          </div>
+          <div class="col-11 col-sm-6 text-center">
+            <mat-form-field>          
+              <input matInput placeholder="Número de tarjeta" [attr.maxlength]="16" formControlName="number" type="tel" required>
+              <mat-error *ngIf="payment.controls.number.hasError('required')">El número es necesario</mat-error>
+              <mat-error *ngIf="payment.controls.number.hasError('error') && !payment.controls.number.hasError('required')">El número es inválido</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-5 col-sm-4 text-center">
+            <mat-form-field>
+              <mat-select placeholder="Mes de expiración" formControlName="month" required>
+                <mat-option [value]="'01'">01</mat-option>
+                <mat-option [value]="'02'">02</mat-option>
+                <mat-option [value]="'03'">03</mat-option>
+                <mat-option [value]="'04'">04</mat-option>
+                <mat-option [value]="'05'">05</mat-option>
+                <mat-option [value]="'06'">06</mat-option>
+                <mat-option [value]="'07'">07</mat-option>
+                <mat-option [value]="'08'">08</mat-option>
+                <mat-option [value]="'09'">09</mat-option>
+                <mat-option [value]="'10'">10</mat-option>
+                <mat-option [value]="'11'">11</mat-option>
+                <mat-option [value]="'12'">12</mat-option>
+              </mat-select>
+              <mat-error *ngIf="payment.controls.month.hasError('required')">El mes es necesario</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-5 col-sm-4 text-center">
+            <mat-form-field>
+              <mat-select placeholder="Año de expiración" formControlName="year" required>
+                <mat-option [value]="'2018'">2018</mat-option>
+                <mat-option [value]="'2019'">2019</mat-option>
+                <mat-option [value]="'2020'">2020</mat-option>
+                <mat-option [value]="'2021'">2021</mat-option>
+                <mat-option [value]="'2022'">2022</mat-option>
+                <mat-option [value]="'2023'">2023</mat-option>
+              </mat-select>
+              <mat-error *ngIf="payment.controls.year.hasError('required')">El año es necesario</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-11 col-sm-4 text-center">
+            <mat-form-field>
+              <input matInput placeholder="CVV" [attr.maxlength]="4" formControlName="cvv" type="tel"required>
+              <mat-error *ngIf="payment.controls.cvv.hasError('required')">El CVV es necesario</mat-error>
+              <mat-error *ngIf="payment.controls.cvv.hasError('error') && !payment.controls.cvv.hasError('required')">El CVV es inválido</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br *ngIf="error.show">
+
+  <div class="row justify-content-center">
+    <div class="col-11 col-sm-8">
+      <div class="alert alert-danger error" role="alert" *ngIf="error.show">
+        {{error.text}}
+      </div>
+    </div>
+  </div>
+
+  <br>
+
+  <button #pilotFormButton style="visibility: hidden;" type="submit"></button>
+
+</form>
+
+<a *ngIf="!loading" (click)="submitPayment()">
+  <div class="row justify-content-center button-background" style="background-color:  #d50000">
+    <div class="col-11 col-sm-8 col-md-5 text-center">
+      <span class="tittle-button">Pagar {{reservation?.amount | currency: 'MX'}}</span>
+    </div>
+  </div>
+</a>
+
+
+
+

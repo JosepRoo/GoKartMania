@@ -1,0 +1,38 @@
+.banner-background {
+  background-color: #B9261A;
+  padding-top:5px;
+  padding-bottom:5px;
+}
+
+.tittle-banner {
+  font-style: italic;
+  font-weight: 700;
+  padding: 5px;
+  color: white;
+  margin-bottom: 0px;
+  text-align: center;
+}
+
+.row-data {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.pay-method {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tittle-button {
+  font-style: italic;
+  font-weight: 700;
+  padding: 5px;
+  color:white;
+  margin-bottom: 0px;
+}
+
+.button-background {
+  background-color: #D92F20;
+  cursor: pointer;
+}

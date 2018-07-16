@@ -1,6 +1,7 @@
 import datetime
 
 from flask import Flask, session
+from flask_compress import Compress
 from flask_restful import Api
 
 from app.common.database import Database
@@ -23,6 +24,7 @@ from config import config
 def create_app(config_name):
     app = Flask(__name__)
     api = Api(app)
+    Compress(app)
     app.config.from_object(config[config_name])
     # Register our blueprints
     from .default import default as default_blueprint, qrs as qrs_blueprint
