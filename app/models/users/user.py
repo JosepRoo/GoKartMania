@@ -60,8 +60,7 @@ class User(BaseModel):
         :param reservation: Reservation object
         :return: POST method requesting an email to be sent to the user making the reservation
         """
-        # email = Email(to=self.email, subject='confirmacion de reservacion')
-        email = Email(to='areyna@sitsolutions.org', subject='Confirmacion de reservacion', qr_code=qr_code)
+        email = Email(to=self.email, subject='Confirmación de reservación', qr_code=qr_code)
 
         turns_detail = ""
         for turn in reservation.turns:

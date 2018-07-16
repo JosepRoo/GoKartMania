@@ -30,6 +30,8 @@ class Pilots(Resource):
             return [pilot.json() for pilot in reservation.pilots], 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
     @staticmethod
     @Utils.login_required
@@ -117,6 +119,8 @@ class Pilots(Resource):
             return reservation_pilots
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
 
 class Pilot(Resource):
@@ -135,6 +139,8 @@ class Pilot(Resource):
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
     @staticmethod
     @Utils.login_required
@@ -152,6 +158,8 @@ class Pilot(Resource):
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
     @staticmethod
     @Utils.login_required
@@ -168,3 +176,5 @@ class Pilot(Resource):
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500

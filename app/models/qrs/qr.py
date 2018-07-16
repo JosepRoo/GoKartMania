@@ -26,7 +26,7 @@ class QR(BaseModel):
         date_str = reservation.date.strftime("%Y-%m-%d")
         img_path = f'{basedir}/app/reservation_qrs/{qr._id}{date_str}.png'
         img.save(img_path, format="PNG")
-        return qr._id + ".png"
+        return qr._id + date_str + ".png"
 
     @staticmethod
     def remove_reservation_qrs():

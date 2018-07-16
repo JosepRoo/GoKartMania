@@ -33,6 +33,8 @@ class Turns(Resource):
             return Response(message=e.message).json(), 401
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
 
 class Turn(Resource):
@@ -51,6 +53,8 @@ class Turn(Resource):
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
     @staticmethod
     @Utils.login_required
@@ -68,3 +72,5 @@ class Turn(Resource):
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500

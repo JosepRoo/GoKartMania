@@ -20,6 +20,8 @@ class Locations(Resource):
             return LocationModel.add(data).json(), 200
         except LocationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
     @staticmethod
     @Utils.login_required
@@ -32,6 +34,8 @@ class Locations(Resource):
             return [location.json() for location in LocationModel.get_locations(location_id)], 200
         except LocationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
     @staticmethod
     @Utils.login_required
@@ -45,3 +49,5 @@ class Locations(Resource):
             return LocationModel.update(data).json(), 200
         except LocationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500

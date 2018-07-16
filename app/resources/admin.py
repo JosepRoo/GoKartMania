@@ -1,10 +1,24 @@
+from flask import session
 from flask_restful import Resource, reqparse
 
 from app import Response
 from app.common.utils import Utils
 from app.models.admins.errors import AdminErrors
 from app.models.admins.admin import Admin as AdminModel
+from app.models.emails.errors import EmailErrors
+from app.models.payments.constants import PAYMENT_PARSER, CARD_PARSER
+from app.models.payments.errors import PaymentErrors
+from app.models.promos.errors import PromotionErrors
+from app.models.reservations.constants import COLLECTION_TEMP
 from app.models.reservations.errors import ReservationErrors
+from app.models.reservations.reservation import Reservation as ReservationModel
+from app.models.users.errors import UserErrors
+from app.models.users.user import User as UserModel
+from app.models.payments.payment import Payment as PaymentModel
+from app.models.qrs.qr import QR as QRModel
+from app.models.pilots.pilot import Pilot as PilotModel
+from app.models.locations.location import Location as LocationModel
+from app.models.users.constants import COLLECTION as USER_COLLECTION
 
 
 class Admin(Resource):
@@ -35,6 +49,8 @@ class Admin(Resource):
             return AdminModel.admin_login(data).json(), 200
         except AdminErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
 
 class WhoReserved(Resource):
@@ -52,6 +68,8 @@ class WhoReserved(Resource):
             return [pilot.json() for pilot in AdminModel.who_reserved(date, schedule, turn)], 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
 
 
 class PartyAvgSize(Resource):
@@ -65,7 +83,7 @@ class PartyAvgSize(Resource):
         try:
             return AdminModel.get_party_avg_size(), 200
         except Exception as e:
-            return Response(message=e).json(), 401
+            return Response(message=e).json(), 500
 
 
 class BusyHours(Resource):
@@ -79,7 +97,7 @@ class BusyHours(Resource):
         try:
             return AdminModel.get_busy_hours(), 200
         except Exception as e:
-            return Response(message=e).json(), 401
+            return Response(message=e).json(), 500
 
 
 class LicensedPilots(Resource):
@@ -93,7 +111,7 @@ class LicensedPilots(Resource):
         try:
             return AdminModel.get_licensed_pilots(), 200
         except Exception as e:
-            return Response(message=e).json(), 401
+            return Response(message=e).json(), 500
 
 
 class ReservationIncomeQty(Resource):
@@ -107,7 +125,7 @@ class ReservationIncomeQty(Resource):
         try:
             return AdminModel.get_reservations_income_qty(start_date, end_date), 200
         except Exception as e:
-            return Response(message=e).json(), 401
+            return Response(message=e).json(), 500
 
 
 class PromosDiscountQty(Resource):
@@ -121,7 +139,7 @@ class PromosDiscountQty(Resource):
         try:
             return AdminModel.get_promos_discount_qty(start_date, end_date), 200
         except Exception as e:
-            return Response(message=e).json(), 401
+            return Response(message=e).json(), 500
 
 
 class ReservationAvgPrice(Resource):
@@ -135,4 +153,42 @@ class ReservationAvgPrice(Resource):
         try:
             return AdminModel.get_reservation_avg_price(), 200
         except Exception as e:
-            return Response(message=e).json(), 401
+            return Response(message=e).json(), 500
+
+
+class AdminPayments(Resource):
+    @staticmethod
+    @Utils.login_required
+    def post(user_id=None):
+        """
+        Inserts a new payment to the current reservation and sends confirmation emails
+        :return: :class:`app.models.payments.Payment`
+        """
+        try:
+            card_data, payment_data = {}, PAYMENT_PARSER.parse_args()
+            if payment_data.get('payment_type') == 'Etomin':
+                card_data = CARD_PARSER.parse_args()
+            reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+            if user_id:
+                user = UserModel.get_by_id(user_id, USER_COLLECTION)
+            else:
+                user = None
+            PaymentModel.add(user, reservation, card_data, payment_data).json()
+            if user:
+                qr_code = QRModel.create(reservation)
+                UserModel.send_confirmation_message(user, reservation, qr_code)
+                PilotModel.send_confirmation_message(reservation, qr_code)
+                LocationModel.send_confirmation_message(user, reservation, qr_code)
+            return Response(success=True, message="Correos de confirmacion exitosamente enviados.").json(), 200
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 401
+        except PaymentErrors as e:
+            return Response(message=e.message).json(), 401
+        except EmailErrors as e:
+            return Response(message=str(e.message)).json(), 401
+        except UserErrors as e:
+            return Response(message=e.message).json(), 401
+        except PromotionErrors as e:
+            return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response(message=e).json(), 500
