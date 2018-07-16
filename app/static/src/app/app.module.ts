@@ -33,20 +33,22 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgXCreditCardsModule } from 'ngx-credit-cards';
 
 // Services
-import { ReservationService } from './services/reservation.service';
-import { DatesService } from './services/dates.service';
+import { ReservationService } from './client/services/reservation.service';
+import { DatesService } from './client/services/dates.service';
 
 // Components
 import { AppComponent } from './app.component';
-import { ReservationComponent } from './reservation/reservation.component';
-import { NavbarComponent } from './navbar/navbar.component';
-import { InstructionsComponent } from './instructions/instructions.component';
-import { FooterComponent } from './footer/footer.component';
-import { PilotsComponent } from './pilots/pilots.component';
-import { TurnComponent } from './turn/turn.component';
-import { CalendarComponent } from './calendar/calendar.component';
-import { PaymentComponent } from './payment/payment.component';
-import { ConfirmComponent } from './confirm/confirm.component';
+import { ClientComponent } from './client/app.component';
+import { ReservationComponent } from './client/reservation/reservation.component';
+import { NavbarComponent } from './client/navbar/navbar.component';
+import { InstructionsComponent } from './client/instructions/instructions.component';
+import { FooterComponent } from './client/footer/footer.component';
+import { PilotsComponent } from './client/pilots/pilots.component';
+import { TurnComponent } from './client/turn/turn.component';
+import { CalendarComponent } from './client/calendar/calendar.component';
+import { PaymentComponent } from './client/payment/payment.component';
+import { ConfirmComponent } from './client/confirm/confirm.component';
+import { HomeComponent } from './admin/home/home.component';
 
 registerLocaleData(localeEs, 'es');
 
@@ -61,12 +63,13 @@ registerLocaleData(localeEs, 'es');
     TurnComponent,
     CalendarComponent,
     PaymentComponent,
-    ConfirmComponent
+    ConfirmComponent,
+    HomeComponent,
+    ClientComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    AppRoutingModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
@@ -84,7 +87,8 @@ registerLocaleData(localeEs, 'es');
     MatDividerModule,
     NgXCreditCardsModule,
     CalendarModule.forRoot(),
-    MDBBootstrapModule.forRoot()
+    MDBBootstrapModule.forRoot(),
+    AppRoutingModule
   ],
   schemas: [NO_ERRORS_SCHEMA],
   providers: [
