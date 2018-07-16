@@ -24,6 +24,7 @@ class QR(BaseModel):
         qr.url = f'gokartmania.com.mx/#/reservation/{reservation._id}'
         img = qrcode.make(qr.url)
         date_str = reservation.date.strftime("%Y-%m-%d")
+        print(basedir)
         img_path = f'{basedir}/app/reservation_qrs/{qr._id}{date_str}.png'
         img.save(img_path, format="PNG")
         return qr._id + date_str + ".png"

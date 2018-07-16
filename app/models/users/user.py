@@ -248,13 +248,14 @@ class User(BaseModel):
                           <br />
                           <td>
                       </tr>""".format(reservation.amount)
+        qr_url = "http://138.197.209.15/qr/"+qr_code
         email_html += """
                       <tr>
                         <td>
                           <table width="100%">
                             <tr>
                               <td align="center" style="font-weight: 400; padding-bottom:15px; font-size: 20px; color: white; text-align: center;">
-                                <img src="138.197.209.15/qr/{}">
+                                <img src={} alt='QR Code' />
                                 <br>
                                 <br>
                                 <span style="font-weight: 700; font-size: 32px; text-align: center;">En sus marcas. Listos.
@@ -283,8 +284,8 @@ class User(BaseModel):
   
 </body>
 </html>
-        """.format(qr_code)
-
+        """.format(qr_url)
+        print(qr_url)
         email.html(email_html)
 
         try:
