@@ -10,7 +10,7 @@
     <!-- end title banner -->
 
     <!-- start pilot list -->
-    <div class="row">
+    <div class="row" *ngIf="!loading">
       <div class="col">
         <div class="container form">
           <div class="row justify-content-center">
@@ -65,7 +65,10 @@
                         </mat-form-field>
                         <div class="row">
                           <div class="col">
-                            <mat-checkbox color="primary" formControlName="licensed" (change)="changePilotLicense(i)">Licencia de GoKart Mania</mat-checkbox>
+                            <mat-checkbox color="primary" formControlName="buy_license" (change)="changePilotLicense(i)">¿Cuentas con licencia de GoKart Mania?</mat-checkbox>
+                          </div>
+                          <div class="col">
+                            <mat-checkbox color="primary" formControlName="licensed" (change)="buyLicense(i)">¿Quieres comprar una licencia de GoKart Mania?</mat-checkbox>
                           </div>
                         </div>
                       </div>
@@ -75,7 +78,7 @@
                     </div>
                   
                     <!-- start license data -->
-                    <div class="row justify-content-center" *ngIf="pilot.controls.licensed.value" [formGroupName]="i">
+                    <div class="row justify-content-center" *ngIf="pilot.controls.licensed.value || pilot.controls.buy_license.value" [formGroupName]="i">
                       <div class="col-12">
                         <span class="tittle-data">Datos de licencia</span>
                       </div>
@@ -164,7 +167,7 @@
     <!-- end pilot list -->
 
     <!-- start continue button -->
-    <a (click)="submitPilotsForm()">
+    <a (click)="submitPilotsForm()" *ngIf="!loading">
       <div class="row justify-content-center banner-background">
         <div class="col-11 col-sm-8 col-md-5 text-center">
           <button #pilotFormButton style="visibility: hidden;" type="submit"></button>
@@ -174,5 +177,12 @@
       </div>
     </a>
     <!-- end continue button -->
+
+    <div *ngIf="loading" class="text-center">
+      <mat-spinner style="margin:0 auto; margin-top: 150px;"></mat-spinner>
+      <br>
+      <br>
+      <span class="tittle-banner">Cargando</span>
+    </div>
 
   </form>

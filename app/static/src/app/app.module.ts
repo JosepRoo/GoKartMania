@@ -18,6 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatRadioModule } from '@angular/material/radio';
 
 // Calendar
 import { CalendarModule } from 'angular-calendar';
@@ -29,6 +30,7 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
 // Dependencies
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgXCreditCardsModule } from 'ngx-credit-cards';
 
 // Services
 import { ReservationService } from './services/reservation.service';
@@ -43,6 +45,8 @@ import { FooterComponent } from './footer/footer.component';
 import { PilotsComponent } from './pilots/pilots.component';
 import { TurnComponent } from './turn/turn.component';
 import { CalendarComponent } from './calendar/calendar.component';
+import { PaymentComponent } from './payment/payment.component';
+import { ConfirmComponent } from './confirm/confirm.component';
 
 registerLocaleData(localeEs, 'es');
 
@@ -55,7 +59,9 @@ registerLocaleData(localeEs, 'es');
     FooterComponent,
     PilotsComponent,
     TurnComponent,
-    CalendarComponent
+    CalendarComponent,
+    PaymentComponent,
+    ConfirmComponent
   ],
   imports: [
     BrowserModule,
@@ -74,12 +80,19 @@ registerLocaleData(localeEs, 'es');
     MatIconModule,
     MatSelectModule,
     MatProgressSpinnerModule,
+    MatRadioModule,
     MatDividerModule,
+    NgXCreditCardsModule,
     CalendarModule.forRoot(),
     MDBBootstrapModule.forRoot()
   ],
   schemas: [NO_ERRORS_SCHEMA],
-  providers: [ReservationService, DatesService, DatePipe, {provide: LOCALE_ID, useValue: 'es'}],
+  providers: [
+    ReservationService,
+    DatesService,
+    DatePipe,
+    { provide: LOCALE_ID, useValue: 'es' }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
