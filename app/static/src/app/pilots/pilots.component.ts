@@ -23,6 +23,7 @@ export class PilotsComponent implements OnInit {
   minBirthDayDate = new Date(1920, 1, 1);
   maxBirthDayDate = new Date();
   numbers: Array<Number>;
+  loading: Boolean = false;
   error = {
     show: false,
     text: ''
@@ -46,7 +47,8 @@ export class PilotsComponent implements OnInit {
     this.reservation = this.formBuilder.group({
       id_location: [1, Validators.required],
       type: ['', Validators.required],
-      pilots: this.formBuilder.array([])
+      pilots: this.formBuilder.array([]),
+      _id: []
     });
   }
 
@@ -59,7 +61,8 @@ export class PilotsComponent implements OnInit {
     const pilots = this.reservation.get('pilots') as FormArray;
     let pilot = pilots.controls[index] as FormGroup;
     const name = pilot.controls.name.value;
-    if (!pilot.controls.licensed.value) {
+    const wasLicensed = pilot.controls.buy_license.value;
+    if (!pilot.controls.buy_license.value) {
       pilots.controls[index] = this.createPilot(0);
     }
     // tslint:disable-next-line:one-line
@@ -68,6 +71,28 @@ export class PilotsComponent implements OnInit {
     }
     pilot = pilots.controls[index] as FormGroup;
     pilot.controls.name.setValue(name);
+    if (wasLicensed) {
+      pilot.controls.buy_license.setValue(true);
+    }
+  }
+
+  buyLicense(index) {
+    const pilots = this.reservation.get('pilots') as FormArray;
+    let pilot = pilots.controls[index] as FormGroup;
+    const name = pilot.controls.name.value;
+    const wasLicensed = pilot.controls.licensed.value;
+    if (!pilot.controls.buy_license.value) {
+      pilots.controls[index] = this.createPilot(0);
+    }
+    // tslint:disable-next-line:one-line
+    else {
+      pilots.controls[index] = this.createPilot(1);
+    }
+    pilot = pilots.controls[index] as FormGroup;
+    pilot.controls.name.setValue(name);
+    if (wasLicensed) {
+      pilot.controls.licensed.setValue(true);
+    }
   }
 
   // create pilot form
@@ -84,7 +109,8 @@ export class PilotsComponent implements OnInit {
         ],
         nickname: [null, Validators.required],
         city: [null, Validators.required],
-        licensed: [true],
+        licensed: [false],
+        buy_license: [false],
         location: ['Carso']
       });
     }
@@ -97,6 +123,7 @@ export class PilotsComponent implements OnInit {
       nickname: [null],
       city: [null],
       licensed: [false],
+      buy_license: [false],
       location: ['Carso']
     });
   }
@@ -120,16 +147,18 @@ export class PilotsComponent implements OnInit {
   // calls the service to add the reservation
   sendPilots() {
     const self = this;
+    this.loading = true;
     this.error = { show: false, text: '' };
     this.reservation.setValue(this.reservation.getRawValue());
     if (self.reservation.valid) {
       if (this.validateAge()) {
         const reservationData = self.reservation.getRawValue();
         self.reservationService.addReservation(reservationData).subscribe(
-          () => {
+          res => {
             self.pilotService
               .addPilots(self.reservation.getRawValue().pilots)
               .subscribe(
+                // tslint:disable-next-line:no-shadowed-variable
                 res => {
                   const data = self.reservation.getRawValue();
                   data.pilots = res;
@@ -137,11 +166,13 @@ export class PilotsComponent implements OnInit {
                 },
                 error => {
                   this.error = { show: true, text: error };
+                  this.loading = false;
                 }
               );
           },
           error => {
             this.error = { show: true, text: error };
+            this.loading = false;
           }
         );
       } else {
@@ -150,6 +181,7 @@ export class PilotsComponent implements OnInit {
           text:
             'Alguno de tus pilotos no cumple con la edad necesaria para este grupo.'
         };
+        this.loading = false;
       }
     }
   }
@@ -159,7 +191,7 @@ export class PilotsComponent implements OnInit {
     const res = true;
     for (let i = 0; i < pilots.controls.length; i++) {
       const pilot = pilots.controls[i] as FormGroup;
-      if (pilot.controls.licensed.value) {
+      if (pilot.controls.buy_license.value || pilot.controls.licensed.value) {
         const timeDiff = Math.abs(Date.now() - pilot.controls.birth_date.value);
         const age = Math.floor(timeDiff / (1000 * 3600 * 24) / 365);
         if (

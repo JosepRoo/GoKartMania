@@ -23,8 +23,10 @@ export class TurnComponent implements OnInit {
   showLoading: Boolean = false;
   selectedDay: Date;
   turn: FormGroup;
+  alreadyDate = false;
   pilotId = 0;
   @Output() goBack: EventEmitter<any> = new EventEmitter<any>();
+  @Output() reservationOutput: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild(CalendarComponent) calendar: CalendarComponent;
   @Input() reservation: any;
   @ViewChild('formButton') formButton: ElementRef;
@@ -49,11 +51,16 @@ export class TurnComponent implements OnInit {
       turn_number: ['', Validators.required],
       positions: [{}, Validators.required]
     });
+    if (this.reservation.date) {
+      this.turn.controls.date.setValue(this.reservation.date);
+      this.onSelectedDate(this.reservation.date, 1);
+      this.alreadyDate = true;
+    }
   }
 
   // event emitted when calendar component detects a click on a day
-  onSelectedDate(date) {
-    if (this.findDay(date)) {
+  onSelectedDate(date, flag) {
+    if (this.findDay(date) || flag) {
       this.selectedDay = date;
       this.turn.controls.date.setValue(
         this.datePipe.transform(date, 'yyyy-MM-dd')
@@ -155,12 +162,13 @@ export class TurnComponent implements OnInit {
   }
 
   assignPositions(turn) {
-    this.availablePositions = turn.positions.filter(el => {
-      if (el.status === 1) {
+    turn.positions = turn.positions.filter(el => {
+      if (el.status !== 0) {
         el.clicked = false;
         return el;
       }
     });
+    this.availablePositions = turn.positions;
     this.turn.controls.positions.setValue({});
     this.pilotId = 0;
     this.error.show = false;
@@ -198,13 +206,30 @@ export class TurnComponent implements OnInit {
     this.error.show = false;
     if (!this.turn.valid) {
       this.error.show = true;
-      this.error.text = 'Debes seleccionar todos los campos para completar tu reservación';
+      this.error.text =
+        'Debes seleccionar todos los campos para completar tu reservación';
     } else {
-      if (Object.keys(this.turn.controls.positions.value).length >= this.reservation.pilots.length) {
-        console.log('todo bien');
+      if (
+        Object.keys(this.turn.controls.positions.value).length >=
+        this.reservation.pilots.length
+      ) {
+        console.log(this.turn.getRawValue());
+        this.datesService.createTurn(this.turn.getRawValue()).subscribe(
+          res => {
+            res.date = this.turn.controls.date.value;
+            res.turn_id = res._id;
+            delete res._id;
+            this.reservationOutput.emit({...this.reservation, ...res});
+          },
+          error => {
+            this.error.show = true;
+            this.error.text = error;
+          }
+        );
       } else {
         this.error.show = true;
-        this.error.text = 'Aun no seleccionas todos los gokarts de tu reservación';
+        this.error.text =
+          'Aun no seleccionas todos los gokarts de tu reservación';
       }
     }
   }

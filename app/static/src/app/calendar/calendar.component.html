@@ -12,8 +12,8 @@
           <div class="col-4">
             <h3 class="month">{{ viewDate | calendarDate:(view + 'ViewTitle'): 'es' | titlecase }}</h3>
           </div>
-          <div class="col-4" role="group">
-            <a class="pointer" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate" (click)="increment()" *ngIf="!nextBtnDisabled">
+          <div *ngIf="!monthLimit" class="col-4" role="group">
+            <a  class="pointer" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate" (click)="increment()">
               ></a>
           </div>
         </div>
