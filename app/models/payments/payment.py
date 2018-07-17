@@ -194,9 +194,9 @@ class Payment(BaseModel):
             payment.promo = promo
         reservation.payment = payment
         # Guardar en la coleccion de reservaciones reales
-        #reservation.save_to_mongo(COLLECTION)
+        reservation.save_to_mongo(COLLECTION)
         # Borrar de la coleccion de reservaciones temporales
-        #reservation.delete_from_mongo(COLLECTION_TEMP)
+        reservation.delete_from_mongo(COLLECTION_TEMP)
         # Nulificar las fechas tentativas de reservacion
         for turn in reservation.turns:
             TurnModel.remove_allocation_dates(reservation, turn)

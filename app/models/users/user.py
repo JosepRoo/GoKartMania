@@ -285,7 +285,6 @@ class User(BaseModel):
 </body>
 </html>
         """.format(qr_url)
-        print(qr_url)
         email.html(email_html)
 
         try:
