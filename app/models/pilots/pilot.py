@@ -239,6 +239,7 @@ class Pilot(BaseModel):
                                                     <div style="padding-left:25px; color: white;">
                                                       {}
                                                     </div>""".format(pilots_detail)
+                qr_url = "http://138.197.209.15/qr/" + qr_code
                 email_html += """
                                                   <p>
                                                     <span align="center" style="font-weight: 700;">Presenta en taquilla el siguiente <span class="primary">código QR</span> para comenzar tu carrera.</span></p>
@@ -253,7 +254,7 @@ class Pilot(BaseModel):
                                           <table width="100%">
                                             <tr>
                                               <td align="center" style="font-weight: 400; padding-bottom:15px; font-size: 20px; color: white; text-align: center;">
-                                                <img src="138.197.209.15/qr/{}">
+                                                <img src={} alt='QR Code' />
                                                 <br>
                                                 <br>
                                                 <span style="font-weight: 700; font-size: 32px; text-align: center;">En sus marcas. Listos.
@@ -282,7 +283,7 @@ class Pilot(BaseModel):
 
                 </body>
                 </html>
-                        """.format(qr_code)
+                        """.format(qr_url)
 
                 email.html(email_html)
                 try:

@@ -55,7 +55,7 @@ class Admin(Resource):
 
 class WhoReserved(Resource):
     @staticmethod
-    @Utils.login_required
+    @Utils.admin_login_required
     def get(date, schedule, turn):
         """
         Finds the pilots that reserved in the given date, schedule, and turn
@@ -74,7 +74,7 @@ class WhoReserved(Resource):
 
 class PartyAvgSize(Resource):
     @staticmethod
-    @Utils.login_required
+    @Utils.admin_login_required
     def get():
         """
         Calculates the average of all races of all times
@@ -88,7 +88,7 @@ class PartyAvgSize(Resource):
 
 class BusyHours(Resource):
     @staticmethod
-    @Utils.login_required
+    @Utils.admin_login_required
     def get():
         """
         Calculates the hour's business per weekday
@@ -102,7 +102,7 @@ class BusyHours(Resource):
 
 class LicensedPilots(Resource):
     @staticmethod
-    @Utils.login_required
+    @Utils.admin_login_required
     def get():
         """
         Retrieves the pilots that have requested license
@@ -116,7 +116,7 @@ class LicensedPilots(Resource):
 
 class ReservationIncomeQty(Resource):
     @staticmethod
-    @Utils.login_required
+    @Utils.admin_login_required
     def get(start_date, end_date):
         """
         Calculates the total income and quantity of reservations in a given date range
@@ -130,7 +130,7 @@ class ReservationIncomeQty(Resource):
 
 class PromosDiscountQty(Resource):
     @staticmethod
-    @Utils.login_required
+    @Utils.admin_login_required
     def get(start_date, end_date):
         """
         Calculates the total discount and quantity of promos in a given date range
@@ -144,7 +144,7 @@ class PromosDiscountQty(Resource):
 
 class ReservationAvgPrice(Resource):
     @staticmethod
-    @Utils.login_required
+    @Utils.admin_login_required
     def get():
         """
         Calculates the average price of all reservations of all times
@@ -158,7 +158,7 @@ class ReservationAvgPrice(Resource):
 
 class AdminPayments(Resource):
     @staticmethod
-    @Utils.login_required
+    @Utils.admin_login_required
     def post(user_id=None):
         """
         Inserts a new payment to the current reservation and sends confirmation emails
