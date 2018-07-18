@@ -2,7 +2,9 @@ import datetime
 import os
 
 from flask import session
+
 from app import Database
+from app.common.utils import Utils
 from app.models.admins.errors import InvalidEmail, InvalidLogin
 from app.models.baseModel import BaseModel
 from app.models.admins.constants import COLLECTION
@@ -13,6 +15,7 @@ from app.models.emails.email import Email
 from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.promos.promotion import Promotion
 from app.models.reservations.errors import ReservationNotFound
+from config import basedir
 
 """
 In this user model the email will be used to identify each user although an _id will be created for each instance of it
@@ -61,6 +64,7 @@ class Admin(BaseModel):
         :return: POST method requesting an email to be sent to the user making the reservation
         """
         email = Email(to='jromagosa@sitsolutions.org', subject='Confirmación de promoción', qr_code=None)
+        # email = Email(to='areyna@sitsolutions.org', subject='Confirmación de promoción', qr_code=None)
 
         email_html = """
 <html>
@@ -166,8 +170,7 @@ class Admin(BaseModel):
                                                 promo.description, promo.value)
         email_html += """
                                   <p>
-                                    <span align="center" style="font-weight: 700;">Entra en el siguiente enlace para confirmar, modificar o desactivar esta promoción:
-                                    <span class="primary"><a href='http://gokartmania.com.mx/#/admin/promos/{}'></span></span>
+                                    <span align="center" style="font-weight: 700;">Entra en el siguiente <a href='http://gokartmania.com.mx/#/admin/promos/{}'>enlace</a> para confirmar, modificar o desactivar esta promoción.</span>
                                   </p>
                               </td>
                             </tr>
@@ -212,8 +215,10 @@ class Admin(BaseModel):
                    "Valor de la promo::\n"
                    "${}\n\n"
                    "Presenta en taquilla el codigo adjunto para comenzar tu carrera.\n\n"
-                   "En sus marcas. Listos. ¡Fuera!".format(promo.existence, promo.start_date, promo.end_date, promo.type,
-                                                promo.creator, promo.created_date, promo.description, promo.value))
+                   "En sus marcas. Listos. ¡Fuera!".format(promo.existence, promo.start_date, promo.end_date,
+                                                           promo.type,
+                                                           promo.creator, promo.created_date, promo.description,
+                                                           promo.value))
 
         email.html(email_html)
 
@@ -239,20 +244,20 @@ class Admin(BaseModel):
         expressions = list()
         expressions.append({"$match": {}})
         expressions.append({"$project": {
-                "weekday": {"$dayOfWeek": "$date"},
-                "schedules": "$schedules"
-            }})
+            "weekday": {"$dayOfWeek": "$date"},
+            "schedules": "$schedules"
+        }})
         expressions.append({"$unwind": "$schedules"})
         expressions.append({"$unwind": "$schedules.turns"})
         expressions.append({"$project": {
-                "pilots_size": {"$size": "$schedules.turns.pilots"},
-                "weekday": 1,
-                "schedules": 1
-            }})
+            "pilots_size": {"$size": "$schedules.turns.pilots"},
+            "weekday": 1,
+            "schedules": 1
+        }})
         expressions.append({"$group": {
-                "_id": {"weekday": "$weekday", "schedule": "$schedules.hour"},
-                "party_size": {"$sum": "$pilots_size"}
-            }})
+            "_id": {"weekday": "$weekday", "schedule": "$schedules.hour"},
+            "party_size": {"$sum": "$pilots_size"}
+        }})
         expressions.append({"$sort": {"_id.weekday": 1, "_id.schedule": 1}})
         result = list(Database.aggregate(DATES, expressions))
         return result
@@ -262,20 +267,20 @@ class Admin(BaseModel):
         expressions = list()
         expressions.append({"$match": {}})
         expressions.append({"$project": {
-                "weekday": {"$dayOfWeek": "$date"},
-                "schedules": "$schedules"
-            }})
+            "weekday": {"$dayOfWeek": "$date"},
+            "schedules": "$schedules"
+        }})
         expressions.append({"$unwind": "$schedules"})
         expressions.append({"$unwind": "$schedules.turns"})
         expressions.append({"$project": {
-                "pilots_size": {"$size": "$schedules.turns.pilots"},
-                "weekday": 1,
-                "schedules": 1
-            }})
+            "pilots_size": {"$size": "$schedules.turns.pilots"},
+            "weekday": 1,
+            "schedules": 1
+        }})
         expressions.append({"$group": {
-                "_id": {"weekday": "$weekday", "schedule": "$schedules.hour"},
-                "party_size": {"$sum": "$pilots_size"}
-            }})
+            "_id": {"weekday": "$weekday", "schedule": "$schedules.hour"},
+            "party_size": {"$sum": "$pilots_size"}
+        }})
         expressions.append({"$sort": {"_id.weekday": 1, "_id.schedule": 1}})
         expressions.append({"$group": {
             "_id": {"schedule": "$_id.schedule"},
@@ -293,8 +298,8 @@ class Admin(BaseModel):
         expressions.append({"$match": {"pilots.licensed": True}})
         expressions.append({"$project": {"pilots": "$pilots"}})
         expressions.append({"$group": {
-                "_id": {"name": "$pilots.name", "last_name": "$pilots.last_name"}
-            }})
+            "_id": {"name": "$pilots.name", "last_name": "$pilots.last_name"}
+        }})
         result = list(Database.aggregate(RESERVATIONS, expressions))
         return result
 
@@ -328,4 +333,50 @@ class Admin(BaseModel):
         expressions.append({"$match": {"discount": {"$ne": None}}})
         expressions.append({"$group": {"_id": None, "discount": {"$sum": "$discount"}, "qty": {"$sum": 1}}})
         result = list(Database.aggregate(RESERVATIONS, expressions))
+        return result
+
+    @staticmethod
+    def build_reservations_report(first_date, last_date):
+        first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
+        last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        expressions = list()
+        expressions.append({'$match': {'date': {'$gte': first_date, '$lte': last_date}}})
+        expressions.append({"$sort": {"date": 1}})
+        expressions.append({"$project": {"_id": 0,
+                                         "ID_Reservación": "$_id",
+                                         "Fecha": {"$dateToString": {"format": "%Y-%m-%d", "date": "$date"}},
+                                         "Número_Pilotos": {"$size": "$pilots"},
+                                         "Número_Carreras": {"$size": "$turns"},
+                                         "Precio_Total": "$amount"}})
+        result = list(Database.aggregate(RESERVATIONS, expressions))
+
+        date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        excel_path = f'{basedir}/app/reports/reservations/ReporteReservaciones_{date}.xlsx'
+        Utils.generate_report(result, excel_path, "Reservaciones")
+        return result
+
+    @staticmethod
+    def build_pilots_report():
+        expressions = list()
+        expressions.append({'$match': {}})
+        expressions.append({"$addFields": {"pilots_size": {"$size": "$pilots"}}})
+        expressions.append({"$unwind": "$pilots"})
+        expressions.append({"$match": {"pilots.licensed": True}})
+        expressions.append({"$project": {"turns": {"$size": "$turns"},
+                                         "total_spent": {"$divide": ["$amount", "$pilots_size"]}, "pilots": "$pilots"}})
+        expressions.append({"$group": {
+                "_id": {"Nombre": "$pilots.name", "Apellido": "$pilots.last_name", "Email": "$pilots.email",
+                        "Ubicación": "$pilots.location", "Fecha_Nacimiento": "$pilots.birth_date",
+                        "Código_Postal": "$pilots.postal_code", "Nickname": "$pilots.nickname", "Ciudad": "$pilots.city"},
+                "Número_Reservaciones": {"$sum": 1}, "Número_Carreras": {"$sum": "$turns"},
+                "Total_Gastado": {"$sum": "$total_spent"}
+            }})
+        expressions.append({"$addFields": {"_id.Número_Reservaciones": "$Número_Reservaciones",
+                                           "_id.Número_Carreras": "$Número_Carreras",
+                                           "_id.Total_Gastado": "$Total_Gastado"}})
+        expressions.append({"$replaceRoot": {"newRoot": "$_id"}})
+        result = list(Database.aggregate(RESERVATIONS, expressions))
+        date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        excel_path = f'{basedir}/app/reports/pilots/ReportePilotos_{date}.xlsx'
+        Utils.generate_report(result, excel_path, "Pilotos")
         return result

@@ -26,10 +26,10 @@ class Dates(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
     @staticmethod
-    @Utils.login_required
+    @Utils.admin_login_required
     def post():
         """
         Inserts date objects to the collection in the month and year given in the parameters
@@ -38,13 +38,13 @@ class Dates(Resource):
         try:
             data = PARSER.parse_args()
             month_dates = calendar.monthrange(data.get('year'), data.get('month'))[1]
-            for i in range(1):
+            for i in range(month_dates):
                 DateModel.add(data, i+1)
             return Response(success=True, message="Registro del mes exitoso").json(), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
     @staticmethod
     def put(start_date, end_date):
@@ -60,7 +60,7 @@ class Dates(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
 
 class AvailableDatesUser(Resource):
@@ -79,7 +79,7 @@ class AvailableDatesUser(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
 
 class AvailableDatesAdmin(Resource):
@@ -97,7 +97,7 @@ class AvailableDatesAdmin(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
 
 class AvailableSchedulesUser(Resource):
@@ -115,7 +115,7 @@ class AvailableSchedulesUser(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
 
 class AvailableSchedulesAdmin(Resource):
@@ -132,4 +132,4 @@ class AvailableSchedulesAdmin(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500

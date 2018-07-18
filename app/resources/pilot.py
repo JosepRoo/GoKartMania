@@ -31,7 +31,7 @@ class Pilots(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
     @staticmethod
     @Utils.login_required
@@ -49,63 +49,11 @@ class Pilots(Resource):
                             )
         pilots = parser.parse_args()
 
-        """
-        nested_parser.add_argument('name',
-                                    type=str,
-                                    location=('pilots',),
-                                    required=True,
-                                    help="Este campo no puede ser dejado en blanco."
-                                    )
-        nested_parser.add_argument('last_name',
-                                    type=str,
-                                    location=('pilots',),
-                                    required=False,
-                                    help="Este campo no puede ser dejado en blanco."
-                                    )
-        nested_parser.add_argument('location',
-                                    type=str,
-                                    location=('pilots',),
-                                    required=False,
-                                    help="Este campo no puede ser dejado en blanco."
-                                    )
-        nested_parser.add_argument('birth_date',
-                                    type=str,
-                                    location=('pilots',),
-                                    required=False,
-                                    help="Este campo no puede ser dejado en blanco."
-                                    )
-        nested_parser.add_argument('postal_code',
-                                    type=str,
-                                    location=('pilots',),
-                                    required=False,
-                                    help="Este campo no puede ser dejado en blanco."
-                                    )
-        nested_parser.add_argument('nickname',
-                                    type=str,
-                                    location=('pilots',),
-                                    required=False,
-                                    help="Este campo no puede ser dejado en blanco."
-                                    )
-        nested_parser.add_argument('city',
-                                    type=str,
-                                    location=('pilots',),
-                                    required=False,
-                                    help="Este campo no puede ser dejado en blanco."
-                                    )
-        nested_parser.add_argument('name',
-                                    type=str,
-                                    location=('pilots',),
-                                    required=False,
-                                    help="Este campo no puede ser dejado en blanco."
-                                    )
-        pilot_data = nested_one_parser.parse_args(req=pilots)
-        print(pilot_data)
-        """
         try:
             reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
             pilot_number = len(reservation.pilots)
             if pilot_number >= 8:
-                return Response(message="La reservacion ya no puede aceptar mas pilotos.").json(), 403
+                return Response(message="La reservación ya no puede aceptar más pilotos.").json(), 403
             for pilot in pilots.get('pilots'):
                 for item in list(pilot.keys()):
                     if item not in [a.name for a in PARSER.args]:
@@ -120,7 +68,7 @@ class Pilots(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
 
 class Pilot(Resource):
@@ -140,7 +88,7 @@ class Pilot(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
     @staticmethod
     @Utils.login_required
@@ -159,7 +107,7 @@ class Pilot(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
     @staticmethod
     @Utils.login_required
@@ -177,4 +125,4 @@ class Pilot(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500

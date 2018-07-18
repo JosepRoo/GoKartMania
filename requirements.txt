@@ -20,4 +20,6 @@ python-crontab==2.3.4
 boto==2.48.0
 boto3==1.7.48
 Flask-Compress==1.4.0
+xlsxwriter==1.0.5
+pandas==0.23.3
 uwsgi

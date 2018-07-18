@@ -96,7 +96,7 @@ class Turn(BaseModel):
                 for turn in schedule.get('turns'):
                     if turn.get('turn') == int(new_turn.get('turn_number')):
                         return turn.get('status')
-        raise TurnNotFound("El turno con el ID dado no existe.")
+        return False
 
     @staticmethod
     def check_positions_availability(turn_positions, user_positions):
