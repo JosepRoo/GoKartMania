@@ -62,7 +62,6 @@ class Reservations(Resource):
             return Response(message=e.message).json(), 401
         except Exception as e:
             return Response.generic_response(e), 500
-
     @staticmethod
     @Utils.login_required
     def get():
@@ -83,7 +82,6 @@ class Reservations(Resource):
             return Response(message=e.message).json(), 401
         except Exception as e:
             return Response.generic_response(e), 500
-
 
 class ReservationWithPromo(Resource):
     @staticmethod

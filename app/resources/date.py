@@ -62,7 +62,6 @@ class Dates(Resource):
         except Exception as e:
             return Response.generic_response(e), 500
 
-
 class AvailableDatesUser(Resource):
     @staticmethod
     @Utils.login_required
@@ -116,7 +115,6 @@ class AvailableSchedulesUser(Resource):
             return Response(message=e.message).json(), 401
         except Exception as e:
             return Response.generic_response(e), 500
-
 
 class AvailableSchedulesAdmin(Resource):
     @staticmethod

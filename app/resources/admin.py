@@ -113,7 +113,6 @@ class LicensedPilots(Resource):
         except Exception as e:
             return Response.generic_response(e), 500
 
-
 class ReservationIncomeQty(Resource):
     @staticmethod
     @Utils.admin_login_required
