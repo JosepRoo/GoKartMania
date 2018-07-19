@@ -52,4 +52,4 @@ class Payments(Resource):
         except PromotionErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500

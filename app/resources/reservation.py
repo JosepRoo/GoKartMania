@@ -27,7 +27,7 @@ class Reservations(Resource):
         except UserErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
     @staticmethod
     @Utils.login_required
@@ -45,7 +45,7 @@ class Reservations(Resource):
         except UserErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
     @staticmethod
     @Utils.login_required
@@ -61,8 +61,7 @@ class Reservations(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
-
+            return Response.generic_response(e), 500
     @staticmethod
     @Utils.login_required
     def get():
@@ -82,8 +81,7 @@ class Reservations(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
-
+            return Response.generic_response(e), 500
 
 class ReservationWithPromo(Resource):
     @staticmethod
@@ -102,4 +100,4 @@ class ReservationWithPromo(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500

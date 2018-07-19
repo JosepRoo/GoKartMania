@@ -41,15 +41,13 @@ class User(BaseModel):
         """
         email = kwargs['email']
         if not Utils.email_is_valid(email):
-            raise InvalidEmail("El email dado no tiene un formato valido.")
+            raise InvalidEmail("El email dado no tiene un formato válido.")
         user = User.get_by_email(email)
         if user is None:
             new_user = cls(**kwargs)
-            new_user.reservations.append(session['reservation'])
             new_user.save_to_mongo(COLLECTION)
         else:
             new_user = cls(**kwargs, _id=user._id)
-            new_user.reservations.append(session['reservation'])
             new_user.update_mongo(COLLECTION)
         return new_user
 

@@ -11,6 +11,7 @@ from app.models.promos.promotion import Coupons as CouponsModel
 from app.models.promos.constants import COLLECTION as PROMO_COLLECTION
 from app.models.reservations.constants import COLLECTION_TEMP, COLLECTION
 from app.models.users.user import User
+from app.models.users.constants import COLLECTION as USER
 from app.models.baseModel import BaseModel
 from app.models.payments.constants import CURRENCY, PAYMENT_COUNTRY, URL, URL_CHARGE, URL_TOKEN, HEADERS
 from app.models.payments.errors import PaymentFailed, TokenisationFailed
@@ -118,7 +119,7 @@ class Payment(BaseModel):
         payment = cls(**new_payment)
 
         if promo and promo.type == 'Reservación':
-            return cls.commit_reservation_payment(payment, 0, reservation.license_price, reservation, promo, coupon)
+            return cls.commit_reservation_payment(payment, 0, reservation.license_price, reservation, promo, coupon, user)
         else:
             if new_payment.get('payment_type') == 'Etomin':
                 auth = requests.get(URL)
@@ -132,14 +133,14 @@ class Payment(BaseModel):
                         payment.id_reference = obj_charge.get("authorization_code")
                         payment.etomin_number = obj_charge.get("card_token")
                         return cls.commit_reservation_payment(payment, reservation.amount, reservation.license_price,
-                                                              reservation, promo, coupon)
+                                                              reservation, promo, coupon, user)
                     else:
                         payment.status = "RECHAZADO"
                         payment.etomin_number = etomin_number
                         raise PaymentFailed(obj_charge.get("message"))
             else:
                 return cls.commit_reservation_payment(payment, reservation.amount, reservation.license_price,
-                                                      reservation, promo, coupon)
+                                                      reservation, promo, coupon, user)
 
     @staticmethod
     def calculate_turns_price(turns_size, prices_size, prices):
@@ -174,7 +175,7 @@ class Payment(BaseModel):
         return params
 
     @staticmethod
-    def commit_reservation_payment(payment, amount, license_price, reservation: Reservation, promo, coupon):
+    def commit_reservation_payment(payment, amount, license_price, reservation: Reservation, promo, coupon, user):
         payment.status = "APROBADO"
         payment.amount = amount
         payment.license_price = license_price
@@ -200,4 +201,7 @@ class Payment(BaseModel):
         # Nulificar las fechas tentativas de reservacion
         for turn in reservation.turns:
             TurnModel.remove_allocation_dates(reservation, turn)
+        # Agregar la reservación al usuario
+        user.reservations.append(reservation._id)
+        user.update_mongo(USER)
         return payment

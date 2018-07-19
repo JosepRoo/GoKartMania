@@ -1,5 +1,7 @@
 import datetime
 import os
+import xlsxwriter
+import pandas as pd
 
 from flask import session
 from passlib.hash import pbkdf2_sha512
@@ -7,8 +9,9 @@ from app import Response
 import re
 from functools import wraps
 
-
 #utility class used thorughout other classes to perform common functions that dont fit in any other class
+
+
 class Utils(object):
 
     @staticmethod
@@ -77,4 +80,19 @@ class Utils(object):
             else:
                 return Response(message="Uso de variable de sesión no autorizada.").json(), 401
         return wrap
+
+    @staticmethod
+    def generate_report(arr_dict, path, type):
+        # Create a Pandas dataframe from the data.
+        data = {key: [item[key] if key in item else 0 for item in arr_dict] for key in arr_dict[-1].keys()}
+        df = pd.DataFrame(data)
+
+        # Create a Pandas Excel writer using XlsxWriter as the engine.
+        writer = pd.ExcelWriter(path, engine='xlsxwriter')
+
+        # Convert the dataframe to an XlsxWriter Excel object.
+        df.to_excel(writer, sheet_name=type)
+
+        # Close the Pandas Excel writer and output the Excel file.
+        writer.save()
 

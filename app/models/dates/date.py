@@ -1,6 +1,6 @@
 from app.common.database import Database
 from app.models.baseModel import BaseModel
-from app.models.dates.constants import COLLECTION, COLLECTION_DATES
+from app.models.dates.constants import COLLECTION
 import datetime
 from random import randint, choice
 from app.models.reservations.reservation import Reservation
@@ -33,8 +33,7 @@ class Date(BaseModel):
         new_day = cls(date=d, schedules=[])
         for i in range(11, 22):
             ScheduleModel.add(new_day, {'hour': f'{i}', 'turns': []})
-        # new_day.save_to_mongo(COLLECTION)
-        new_day.save_to_mongo(COLLECTION_DATES)
+        new_day.save_to_mongo(COLLECTION)
         return new_day
 
     @classmethod
@@ -94,19 +93,28 @@ class Date(BaseModel):
         for date in availability:
             availability[date].pop('cupo')
             now = datetime.datetime.now().astimezone(get_localzone())
+            today = now.day
+            reservation_day = datetime.datetime.strptime(date, "%Y-%m-%d").day
             for schedule in availability[date]:
-                # if int(schedule) > now.hour:
-                turns = []
-                schedule_status = availability[date][schedule].pop('cupo')
-                for turn in availability[date][schedule]:
-                    turn_status = availability[date][schedule][turn].pop('cupo')
-                    turns.append({"turn": turn, "status": turn_status,
-                                  "positions": [
-                                      {"position": position[-1], "status": availability[date][schedule][turn][position]}
-                                      for position in availability[date][schedule][turn]]})
-                schedule = {'schedule': schedule, 'cupo': schedule_status, 'turns': turns}
-                availability_arr.append(schedule)
+                if today == reservation_day:
+                    if int(schedule) > now.hour:
+                        availability_arr.append(cls.fill_availability_arr(availability, date, schedule))
+                elif reservation_day > today:
+                    availability_arr.append(cls.fill_availability_arr(availability, date, schedule))
         return availability_arr
+
+    @staticmethod
+    def fill_availability_arr(availability, date, schedule):
+        turns = []
+        schedule_status = availability[date][schedule].pop('cupo')
+        for turn in availability[date][schedule]:
+            turn_status = availability[date][schedule][turn].pop('cupo')
+            turns.append({"turn": turn, "status": turn_status,
+                          "positions": [
+                              {"position": position[-1], "status": availability[date][schedule][turn][position]}
+                              for position in availability[date][schedule][turn]]})
+        schedule = {'schedule': schedule, 'cupo': schedule_status, 'turns': turns}
+        return schedule
 
     @classmethod
     def get_available_schedules_admin(cls, date):
@@ -297,7 +305,7 @@ class Date(BaseModel):
         """
         expressions = list()
         expressions.append({"$group": {"_id": None, "maxDate": {"$max": "$date"}}})
-        result = list(Database.aggregate(COLLECTION_DATES, expressions))
+        result = list(Database.aggregate(COLLECTION, expressions))
         now = result[0].get('maxDate') + datetime.timedelta(days=1)
         month_dates = calendar.monthrange(now.year, now.month)[1]
         for i in range(month_dates):

@@ -50,7 +50,7 @@ class Admin(Resource):
         except AdminErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
 
 class WhoReserved(Resource):
@@ -69,7 +69,7 @@ class WhoReserved(Resource):
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
 
 class PartyAvgSize(Resource):
@@ -83,7 +83,7 @@ class PartyAvgSize(Resource):
         try:
             return AdminModel.get_party_avg_size(), 200
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
 
 class BusyHours(Resource):
@@ -97,7 +97,7 @@ class BusyHours(Resource):
         try:
             return AdminModel.get_busy_hours(), 200
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
 
 class LicensedPilots(Resource):
@@ -111,8 +111,7 @@ class LicensedPilots(Resource):
         try:
             return AdminModel.get_licensed_pilots(), 200
         except Exception as e:
-            return Response(message=e).json(), 500
-
+            return Response.generic_response(e), 500
 
 class ReservationIncomeQty(Resource):
     @staticmethod
@@ -125,7 +124,7 @@ class ReservationIncomeQty(Resource):
         try:
             return AdminModel.get_reservations_income_qty(start_date, end_date), 200
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
 
 class PromosDiscountQty(Resource):
@@ -139,7 +138,36 @@ class PromosDiscountQty(Resource):
         try:
             return AdminModel.get_promos_discount_qty(start_date, end_date), 200
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
+
+
+class BuildReservationsReport(Resource):
+    @staticmethod
+    @Utils.admin_login_required
+    def get(start_date, end_date):
+        """
+        Builds a report containing the number of pilots, number of races,
+        and the price of a reservation in a given date range.
+        :return: XLSX report
+        """
+        try:
+            return AdminModel.build_reservations_report(start_date, end_date), 200
+        except Exception as e:
+            return Response.generic_response(e), 500
+
+
+class BuildPilotsReport(Resource):
+    @staticmethod
+    @Utils.admin_login_required
+    def get():
+        """
+        Builds a report containing the information of licensed pilots, their total reservations and races.
+        :return: XLSX report
+        """
+        try:
+            return AdminModel.build_pilots_report(), 200
+        except Exception as e:
+            return Response.generic_response(e), 500
 
 
 class ReservationAvgPrice(Resource):
@@ -153,7 +181,7 @@ class ReservationAvgPrice(Resource):
         try:
             return AdminModel.get_reservation_avg_price(), 200
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
 
 class AdminPayments(Resource):
@@ -191,4 +219,4 @@ class AdminPayments(Resource):
         except PromotionErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500

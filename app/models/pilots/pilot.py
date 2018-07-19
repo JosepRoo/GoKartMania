@@ -7,6 +7,7 @@ from app.models.baseModel import BaseModel
 from app.models.emails.email import Email
 from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.pilots.errors import PilotNotFound
+from app.models.pilots.constants import COLLECTION as PILOTS
 from app.models.reservations.constants import COLLECTION_TEMP, TIMEOUT
 from app.models.dates.constants import COLLECTION
 from app.models.reservations.reservation import Reservation
@@ -18,8 +19,8 @@ This is the pilot model object which holds the information of the pilot if they 
 
 
 class Pilot(BaseModel):
-    def __init__(self, name, licensed, last_name=None, email=None, location=None,
-                 birth_date=None, postal_code=None, nickname=None, city=None, _id=None):
+    def __init__(self, name, licensed, last_name, email, location,
+                 birth_date, postal_code, nickname, city, _id=None):
         super().__init__(_id)
         self.name = name
         self.last_name = last_name
@@ -39,7 +40,8 @@ class Pilot(BaseModel):
         :param new_pilot: The new pilot to be added to the reservation
         :return: A brand new pilot
         """
-        pilot = cls(**new_pilot)
+        pilot = cls(**new_pilot, _id=new_pilot.get('email'))
+        pilot.update_mongo(PILOTS)
         reservation.pilots.append(pilot)
         reservation.update_mongo(COLLECTION_TEMP)
         return pilot

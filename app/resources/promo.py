@@ -9,7 +9,7 @@ from app.models.promos.constants import PARSER
 
 class Promos(Resource):
     @staticmethod
-    @Utils.login_required
+    @Utils.admin_login_required
     def post():
         """
         Inserts a new promotion to the Promos Collection
@@ -22,10 +22,10 @@ class Promos(Resource):
         except PromotionErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
     @staticmethod
-    @Utils.login_required
+    @Utils.admin_login_required
     def get(promo_id=None):
         """
         Retrieves the information of all the promotions in the Promo collection or one in particular
@@ -36,10 +36,10 @@ class Promos(Resource):
         except PromotionErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
 
     @staticmethod
-    @Utils.login_required
+    @Utils.admin_login_required
     def put(promo_id):
         """
         Updates the promo with the given parameters
@@ -53,4 +53,4 @@ class Promos(Resource):
         except AdminErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
-            return Response(message=e).json(), 500
+            return Response.generic_response(e), 500
