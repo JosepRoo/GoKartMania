@@ -7,7 +7,7 @@ from app import Database
 from app.common.utils import Utils
 from app.models.admins.errors import InvalidEmail, InvalidLogin
 from app.models.baseModel import BaseModel
-from app.models.admins.constants import COLLECTION
+from app.models.admins.constants import COLLECTION, SUPERADMINS
 from app.models.dates.constants import COLLECTION as DATES
 from app.models.reservations.constants import COLLECTION as RESERVATIONS
 from app.models.dates.date import Date
@@ -18,7 +18,7 @@ from app.models.reservations.errors import ReservationNotFound
 from config import basedir
 
 """
-In this user model the email will be used to identify each user although an _id will be created for each instance of it
+This is the admin user model that will be used to manage different dashboard information and analytics
 """
 
 
@@ -41,19 +41,33 @@ class Admin(BaseModel):
 
     @classmethod
     def admin_login(cls, data):
+        """
+        Logins the user admin given its name, email, and password, or throws Incorrect Credentials error
+        :param data: The admin credentials
+        :return: Admin object
+        """
         email = data.get('email')
         if email[email.index('@') + 1:] != 'gokartmania.com':
             raise InvalidEmail("Credenciales incorrectas")
         # Esta contraseña debería ser comparada con la que guardemos en la BD
-        if data.pop('password') != os.environ.get('GKM_PB_KEY'):
+        password = data.pop('password')
+        if password != os.environ.get('GKM_PB_KEY') and password != Utils.generate_password():
             raise InvalidLogin("Credenciales incorrectas")
         admin = Admin.get_by_email(email)
         if admin is None:
             new_admin = cls(**data)
-            new_admin.save_to_mongo(COLLECTION)
+            if password == Utils.generate_password():
+                session['sudo'] = new_admin._id
+                new_admin.save_to_mongo(SUPERADMINS)
+            else:
+                new_admin.save_to_mongo(COLLECTION)
         else:
             new_admin = cls(**data, _id=admin._id)
-            new_admin.update_mongo(COLLECTION)
+            if password == Utils.generate_password():
+                session['sudo'] = new_admin._id
+                new_admin.update_mongo(SUPERADMINS)
+            else:
+                new_admin.update_mongo(COLLECTION)
         session['admin_id'] = new_admin._id
         return new_admin
 
@@ -61,6 +75,7 @@ class Admin(BaseModel):
     def send_alert_message(promo: Promotion):
         """
         Sends an email to the super-admin in order to authorise a given promotion
+        :param promo: Promotion object containing the information of the promo to be confirmed
         :return: POST method requesting an email to be sent to the user making the reservation
         """
         email = Email(to='jromagosa@sitsolutions.org', subject='Confirmación de promoción', qr_code=None)
@@ -229,6 +244,13 @@ class Admin(BaseModel):
 
     @staticmethod
     def who_reserved(date, schedule, turn):
+        """
+        Finds the pilots in a particular reservation
+        :param date: The date of the reservation to be found
+        :param schedule: The schedule of the reservation to be found
+        :param turn: The turn of the reservation to be found
+        :return: The information of the pilots in the found reservation
+        """
         for d in Database.find(DATES, {}):
             prob_date = Date(**d)
             if datetime.datetime.strftime(prob_date.date, "%Y-%m-%d") == date:
@@ -241,6 +263,10 @@ class Admin(BaseModel):
 
     @staticmethod
     def get_party_avg_size():
+        """
+        Calculates the party average size
+        :return:
+        """
         expressions = list()
         expressions.append({"$match": {}})
         expressions.append({"$project": {
