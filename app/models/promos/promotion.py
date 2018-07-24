@@ -11,7 +11,7 @@ from app.common.database import Database
 from app.models.promos.constants import COLLECTION
 from app.models.promos.errors import WrongPromotionType, PromotionNotFound, PromotionUsed, PromotionExpired, \
     PromotionUnauthorised, CouponNotFound
-from app.models.admins.constants import COLLECTION as ADMIN_COLLECTION
+from app.models.admins.constants import COLLECTION as ADMIN_COLLECTION, SUPERADMINS
 
 """
 This is the promotion model
@@ -99,13 +99,11 @@ class Promotion(BaseModel):
         promo = Database.find_one(COLLECTION, {'_id': promo_id})
         if promo is None:
             raise PromotionNotFound("La promo con el ID dado no existe.")
-        password = updated_promo.pop('password')
-        if password == Utils.generate_password():
-            promo = cls(**updated_promo, _id=promo_id, coupons=promo.get('coupons'), creator=promo.get('creator'))
-            promo.authoriser = "Admnistrador"
-            promo.update_mongo(COLLECTION)
-            return promo
-        raise InvalidLogin("Credenciales incorrectas.")
+        updated_promo.pop('password')
+        promo = cls(**updated_promo, _id=promo_id, coupons=promo.get('coupons'), creator=promo.get('creator'))
+        promo.authoriser = "Admnistrador"
+        promo.update_mongo(COLLECTION)
+        return promo
 
     @classmethod
     def get_promos(cls, _id=None):

@@ -1,5 +1,7 @@
 from flask import session
 from flask_restful import Resource
+from werkzeug.exceptions import BadRequest
+
 from app import Response
 from app.common.utils import Utils
 from app.models.admins.errors import AdminErrors
@@ -46,7 +48,7 @@ class Promos(Resource):
             return Response.generic_response(e), 500
 
     @staticmethod
-    @Utils.admin_login_required
+    @Utils.sudo_login_required
     def put(promo_id):
         """
         Updates the promo with the given parameters

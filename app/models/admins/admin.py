@@ -5,7 +5,7 @@ from flask import session
 
 from app import Database
 from app.common.utils import Utils
-from app.models.admins.errors import InvalidEmail, InvalidLogin
+from app.models.admins.errors import InvalidEmail, InvalidLogin, AdminNotFound
 from app.models.baseModel import BaseModel
 from app.models.admins.constants import COLLECTION, SUPERADMINS
 from app.models.dates.constants import COLLECTION as DATES
@@ -38,6 +38,10 @@ class Admin(BaseModel):
         data = Database.find_one(COLLECTION, {"email": email})
         if data is not None:
             return cls(**data)
+        else:
+            data = Database.find_one(SUPERADMINS, {"email": email})
+            if data is not None:
+                return cls(**data)
 
     @classmethod
     def admin_login(cls, data):
@@ -406,3 +410,21 @@ class Admin(BaseModel):
         excel_path = f'{basedir}/app/reports/pilots/ReportePilotos_{date}.xlsx'
         Utils.generate_report(result, excel_path, "Pilotos")
         return result
+
+    @classmethod
+    def get_by_id(cls, _id, collection):
+        """
+        Retrieves the admin object with the given id, or raises an exception if that admin was not found
+        :param _id: ID of the admin to find
+        :param collection: Contains all the admins or super_admins
+        :return: Admin object
+        """
+        admin = Database.find_one(collection, {'_id': _id})
+        if admin:
+            return cls(**admin)
+        else:
+            admin = Database.find_one(SUPERADMINS, {'_id': _id})
+            if admin:
+                return cls(**admin)
+            raise AdminNotFound("El administrador con el ID dado no existe.")
+

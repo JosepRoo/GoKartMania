@@ -4,7 +4,7 @@ from flask_restful import reqparse
 COLLECTION_TEMP = 'temp_reservations'
 COLLECTION = 'real_reservations'
 
-TIMEOUT = datetime.timedelta(minutes=60)
+TIMEOUT = datetime.timedelta(minutes=15)
 
 PARSER = reqparse.RequestParser(bundle_errors=True)
 PARSER.add_argument('type',

@@ -1,4 +1,6 @@
 import datetime
+
+from flask import session
 from flask_restful import reqparse
 
 COLLECTION = 'promos'

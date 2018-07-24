@@ -17,7 +17,7 @@ from app.resources.payment import Payments
 from app.resources.turn import Turns, Turn
 from app.resources.user import User
 from app.resources.pilot import Pilots, Pilot
-from app.resources.reservation import Reservations, ReservationWithPromo
+from app.resources.reservation import Reservations, ReservationWithPromo, ReservationsDates
 from config import config
 
 
@@ -44,6 +44,7 @@ def create_app(config_name):
     api.add_resource(ReservationAvgPrice, '/admin/reservation_avg_price')
 
     api.add_resource(Reservations, '/user/reservations', '/user/reservations/<string:reservation_id>')
+    api.add_resource(ReservationsDates, '/user/reservations/<string:start_date>/<string:end_date>')
     api.add_resource(ReservationWithPromo, '/user/reservations_promo')
 
     api.add_resource(Pilots, '/user/pilots')
