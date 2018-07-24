@@ -1,5 +1,6 @@
 from flask import session
 from flask_restful import Resource, reqparse
+from werkzeug.exceptions import BadRequest
 
 from app import Response
 from app.common.utils import Utils

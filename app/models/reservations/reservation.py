@@ -183,3 +183,12 @@ class Reservation(BaseModel):
         self.amount = amount
         self.update_mongo(COLLECTION_TEMP)
         return self
+
+    @classmethod
+    def get_reservations_in_time(cls, first_date, last_date):
+        first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
+        last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        expressions = list()
+        expressions.append({'$match': {'date': {'$gte': first_date, '$lte': last_date}}})
+        result = list(Database.aggregate(REAL_RESERVATIONS, expressions))
+        return [cls(**reservation) for reservation in result]

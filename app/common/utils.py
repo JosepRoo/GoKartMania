@@ -82,6 +82,16 @@ class Utils(object):
         return wrap
 
     @staticmethod
+    def sudo_login_required(f):
+        @wraps(f)
+        def wrap(*args, **kwargs):
+            if session.get('sudo'):
+                return f(*args, **kwargs)
+            else:
+                return Response(message="Uso de variable de sesión no autorizada.").json(), 401
+        return wrap
+
+    @staticmethod
     def generate_report(arr_dict, path, type):
         # Create a Pandas dataframe from the data.
         data = {key: [item[key] if key in item else 0 for item in arr_dict] for key in arr_dict[-1].keys()}

@@ -62,6 +62,7 @@ class Reservations(Resource):
             return Response(message=e.message).json(), 401
         except Exception as e:
             return Response.generic_response(e), 500
+
     @staticmethod
     @Utils.login_required
     def get():
@@ -82,6 +83,26 @@ class Reservations(Resource):
             return Response(message=e.message).json(), 401
         except Exception as e:
             return Response.generic_response(e), 500
+
+
+class ReservationsDates(Resource):
+    @staticmethod
+    @Utils.login_required
+    def get(start_date, end_date):
+        """
+        Retrieves the information of the reservations in a given date range
+        :param: start_date: The starting date to look for reservations
+        :param: end_date: The ending date to look for reservations
+        :return:
+        """
+        try:
+            reservation = ReservationModel.get_reservations_in_time(start_date, end_date)
+            return [r.json() for r in reservation], 200
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response.generic_response(e), 500
+
 
 class ReservationWithPromo(Resource):
     @staticmethod
