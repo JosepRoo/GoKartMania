@@ -107,4 +107,32 @@ export class AdminService {
         }
       });
   }
+
+
+  //CHECK
+  loginAdmin(body){
+    body.name = "name";
+    return this.http
+    .post<any>(
+      this.apiAdmin,
+      body,
+      {
+        headers: this.headers
+      }
+    )
+    .pipe( res=>{
+      return res;
+    })
+    .catch(e => {
+      if (e.status === 401) {
+        this.location.replaceState('/');
+        this.router.navigate(['/logIn']);
+        return Observable.throw(e.error.message);
+      }
+      if (e.status === 400) {
+        return Observable.throw(e.error.message);
+      }
+    });
+  }
+
 }
