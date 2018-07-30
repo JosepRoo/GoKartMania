@@ -52,12 +52,12 @@ def create_app(config_name):
 
     api.add_resource(Dates, '/dates', '/dates/<string:start_date>/<string:end_date>')
     api.add_resource(AvailableDatesUser, '/available_dates/<string:start_date>/<string:end_date>')
-    api.add_resource(AvailableDatesAdmin, '/admins/available_dates/<string:start_date>/<string:end_date>')
+    api.add_resource(AvailableDatesAdmin, '/admin/available_dates/<string:start_date>/<string:end_date>')
     api.add_resource(AvailableSchedulesUser, '/available_schedules/<string:date>')
-    api.add_resource(AvailableSchedulesAdmin, '/admins/available_schedules/<string:date>')
+    api.add_resource(AvailableSchedulesAdmin, '/admin/available_schedules/<string:date>')
 
     api.add_resource(Turns, '/user/turns')
-    api.add_resource(Turn, '/user/turn/<string:turn_id>')
+    api.add_resource(Turn, '/user/turn/<string:turn_id>', '/user/turn/<string:reservation_id>/<string:turn_id>')
 
     api.add_resource(Payments, '/user/payments/<string:user_id>')
     api.add_resource(AdminPayments, '/admin/payments', '/admin/payments/<string:user_id>')

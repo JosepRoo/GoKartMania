@@ -7,6 +7,11 @@ from app.models.baseModel import BaseModel
 from app.models.reservations.reservation import Reservation
 from config import basedir
 
+"""
+This is the QR model that creates new QR codes and removes from the /app/reservation_qrs those that
+have passed their reservation date
+"""
+
 
 class QR(BaseModel):
     def __init__(self, _id=None, url=None):
@@ -14,7 +19,7 @@ class QR(BaseModel):
         self.url = url
 
     @classmethod
-    def create(cls, reservation: Reservation):
+    def create(cls, reservation: Reservation) -> str:
         """
         Creates a QR and saves an image of an instance in the `reservation_qrs` directory
         :param reservation: Reservation object
@@ -29,7 +34,11 @@ class QR(BaseModel):
         return qr._id + date_str + ".png"
 
     @staticmethod
-    def remove_reservation_qrs():
+    def remove_reservation_qrs() -> None:
+        """
+        Removes from the app/reservation_qrs those that have already been applied or expired
+        :return: None
+        """
         folder = f'{basedir}/app/reservation_qrs'
         for file in os.listdir(folder):
             file_path = os.path.join(folder, file)

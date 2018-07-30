@@ -30,7 +30,7 @@ class Date(BaseModel):
         """
         from app.models.schedules.schedule import Schedule as ScheduleModel
         d = datetime.datetime(new_date.get('year'), new_date.get('month'), day, 21)
-        new_day = cls(date=d, schedules=[])
+        new_day: Date = cls(date=d, schedules=[])
         for i in range(11, 22):
             ScheduleModel.add(new_day, {'hour': f'{i}', 'turns': []})
         new_day.save_to_mongo(COLLECTION)
@@ -49,7 +49,7 @@ class Date(BaseModel):
         dates = []
         query = {'date': {'$gte': first_date, '$lte': last_date}}
         for date in Database.find(COLLECTION, query):
-            new_date = cls(**date)
+            new_date: Date = cls(**date)
             new_date.date = new_date.date.strftime("%Y-%m-%d")
             dates.append(new_date)
         return dates
@@ -70,7 +70,7 @@ class Date(BaseModel):
         return available_dates
 
     @classmethod
-    def get_available_dates_admin(cls, first_date, last_date):
+    def get_available_dates_admin(cls, first_date, last_date) -> list:
         """
         Shows the date objects in the given range with the status of availability
         :param first_date: The start date in range
@@ -92,19 +92,25 @@ class Date(BaseModel):
         availability_arr = []
         for date in availability:
             availability[date].pop('cupo')
-            now = datetime.datetime.now().astimezone(get_localzone())
-            today = now.day
-            reservation_day = datetime.datetime.strptime(date, "%Y-%m-%d").day
+            today = datetime.datetime.now().astimezone(get_localzone())
+            reservation_date = datetime.datetime.strptime(date, "%Y-%m-%d")
             for schedule in availability[date]:
-                if today == reservation_day:
-                    if int(schedule) > now.hour:
+                if today.strftime("%Y-%m-%d") == reservation_date.strftime("%Y-%m-%d"):
+                    if int(schedule) > today.hour:
                         availability_arr.append(cls.fill_availability_arr(availability, date, schedule))
-                elif reservation_day > today:
+                elif reservation_date.strftime("%Y-%m-%d") > today.strftime("%Y-%m-%d"):
                     availability_arr.append(cls.fill_availability_arr(availability, date, schedule))
         return availability_arr
 
     @staticmethod
-    def fill_availability_arr(availability, date, schedule):
+    def fill_availability_arr(availability, date, schedule) -> dict:
+        """
+        Builds a schedule dictionary containing the status of the schedule, the turn and the positions
+        :param availability: The dictionary of availability of all dates
+        :param date: A given date by the user
+        :param schedule: A given schedule by the user
+        :return: A dictionary with schedules, status, and turns
+        """
         turns = []
         schedule_status = availability[date][schedule].pop('cupo')
         for turn in availability[date][schedule]:
@@ -117,7 +123,7 @@ class Date(BaseModel):
         return schedule
 
     @classmethod
-    def get_available_schedules_admin(cls, date):
+    def get_available_schedules_admin(cls, date) -> list:
         """
         Shows the schedule objects in the given date with the status of availability
         :param date: The date to be processed
@@ -127,7 +133,7 @@ class Date(BaseModel):
         return [{'schedules': date['schedules']} for date in dates_status]
 
     @classmethod
-    def build_availability_dict(cls, reservation: Reservation, first_date, last_date):
+    def build_availability_dict(cls, reservation: Reservation, first_date, last_date) -> dict:
         """
         Builds a dictionary that contains the status of availability for each day, schedule, turn, and position
         :param reservation: Reservation object
@@ -141,6 +147,7 @@ class Date(BaseModel):
         total_pilots = len(reservation.pilots)
         availability_dict = {}
 
+        # Builds an array containing only the types of the Dates in the given range
         expressions = list()
         expressions.append({'$match': {'date': {'$gte': first_date, '$lte': last_date}}})
         expressions.append({'$unwind': '$schedules'})
@@ -157,16 +164,22 @@ class Date(BaseModel):
             availability_dict[date_str] = {}
             busy_schedules = 0
             empty_schedules = 0
+            # Counts how many days, schedules, and turns are occupied
+            # 0 - Completely occupied
+            # 1 - Moderately occupied
+            # 2 - Completely empty
             for schedule in new_date.schedules:
                 availability_dict[date_str][schedule.hour] = {}
                 busy_turns = 0
                 for turn in schedule.turns:
                     availability_dict[date_str][schedule.hour][turn.turn_number] = {}
                     for k in range(1, 9):
+                        # Looks for any pre-occupied positions by other pilots
                         if k in [pilot.position for pilot in turn.pilots]:
                             availability_dict[date_str][schedule.hour][turn.turn_number][f'pos{k}'] = 0
                         else:
                             availability_dict[date_str][schedule.hour][turn.turn_number][f'pos{k}'] = 1
+                    # Checks that there are at least two turns of Adults or None between Kids reservation
                     if turn.type is None:
                         f = lambda x: 0 if x < 0 else x
                         if "Niños" in turn_types[f(i - 2): i] + turn_types[i + 1: i + 3]:
@@ -174,6 +187,8 @@ class Date(BaseModel):
                             busy_turns += 1
                         else:
                             availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 2
+                    # Ensures that the type of the reservation matches the turn selected
+                    # and that the party size fits in that turn
                     elif turn.type != reservation.type or total_pilots + len(turn.pilots) > 8:
                         availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 0
                         busy_turns += 1
@@ -197,7 +212,7 @@ class Date(BaseModel):
         return availability_dict
 
     @classmethod
-    def build_dates_status(cls, first_date, last_date):
+    def build_dates_status(cls, first_date, last_date) -> list:
         """
         Builds a dictionary that contains the status of availability for each day, schedule, turn, and position
         :param first_date: The start date in range
@@ -219,6 +234,10 @@ class Date(BaseModel):
                         else:
                             turn_status = 1
                     turns.append({"turn": turn['turn_number'], "type": turn['type'], "status": turn_status})
+                # Counts how many schedules are occupied
+                # 0 - Completely occupied
+                # 1 - Moderately occupied
+                # 2 - Completely empty
                 if len(list(filter(lambda race: race['status'] == 0, turns))) == 5:
                     schedule_status = 0
                 elif len(list(filter(lambda race: race['status'] == 2, turns))) == 5:
@@ -236,7 +255,7 @@ class Date(BaseModel):
         return dates_status
 
     @classmethod
-    def auto_fill(cls, first_date, last_date):
+    def auto_fill(cls, first_date, last_date) -> None:
         """
         Automatically fills all dates in the given range with random turns and pilots, for testing only
         :param first_date: The start date in range
@@ -253,6 +272,7 @@ class Date(BaseModel):
             arr = []
             for schedule in new_date.schedules:
                 for turn in schedule.turns:
+                    # Checks that there are at least two turns of Adults or None between Kids reservation
                     for x in range(randint(1, 8)):
                         AbstractPilot.add(turn, {'position': x + 1, 'allocation_date': None})
                     if i == 0:
@@ -271,12 +291,13 @@ class Date(BaseModel):
             new_date.update_mongo(COLLECTION)
 
     @classmethod
-    def update_temp(cls, allocation_date, new_turn, reservation_type):
+    def update_temp(cls, allocation_date, new_turn, reservation_type) -> None:
         """
         Updates the indicated date with the schedule, turn, type, pilots, and allocation date
-        :param allocation_date:
-        :param new_turn:
-        :return:
+        :param reservation_type: The type of reservation (Kids or Adults)
+        :param allocation_date: The momentary date when the reservation will be occupied
+        :param new_turn: The information of the turn
+        :return: None
         """
         from app.models.pilots.pilot import AbstractPilot
         first_date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d")
@@ -292,15 +313,15 @@ class Date(BaseModel):
                     AbstractPilot.add(schedule.turns[turn_number - 1], {'_id': new_turn.get('positions').get(position),
                                                                         'position': position_num,
                                                                         'allocation_date': now})
-                # Actualizar el tipo de turno, si es null
+                # Update the type if turn, if it's None
                 if schedule.turns[turn_number - 1].type is None:
                     schedule.turns[turn_number - 1].type = reservation_type
                 updated_date.update_mongo(COLLECTION)
 
     @staticmethod
-    def insert_dates():
+    def insert_dates() -> None:
         """
-        Adds to the Date Collection a whole month
+        Adds to the Date Collection a whole month, taking into account the last month in the collection
         :return: None
         """
         expressions = list()
