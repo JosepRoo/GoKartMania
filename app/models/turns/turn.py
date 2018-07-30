@@ -32,7 +32,7 @@ class Turn(BaseModel):
         :return: A brand new turn object
         """
         allocation_date = new_turn.pop('date')
-        turn = cls(**new_turn)
+        turn: Turn = cls(**new_turn)
         if allocation_date != datetime.datetime.strftime(reservation.date, "%Y-%m-%d"):
             reservation.date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d") + datetime.timedelta(days=1)
         reservation.turns.append(turn)
@@ -54,43 +54,64 @@ class Turn(BaseModel):
 
     @classmethod
     def check_and_add(cls, reservation: Reservation, new_turn):
+        """
+        Verifies that a turn can accept the given pilots and adds them to the Date Collection and the current reservation
+        :param reservation: Reservation object
+        :param new_turn: Turn information
+        :return: None, or schedule/turn not available anymore message
+        """
         available_schedules = DateModel.get_available_schedules_user(reservation, new_turn.get('date'))
         still_available = cls.check_turn_availability(available_schedules, new_turn)
-        # print(still_available)
+        # Verifies that the turn is is still available
         if still_available:
             turn_positions = \
                 list(filter(lambda schedule: schedule['schedule'] == new_turn.get('schedule'), available_schedules))[
                     0].get(
                     'turns')[int(new_turn.get('turn_number')) - 1].get('positions')
             user_positions = new_turn.get('positions')
-            # print(turn_positions)
-            # print(user_positions)
+            # Verifies that the positions selected are still available
             positions_available = cls.check_positions_availability(turn_positions, user_positions)
             if positions_available:
                 allocation_date = new_turn.get('date')
-                # print(allocation_date)
                 DateModel.update_temp(allocation_date, new_turn, reservation.type)
                 if reservation.turns != [] and reservation.turns is not None and reservation.turns[0].turn_number == 0:
-                    # Actualizar el turno que ya existia por default
+                    # Update the pre-existing turn by default
                     return cls.update(reservation, new_turn, reservation.turns[0]._id)
                 else:
                     return cls.add(reservation, new_turn)
-                # Actualizar en la Collection de Dates el turno, schedule y pilotos
             else:
                 raise ScheduleNotAvailable("Las posiciones que seleccionaste ya no se encuentran disponibles.")
         else:
             raise TurnNotAvailable("Este turno ya no se encuentra disponible.")
 
     @staticmethod
-    def check_date_availability(available_dates, new_turn):
+    def check_date_availability(available_dates, new_turn) -> dict:
+        """
+        Checks the status of the date contained in a turn
+        :param available_dates: The status of the dates
+        :param new_turn: Turn with its information, such as the date
+        :return: Turn information
+        """
         return available_dates.get(new_turn.get('date'))
 
     @staticmethod
-    def check_schedule_availability(available_schedules, new_turn):
+    def check_schedule_availability(available_schedules, new_turn) -> int:
+        """
+        Verifies if a given schedule is available
+        :param available_schedules: All schedules in a given date
+        :param new_turn: Turn information, such as the schedule
+        :return: 0 or 1, depending the status of the schedule
+        """
         return available_schedules.get(new_turn.get('schedule')).get('cupo')
 
     @staticmethod
-    def check_turn_availability(available_schedules, new_turn):
+    def check_turn_availability(available_schedules, new_turn) -> int:
+        """
+        Verifies that a given turn is still available, taking into account other completed reservations
+        :param available_schedules: The schedules and their status of a given date
+        :param new_turn: The turn information, such as the turn number
+        :return: True or False, depending on the turn status
+        """
         for schedule in available_schedules:
             if schedule.get('schedule') == new_turn.get('schedule'):
                 for turn in schedule.get('turns'):
@@ -99,7 +120,13 @@ class Turn(BaseModel):
         return False
 
     @staticmethod
-    def check_positions_availability(turn_positions, user_positions):
+    def check_positions_availability(turn_positions, user_positions) -> bool:
+        """
+        Verifies if the positions selected by the user are still available
+        :param turn_positions: Positions used by other users
+        :param user_positions: Positions selected by the user
+        :return: True or False, depending the positions availability
+        """
         return True not in [turn_positions[int(position[-1]) - 1].get('status') == 0
                             for position in user_positions.keys()]
 
@@ -123,6 +150,13 @@ class Turn(BaseModel):
 
     @classmethod
     def verify_update(cls, reservation: Reservation, updated_turn, former_turn):
+        """
+        Checks that updating the reservation is doable, given any possible changes in the collection
+        :param reservation: Reservation object
+        :param updated_turn: The new turn information
+        :param former_turn: Previous turn information
+        :return: True if the update was successful; error message otherwise
+        """
         first_date = datetime.datetime.strptime(reservation.date, "%Y-%m-%d")
         last_date = datetime.datetime.strptime(reservation.date, "%Y-%m-%d") + datetime.timedelta(days=1)
         query = {'date': {'$gte': first_date, '$lte': last_date}}
@@ -150,7 +184,13 @@ class Turn(BaseModel):
             raise DateNotAvailable("La fecha que seleccionaste no se encuentra disponible por el momento.")
 
     @classmethod
-    def remove_allocation_dates(cls, reservation: Reservation, current_turn):
+    def remove_allocation_dates(cls, reservation: Reservation, current_turn) -> None:
+        """
+        Removes from the Dates collection the field of "allocation date" if the transaction was completed
+        :param reservation: Reservation object
+        :param current_turn: Turn with its information, such as the turn number
+        :return: None
+        """
         first_date = reservation.date
         last_date = reservation.date + datetime.timedelta(days=1)
         query = {'date': {'$gte': first_date, '$lte': last_date}}
@@ -167,7 +207,7 @@ class Turn(BaseModel):
                             new_date.update_mongo(COLLECTION)
 
     @classmethod
-    def update(cls, reservation: Reservation, updated_turn, turn_id):
+    def update(cls, reservation: Reservation, updated_turn, turn_id) -> list:
         """
         Updates the information from the turn with the given id.
         :param reservation: Reservation object containing the array of turns
@@ -203,6 +243,6 @@ class AbstractTurn(BaseModel):
         :param new_turn: Turn to be added to the schedule
         :return: A brand new turn object
         """
-        turn = cls(**new_turn)
+        turn: AbstractTurn = cls(**new_turn)
         schedule.turns.append(turn)
         return turn

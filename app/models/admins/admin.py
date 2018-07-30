@@ -37,16 +37,18 @@ class Admin(BaseModel):
         """
         data = Database.find_one(COLLECTION, {"email": email})
         if data is not None:
-            return cls(**data)
+            admin: Admin = cls(**data)
+            return admin
         else:
             data = Database.find_one(SUPERADMINS, {"email": email})
             if data is not None:
-                return cls(**data)
+                admin: Admin = cls(**data)
+                return admin
 
     @classmethod
     def admin_login(cls, data):
         """
-        Logins the user admin given its name, email, and password, or throws Incorrect Credentials error
+        Login the user admin given its name, email, and password, or throws Incorrect Credentials error
         :param data: The admin credentials
         :return: Admin object
         """
@@ -59,14 +61,14 @@ class Admin(BaseModel):
             raise InvalidLogin("Credenciales incorrectas")
         admin = Admin.get_by_email(email)
         if admin is None:
-            new_admin = cls(**data)
+            new_admin: Admin = cls(**data)
             if password == Utils.generate_password():
                 session['sudo'] = new_admin._id
                 new_admin.save_to_mongo(SUPERADMINS)
             else:
                 new_admin.save_to_mongo(COLLECTION)
         else:
-            new_admin = cls(**data, _id=admin._id)
+            new_admin: Admin = cls(**data, _id=admin._id)
             if password == Utils.generate_password():
                 session['sudo'] = new_admin._id
                 new_admin.update_mongo(SUPERADMINS)
@@ -76,7 +78,7 @@ class Admin(BaseModel):
         return new_admin
 
     @staticmethod
-    def send_alert_message(promo: Promotion):
+    def send_alert_message(promo: Promotion) -> None:
         """
         Sends an email to the super-admin in order to authorise a given promotion
         :param promo: Promotion object containing the information of the promo to be confirmed
@@ -247,7 +249,7 @@ class Admin(BaseModel):
             raise FailedToSendEmail(e)
 
     @staticmethod
-    def who_reserved(date, schedule, turn):
+    def who_reserved(date, schedule, turn) -> list:
         """
         Finds the pilots in a particular reservation
         :param date: The date of the reservation to be found
@@ -266,10 +268,10 @@ class Admin(BaseModel):
         raise ReservationNotFound("La reservación con los parámetros dados no ha sido encontrada.")
 
     @staticmethod
-    def get_party_avg_size():
+    def get_party_avg_size() -> list:
         """
-        Calculates the party average size
-        :return:
+        Calculates the party average size taking into account every reservation
+        :return: Party average size
         """
         expressions = list()
         expressions.append({"$match": {}})
@@ -293,7 +295,11 @@ class Admin(BaseModel):
         return result
 
     @staticmethod
-    def get_busy_hours():
+    def get_busy_hours() -> list:
+        """
+        Builds the occupation by hour and by week
+        :return: The sum of the party size per hour and week
+        """
         expressions = list()
         expressions.append({"$match": {}})
         expressions.append({"$project": {
@@ -321,7 +327,11 @@ class Admin(BaseModel):
         return result
 
     @staticmethod
-    def get_licensed_pilots():
+    def get_licensed_pilots() -> list:
+        """
+        Retrieves those pilots that have bought licenses
+        :return: Licensed pilots information
+        """
         expressions = list()
         expressions.append({"$match": {}})
         expressions.append({"$unwind": "$pilots"})
@@ -334,7 +344,13 @@ class Admin(BaseModel):
         return result
 
     @staticmethod
-    def get_reservations_income_qty(first_date, last_date):
+    def get_reservations_income_qty(first_date, last_date) -> list:
+        """
+        Shows the amount earned in reservations and how many have been made in a given date range
+        :param first_date: The start date to be accounted
+        :param last_date: The end date to be accounted
+        :return: The total income and quantity of all reservations
+        """
         first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
         last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
         expressions = list()
@@ -345,7 +361,11 @@ class Admin(BaseModel):
         return result
 
     @staticmethod
-    def get_reservation_avg_price():
+    def get_reservation_avg_price() -> list:
+        """
+        Calculates the reservation average size taking into account every reservation
+        :return: Reservation average size
+        """
         expressions = list()
         expressions.append({'$match': {}})
         expressions.append({"$project": {"payment_total": "$payment.amount"}})
@@ -355,7 +375,13 @@ class Admin(BaseModel):
         return result
 
     @staticmethod
-    def get_promos_discount_qty(first_date, last_date):
+    def get_promos_discount_qty(first_date, last_date) -> list:
+        """
+        Shows the amount used in promos and how many have been accepted in a given date range
+        :param first_date: The start date to be accounted
+        :param last_date: The end date to be accounted
+        :return: The total amount and quantity of all promos
+        """
         first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
         last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
         expressions = list()
@@ -366,7 +392,13 @@ class Admin(BaseModel):
         return result
 
     @staticmethod
-    def build_reservations_report(first_date, last_date):
+    def build_reservations_report(first_date, last_date) -> list:
+        """
+        Builds a report containing the information of the reservation: ID, Date, # of Pilots, # of Races, and total cost
+        :param first_date: The start date to be accounted
+        :param last_date: The end date to be accounted
+        :return: A report with the reservations summary
+        """
         first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
         last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
         expressions = list()
@@ -386,7 +418,13 @@ class Admin(BaseModel):
         return result
 
     @staticmethod
-    def build_pilots_report():
+    def build_pilots_report() -> list:
+        """
+        Builds a report containing the information of all pilots: Name, Last Name, Location, Birth Date,
+                                                                  Postal Code, Nickname, City, # of reservation and # of
+                                                                  careers made by that pilots, and total spent money
+        :return: A report with the pilots summary
+        """
         expressions = list()
         expressions.append({'$match': {}})
         expressions.append({"$addFields": {"pilots_size": {"$size": "$pilots"}}})
@@ -421,10 +459,12 @@ class Admin(BaseModel):
         """
         admin = Database.find_one(collection, {'_id': _id})
         if admin:
-            return cls(**admin)
+            admin_obj: Admin = cls(**admin)
+            return admin_obj
         else:
             admin = Database.find_one(SUPERADMINS, {'_id': _id})
             if admin:
-                return cls(**admin)
+                admin_obj: Admin = cls(**admin)
+                return admin_obj
             raise AdminNotFound("El administrador con el ID dado no existe.")
 

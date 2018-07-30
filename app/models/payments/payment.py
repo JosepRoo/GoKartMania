@@ -34,9 +34,10 @@ class Card(BaseModel):
         self.year = year
 
     @staticmethod
-    def parse_card(new_card):
+    def parse_card(new_card) -> dict:
         """
         Parses the information of the new card to be processed.
+        :new_card: The card information - Name, number, CVV, month, and year
         :return: A dictionary that etomin will process.
         """
         return {
@@ -68,7 +69,7 @@ class Card(BaseModel):
             new_card["number"] = obj_token["card"]
             new_card["token"] = obj_token["token"]
             new_card["year"] = new_card.get("year")[-2:]
-            card = cls(**new_card)
+            card: Card = cls(**new_card)
             return card
         raise TokenisationFailed("No fue posible tokenizar la tarjeta. Contacte al administrador.")
 
@@ -143,14 +144,30 @@ class Payment(BaseModel):
                                                       reservation, promo, coupon, user)
 
     @staticmethod
-    def calculate_turns_price(turns_size, prices_size, prices):
+    def calculate_turns_price(turns_size, prices_size, prices) -> int:
+        """
+        Calculates the total price of the turns depending on how many turns were selected, and the location
+        :param turns_size: Total turns selected
+        :param prices_size: The length of the array of prices of a certain location
+        :param prices: The actual array containing the prices of a certain location
+        :return: Price to be paid in terms of the turns
+        """
         if turns_size != 3:
             return prices[prices_size - 1] * (turns_size // prices_size) + prices[turns_size % prices_size - 1]
         else:
             return prices[prices_size - 1]
 
     @staticmethod
-    def build_etomin_params(user, payment, new_payment, amount, etomin_number):
+    def build_etomin_params(user, payment, new_payment, amount, etomin_number) -> dict:
+        """
+        Takes into account the user, payment and etomin number data to parse etomin parameters
+        :param user: User object with its data
+        :param payment: Payment object used for the external reference
+        :param new_payment: The payment containing the method
+        :param amount: Total amount to be payed
+        :param etomin_number: Etomin number (given by etomin api)
+        :return: Etomin parse-ful parameters
+        """
         params = {
             "public_key": os.environ.get("ETOMIN_PB_KEY"),
             "transaction": {
@@ -176,6 +193,17 @@ class Payment(BaseModel):
 
     @staticmethod
     def commit_reservation_payment(payment, amount, license_price, reservation: Reservation, promo, coupon, user):
+        """
+        Attempts to concrete the payment taking into account the reservation, promo, and user information
+        :param payment: Payment object
+        :param amount: Total amount to be payed by the user
+        :param license_price: The price only in in terms of the licence
+        :param reservation: Reservation object
+        :param promo: Promo object with information of use
+        :param coupon: Instance of promo with more specific information
+        :param user: User object
+        :return: Completed and approved payment
+        """
         payment.status = "APROBADO"
         payment.amount = amount
         payment.license_price = license_price

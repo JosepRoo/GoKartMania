@@ -116,6 +116,7 @@ class AvailableSchedulesUser(Resource):
         except Exception as e:
             return Response.generic_response(e), 500
 
+
 class AvailableSchedulesAdmin(Resource):
     @staticmethod
     @Utils.login_required
