@@ -233,7 +233,16 @@ class Date(BaseModel):
                             turn_status = 0
                         else:
                             turn_status = 1
-                    turns.append({"turn": turn['turn_number'], "type": turn['type'], "status": turn_status})
+                    positions = []
+                    for k in range(1, 9):
+                        # Looks for any pre-occupied positions by other pilots
+                        if k in [pilot['position'] for pilot in turn['pilots']]:
+                            position_status = 0
+                        else:
+                            position_status = 1
+                        positions.append({"position": k, "status": position_status})
+                    turns.append({"turn": turn['turn_number'], "type": turn['type'],
+                                  "status": turn_status, "positions": positions})
                 # Counts how many schedules are occupied
                 # 0 - Completely occupied
                 # 1 - Moderately occupied
