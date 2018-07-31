@@ -11,6 +11,10 @@ from app.models.emails.errors import FailedToSendEmail
 AWS_ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY")
 AWS_SECRET_KEY = os.environ.get("AWS_SECRET_KEY")
 
+"""
+This is the email model that will be used to handle the requests of sending emails to the user, the admin, and pilots
+"""
+
 
 class Email(object):
     def __init__(self, to, subject, qr_code):

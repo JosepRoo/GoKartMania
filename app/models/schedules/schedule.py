@@ -22,7 +22,7 @@ class Schedule(BaseModel):
         :return: Schedule object
         """
         from app.models.turns.turn import AbstractTurn as TurnModel
-        schedule = cls(**new_schedule)
+        schedule: Schedule = cls(**new_schedule)
         for i in range(5):
             TurnModel.add(schedule, {'turn_number': i+1})
         date.schedules.append(schedule)

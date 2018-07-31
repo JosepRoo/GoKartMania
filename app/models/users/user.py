@@ -30,7 +30,8 @@ class User(BaseModel):
         """
         data = Database.find_one(COLLECTION, {"email": email})
         if data is not None:
-            return cls(**data)
+            user_obj: User = cls(**data)
+            return user_obj
 
     @classmethod
     def register(cls, kwargs):
@@ -44,17 +45,17 @@ class User(BaseModel):
             raise InvalidEmail("El email dado no tiene un formato válido.")
         user = User.get_by_email(email)
         if user is None:
-            new_user = cls(**kwargs)
+            new_user: User = cls(**kwargs)
             new_user.save_to_mongo(COLLECTION)
         else:
-            new_user = cls(**kwargs, _id=user._id)
+            new_user: User = cls(**kwargs, _id=user._id)
             new_user.update_mongo(COLLECTION)
         return new_user
 
-    def send_confirmation_message(self, reservation: Reservation, qr_code):
+    def send_confirmation_message(self, reservation: Reservation, qr_code) -> None:
         """
         Sends an email to the current user with the summary of the reservation (all turns)
-        :param qr_code:
+        :param qr_code: QR code path that will be displayed in the email
         :param reservation: Reservation object
         :return: POST method requesting an email to be sent to the user making the reservation
         """

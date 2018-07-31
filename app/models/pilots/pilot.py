@@ -93,10 +93,10 @@ class Pilot(BaseModel):
         raise PilotNotFound("El piloto con el ID dado no existe")
 
     @staticmethod
-    def send_confirmation_message(reservation: Reservation, qr_code):
+    def send_confirmation_message(reservation: Reservation, qr_code) -> None:
         """
         Sends an email to the reservation pilots with the summary of their turns
-        :param qr_code:
+        :param qr_code: QR code path that will be displayed in the email
         :param reservation: Reservation object
         :return: POST method requesting an email to be sent to the user making the reservation
         """
@@ -310,12 +310,12 @@ class AbstractPilot(BaseModel):
         :param new_pilot: The new pilot to be added to the turn
         :return: Pilot object
         """
-        pilot = cls(**new_pilot)
+        pilot: AbstractPilot = cls(**new_pilot)
         turn.pilots.append(pilot)
         return pilot
 
     @staticmethod
-    def remove_allocated_pilots():
+    def remove_allocated_pilots() -> None:
         """
         Removes the allocated date-schedule-turn-pilots that have already concluded their TIMEOUT
         :return: None
