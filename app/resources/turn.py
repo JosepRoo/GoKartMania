@@ -68,7 +68,7 @@ class Turn(Resource):
         """
         try:
             data = PARSER.parse_args()
-            if reservation_id:
+            if reservation_id is None:
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
             else:
                 reservation = ReservationModel.get_by_id(reservation_id, COLLECTION)
@@ -81,5 +81,5 @@ class Turn(Resource):
             return Response(message=e.message).json(), 409
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
-        except Exception as e:
-            return Response.generic_response(e), 500
+        # except Exception as e:
+        #     return Response.generic_response(e), 500
