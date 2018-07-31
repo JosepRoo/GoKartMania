@@ -1,4 +1,7 @@
 import datetime
+
+from tzlocal import get_localzone
+
 from app.common.database import Database
 from app.models.baseModel import BaseModel
 from app.models.dates.constants import COLLECTION
@@ -92,7 +95,7 @@ class Turn(BaseModel):
         :param new_turn: Turn with its information, such as the date
         :return: Turn information
         """
-        return available_dates.get(new_turn.get('date'))
+        return available_dates.get('cupo')
 
     @staticmethod
     def check_schedule_availability(available_schedules, new_turn) -> int:
@@ -102,7 +105,10 @@ class Turn(BaseModel):
         :param new_turn: Turn information, such as the schedule
         :return: 0 or 1, depending the status of the schedule
         """
-        return available_schedules.get(new_turn.get('schedule')).get('cupo')
+        today = datetime.datetime.now().astimezone(get_localzone())
+        if today.hour > int(new_turn.get('schedule')):
+            raise ScheduleNotAvailable("El horario que seleccionaste no se encuentra disponible por el momento.")
+        return list(filter(lambda x: x.get('schedule') == new_turn.get('schedule'), available_schedules))[0].get('cupo')
 
     @staticmethod
     def check_turn_availability(available_schedules, new_turn) -> int:
@@ -157,24 +163,27 @@ class Turn(BaseModel):
         :param former_turn: Previous turn information
         :return: True if the update was successful; error message otherwise
         """
-        first_date = datetime.datetime.strptime(reservation.date, "%Y-%m-%d")
-        last_date = datetime.datetime.strptime(reservation.date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        first_date = reservation.date
+        last_date = reservation.date + datetime.timedelta(days=1)
         query = {'date': {'$gte': first_date, '$lte': last_date}}
         for date in Database.find(COLLECTION, query):
             new_date = DateModel(**date)
             for schedule in new_date.schedules:
                 if schedule.hour == former_turn.schedule:
+                    # print(schedule._id)
                     for turn in schedule.turns:
                         if turn.turn_number == int(former_turn.turn_number):
+                            # print(turn.turn_number, [pilot._id for pilot in turn.pilots])
                             pilots = turn.pilots.copy()
                             for pilot in pilots:
                                 if pilot._id in [pilot._id for pilot in reservation.pilots]:
                                     turn.pilots.remove(pilot)
                             if turn.pilots is None or turn.pilots == []:
                                 turn.type = None
+                                # print(new_date.schedules[4].turns[0].pilots)
                             new_date.update_mongo(COLLECTION)
         available_dates = DateModel.get_available_dates_user(reservation, updated_turn.get('date'), updated_turn.get('date'))
-        if cls.check_date_availability(available_dates, updated_turn):
+        if cls.check_date_availability(available_dates[0], updated_turn):
             available_schedules = DateModel.get_available_schedules_user(reservation, updated_turn.get('date'))
             if cls.check_schedule_availability(available_schedules, updated_turn):
                 return True
