@@ -17,7 +17,7 @@ from app.resources.payment import Payments
 from app.resources.turn import Turns, Turn
 from app.resources.user import User
 from app.resources.pilot import Pilots, Pilot
-from app.resources.reservation import Reservations, ReservationWithPromo
+from app.resources.reservation import Reservations, ReservationWithPromo, ReservationsDates
 from config import config
 
 
@@ -27,9 +27,10 @@ def create_app(config_name):
     Compress(app)
     app.config.from_object(config[config_name])
     # Register our blueprints
-    from .default import default as default_blueprint, qrs as qrs_blueprint
+    from .default import default as default_blueprint, qrs as qrs_blueprint, documentation as doc_blueprint
     app.register_blueprint(default_blueprint)
     app.register_blueprint(qrs_blueprint, url_prefix='/qr')
+    app.register_blueprint(doc_blueprint, url_prefix='/api')
 
     api.add_resource(User, '/user')
     api.add_resource(Admin, '/admin')
@@ -44,6 +45,7 @@ def create_app(config_name):
     api.add_resource(ReservationAvgPrice, '/admin/reservation_avg_price')
 
     api.add_resource(Reservations, '/user/reservations', '/user/reservations/<string:reservation_id>')
+    api.add_resource(ReservationsDates, '/user/reservations/<string:start_date>/<string:end_date>')
     api.add_resource(ReservationWithPromo, '/user/reservations_promo')
 
     api.add_resource(Pilots, '/user/pilots')
@@ -51,12 +53,12 @@ def create_app(config_name):
 
     api.add_resource(Dates, '/dates', '/dates/<string:start_date>/<string:end_date>')
     api.add_resource(AvailableDatesUser, '/available_dates/<string:start_date>/<string:end_date>')
-    api.add_resource(AvailableDatesAdmin, '/admins/available_dates/<string:start_date>/<string:end_date>')
+    api.add_resource(AvailableDatesAdmin, '/admin/available_dates/<string:start_date>/<string:end_date>')
     api.add_resource(AvailableSchedulesUser, '/available_schedules/<string:date>')
-    api.add_resource(AvailableSchedulesAdmin, '/admins/available_schedules/<string:date>')
+    api.add_resource(AvailableSchedulesAdmin, '/admin/available_schedules/<string:date>')
 
     api.add_resource(Turns, '/user/turns')
-    api.add_resource(Turn, '/user/turn/<string:turn_id>')
+    api.add_resource(Turn, '/user/turn/<string:turn_id>', '/user/turn/<string:reservation_id>/<string:turn_id>')
 
     api.add_resource(Payments, '/user/payments/<string:user_id>')
     api.add_resource(AdminPayments, '/admin/payments', '/admin/payments/<string:user_id>')

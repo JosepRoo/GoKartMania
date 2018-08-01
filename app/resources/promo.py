@@ -1,4 +1,7 @@
+from flask import session
 from flask_restful import Resource
+from werkzeug.exceptions import BadRequest
+
 from app import Response
 from app.common.utils import Utils
 from app.models.admins.errors import AdminErrors
@@ -32,14 +35,20 @@ class Promos(Resource):
         :return: JSON object with all the promotions or one specific one
         """
         try:
-            return [promo.json() for promo in PromoModel.get_promos(promo_id)], 200
+            promos_array = [promo.json() for promo in PromoModel.get_promos(promo_id)]
+            if session.get('sudo'):
+                superadmin = 1
+            else:
+                superadmin = 0
+            return {'isSuperAdmin': superadmin,
+                    'promos': promos_array}, 200
         except PromotionErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
             return Response.generic_response(e), 500
 
     @staticmethod
-    @Utils.admin_login_required
+    @Utils.sudo_login_required
     def put(promo_id):
         """
         Updates the promo with the given parameters

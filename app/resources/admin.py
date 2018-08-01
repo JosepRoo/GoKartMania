@@ -1,5 +1,6 @@
 from flask import session
 from flask_restful import Resource, reqparse
+from werkzeug.exceptions import BadRequest
 
 from app import Response
 from app.common.utils import Utils
@@ -151,7 +152,7 @@ class BuildReservationsReport(Resource):
         :return: XLSX report
         """
         try:
-            return AdminModel.build_reservations_report(start_date, end_date), 200
+            return AdminModel.build_reservations_report(start_date, end_date)
         except Exception as e:
             return Response.generic_response(e), 500
 
@@ -165,7 +166,7 @@ class BuildPilotsReport(Resource):
         :return: XLSX report
         """
         try:
-            return AdminModel.build_pilots_report(), 200
+            return AdminModel.build_pilots_report()
         except Exception as e:
             return Response.generic_response(e), 500
 

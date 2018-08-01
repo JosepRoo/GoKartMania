@@ -5,9 +5,9 @@ from flask import session
 
 from app import Database
 from app.common.utils import Utils
-from app.models.admins.errors import InvalidEmail, InvalidLogin
+from app.models.admins.errors import InvalidEmail, InvalidLogin, AdminNotFound
 from app.models.baseModel import BaseModel
-from app.models.admins.constants import COLLECTION
+from app.models.admins.constants import COLLECTION, SUPERADMINS
 from app.models.dates.constants import COLLECTION as DATES
 from app.models.reservations.constants import COLLECTION as RESERVATIONS
 from app.models.dates.date import Date
@@ -18,7 +18,7 @@ from app.models.reservations.errors import ReservationNotFound
 from config import basedir
 
 """
-In this user model the email will be used to identify each user although an _id will be created for each instance of it
+This is the admin user model that will be used to manage different dashboard information and analytics
 """
 
 
@@ -37,30 +37,51 @@ class Admin(BaseModel):
         """
         data = Database.find_one(COLLECTION, {"email": email})
         if data is not None:
-            return cls(**data)
+            admin: Admin = cls(**data)
+            return admin
+        else:
+            data = Database.find_one(SUPERADMINS, {"email": email})
+            if data is not None:
+                admin: Admin = cls(**data)
+                return admin
 
     @classmethod
     def admin_login(cls, data):
+        """
+        Login the user admin given its name, email, and password, or throws Incorrect Credentials error
+        :param data: The admin credentials
+        :return: Admin object
+        """
         email = data.get('email')
         if email[email.index('@') + 1:] != 'gokartmania.com':
             raise InvalidEmail("Credenciales incorrectas")
         # Esta contraseña debería ser comparada con la que guardemos en la BD
-        if data.pop('password') != os.environ.get('GKM_PB_KEY'):
+        password = data.pop('password')
+        if password != os.environ.get('GKM_PB_KEY') and password != Utils.generate_password():
             raise InvalidLogin("Credenciales incorrectas")
         admin = Admin.get_by_email(email)
         if admin is None:
-            new_admin = cls(**data)
-            new_admin.save_to_mongo(COLLECTION)
+            new_admin: Admin = cls(**data)
+            if password == Utils.generate_password():
+                session['sudo'] = new_admin._id
+                new_admin.save_to_mongo(SUPERADMINS)
+            else:
+                new_admin.save_to_mongo(COLLECTION)
         else:
-            new_admin = cls(**data, _id=admin._id)
-            new_admin.update_mongo(COLLECTION)
+            new_admin: Admin = cls(**data, _id=admin._id)
+            if password == Utils.generate_password():
+                session['sudo'] = new_admin._id
+                new_admin.update_mongo(SUPERADMINS)
+            else:
+                new_admin.update_mongo(COLLECTION)
         session['admin_id'] = new_admin._id
         return new_admin
 
     @staticmethod
-    def send_alert_message(promo: Promotion):
+    def send_alert_message(promo: Promotion) -> None:
         """
         Sends an email to the super-admin in order to authorise a given promotion
+        :param promo: Promotion object containing the information of the promo to be confirmed
         :return: POST method requesting an email to be sent to the user making the reservation
         """
         email = Email(to='jromagosa@sitsolutions.org', subject='Confirmación de promoción', qr_code=None)
@@ -228,7 +249,14 @@ class Admin(BaseModel):
             raise FailedToSendEmail(e)
 
     @staticmethod
-    def who_reserved(date, schedule, turn):
+    def who_reserved(date, schedule, turn) -> list:
+        """
+        Finds the pilots in a particular reservation
+        :param date: The date of the reservation to be found
+        :param schedule: The schedule of the reservation to be found
+        :param turn: The turn of the reservation to be found
+        :return: The information of the pilots in the found reservation
+        """
         for d in Database.find(DATES, {}):
             prob_date = Date(**d)
             if datetime.datetime.strftime(prob_date.date, "%Y-%m-%d") == date:
@@ -240,7 +268,11 @@ class Admin(BaseModel):
         raise ReservationNotFound("La reservación con los parámetros dados no ha sido encontrada.")
 
     @staticmethod
-    def get_party_avg_size():
+    def get_party_avg_size() -> list:
+        """
+        Calculates the party average size taking into account every reservation
+        :return: Party average size
+        """
         expressions = list()
         expressions.append({"$match": {}})
         expressions.append({"$project": {
@@ -263,7 +295,11 @@ class Admin(BaseModel):
         return result
 
     @staticmethod
-    def get_busy_hours():
+    def get_busy_hours() -> list:
+        """
+        Builds the occupation by hour and by week
+        :return: The sum of the party size per hour and week
+        """
         expressions = list()
         expressions.append({"$match": {}})
         expressions.append({"$project": {
@@ -291,7 +327,11 @@ class Admin(BaseModel):
         return result
 
     @staticmethod
-    def get_licensed_pilots():
+    def get_licensed_pilots() -> list:
+        """
+        Retrieves those pilots that have bought licenses
+        :return: Licensed pilots information
+        """
         expressions = list()
         expressions.append({"$match": {}})
         expressions.append({"$unwind": "$pilots"})
@@ -304,7 +344,13 @@ class Admin(BaseModel):
         return result
 
     @staticmethod
-    def get_reservations_income_qty(first_date, last_date):
+    def get_reservations_income_qty(first_date, last_date) -> list:
+        """
+        Shows the amount earned in reservations and how many have been made in a given date range
+        :param first_date: The start date to be accounted
+        :param last_date: The end date to be accounted
+        :return: The total income and quantity of all reservations
+        """
         first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
         last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
         expressions = list()
@@ -315,7 +361,11 @@ class Admin(BaseModel):
         return result
 
     @staticmethod
-    def get_reservation_avg_price():
+    def get_reservation_avg_price() -> list:
+        """
+        Calculates the reservation average size taking into account every reservation
+        :return: Reservation average size
+        """
         expressions = list()
         expressions.append({'$match': {}})
         expressions.append({"$project": {"payment_total": "$payment.amount"}})
@@ -325,7 +375,13 @@ class Admin(BaseModel):
         return result
 
     @staticmethod
-    def get_promos_discount_qty(first_date, last_date):
+    def get_promos_discount_qty(first_date, last_date) -> list:
+        """
+        Shows the amount used in promos and how many have been accepted in a given date range
+        :param first_date: The start date to be accounted
+        :param last_date: The end date to be accounted
+        :return: The total amount and quantity of all promos
+        """
         first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
         last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
         expressions = list()
@@ -336,7 +392,13 @@ class Admin(BaseModel):
         return result
 
     @staticmethod
-    def build_reservations_report(first_date, last_date):
+    def build_reservations_report(first_date, last_date) -> list:
+        """
+        Builds a report containing the information of the reservation: ID, Date, # of Pilots, # of Races, and total cost
+        :param first_date: The start date to be accounted
+        :param last_date: The end date to be accounted
+        :return: A report with the reservations summary
+        """
         first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
         last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
         expressions = list()
@@ -352,11 +414,16 @@ class Admin(BaseModel):
 
         date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         excel_path = f'{basedir}/app/reports/reservations/ReporteReservaciones_{date}.xlsx'
-        Utils.generate_report(result, excel_path, "Reservaciones")
-        return result
+        return Utils.generate_report(result, f'ReporteReservaciones_{date}.xlsx', "Reservaciones")
 
     @staticmethod
-    def build_pilots_report():
+    def build_pilots_report() -> list:
+        """
+        Builds a report containing the information of all pilots: Name, Last Name, Location, Birth Date,
+                                                                  Postal Code, Nickname, City, # of reservation and # of
+                                                                  careers made by that pilots, and total spent money
+        :return: A report with the pilots summary
+        """
         expressions = list()
         expressions.append({'$match': {}})
         expressions.append({"$addFields": {"pilots_size": {"$size": "$pilots"}}})
@@ -378,5 +445,24 @@ class Admin(BaseModel):
         result = list(Database.aggregate(RESERVATIONS, expressions))
         date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         excel_path = f'{basedir}/app/reports/pilots/ReportePilotos_{date}.xlsx'
-        Utils.generate_report(result, excel_path, "Pilotos")
-        return result
+        return Utils.generate_report(result, f'ReportePilotos_{date}.xlsx', "Pilotos")
+
+    @classmethod
+    def get_by_id(cls, _id, collection):
+        """
+        Retrieves the admin object with the given id, or raises an exception if that admin was not found
+        :param _id: ID of the admin to find
+        :param collection: Contains all the admins or super_admins
+        :return: Admin object
+        """
+        admin = Database.find_one(collection, {'_id': _id})
+        if admin:
+            admin_obj: Admin = cls(**admin)
+            return admin_obj
+        else:
+            admin = Database.find_one(SUPERADMINS, {'_id': _id})
+            if admin:
+                admin_obj: Admin = cls(**admin)
+                return admin_obj
+            raise AdminNotFound("El administrador con el ID dado no existe.")
+

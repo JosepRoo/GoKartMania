@@ -11,10 +11,10 @@ from app.common.database import Database
 from app.models.promos.constants import COLLECTION
 from app.models.promos.errors import WrongPromotionType, PromotionNotFound, PromotionUsed, PromotionExpired, \
     PromotionUnauthorised, CouponNotFound
-from app.models.admins.constants import COLLECTION as ADMIN_COLLECTION
+from app.models.admins.constants import COLLECTION as ADMIN_COLLECTION, SUPERADMINS
 
 """
-This is the promotion model
+This is the promotion model that will handle the request of the admin and user in their payments and creation
 """
 
 
@@ -31,11 +31,17 @@ class Coupons(BaseModel):
         :param promo: The promotion Object
         :return: Promo with coupon added
         """
-        coupon = cls(_id=promo.type[:4].lower()+"-"+uuid.uuid4().hex[:5])
+        coupon: Promotion = cls(_id=promo.type[:4].lower()+"-"+uuid.uuid4().hex[:5])
         promo.coupons.append(coupon)
 
     @staticmethod
     def get_coupon_by_id(promo_id, coupon_id):
+        """
+        Retrieves a coupon given its ID
+        :param promo_id: ID of the promotion
+        :param coupon_id: ID of the coupon
+        :return: Coupon information or error message if either promotion or coupon does not exist
+        """
         promo = Database.find_one(COLLECTION, {'_id': promo_id})
         if promo is None:
             raise PromotionNotFound("La promoción con el ID dado no existe.")
@@ -76,7 +82,7 @@ class Promotion(BaseModel):
             raise WrongPromotionType(
                 "Error en el tipo de promoción. Solo puede ser 'Descuento', 'Reservación' o 'Carreras'.")
         password = new_promo.pop('password')
-        promo = cls(**new_promo, coupons=[])
+        promo: Promotion = cls(**new_promo, coupons=[])
         admin = AdminModel.get_by_id(session['admin_id'], ADMIN_COLLECTION)
         promo.creator = admin.name
         if password != Utils.generate_password():
@@ -99,13 +105,12 @@ class Promotion(BaseModel):
         promo = Database.find_one(COLLECTION, {'_id': promo_id})
         if promo is None:
             raise PromotionNotFound("La promo con el ID dado no existe.")
-        password = updated_promo.pop('password')
-        if password == Utils.generate_password():
-            promo = cls(**updated_promo, _id=promo_id, coupons=promo.get('coupons'), creator=promo.get('creator'))
-            promo.authoriser = "Admnistrador"
-            promo.update_mongo(COLLECTION)
-            return promo
-        raise InvalidLogin("Credenciales incorrectas.")
+        updated_promo.pop('password')
+        promo_obj: Promotion = cls(**updated_promo, _id=promo_id, coupons=promo.get('coupons'),
+                                   creator=promo.get('creator'))
+        promo_obj.authoriser = "Admnistrador"
+        promo_obj.update_mongo(COLLECTION)
+        return promo_obj
 
     @classmethod
     def get_promos(cls, _id=None):
@@ -123,7 +128,7 @@ class Promotion(BaseModel):
             return [cls(**promo)]
 
     @staticmethod
-    def find_promotion(promo_id):
+    def find_promotion(promo_id) -> dict:
         """
         Searches in the Promo Collection for a specific coupon with the given ID
         :param promo_id: The ID of the coupon to be found

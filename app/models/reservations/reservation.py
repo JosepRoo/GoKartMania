@@ -56,7 +56,7 @@ class Reservation(BaseModel):
         id_location = new_reservation.pop('id_location')
         location = Database.find_one(COLLECTION, {'_id': id_location})
         now = datetime.datetime.now().astimezone(get_localzone())
-        reservation = cls(**new_reservation, date=now)
+        reservation: Reservation = cls(**new_reservation, date=now)
         # print(reservation.date)
         reservation.location = LocationModel(**location)
         if reservation.type != "Niños" and reservation.type != "Adultos":
@@ -69,21 +69,26 @@ class Reservation(BaseModel):
         session['reservation'] = reservation._id
         return reservation
 
-    @classmethod
-    def update(cls, reservation, type):
+    def update(self, type):
+        """
+        Changes the type of the reservation (Kids or Adults)
+        :param self: Reservation object
+        :param type: Kids or adults
+        :return: Reservation updated object
+        """
         from app.models.qrs.qr import QR
         from app.models.pilots.pilot import AbstractPilot
         from app.models.dates.date import Date
-        reservation.type = type
-        reservation.update_mongo(COLLECTION_TEMP)
+        self.type = type
+        self.update_mongo(COLLECTION_TEMP)
         # QR.remove_reservation_qrs()
-        # QR.create(reservation)
+        # QR.create(self)
         # AbstractPilot.remove_allocated_pilots()
         # Reservation.remove_temporal_reservations()
-        return reservation
+        return self
 
     @staticmethod
-    def delete(reservation_id):
+    def delete(reservation_id) -> None:
         """
         Removes from the Collection the given reservation
         :param reservation_id: The id of the reservation to be deleted from the collection
@@ -109,11 +114,16 @@ class Reservation(BaseModel):
         """
         reservation = Database.find_one(collection, {'_id': _id})
         if reservation:
-            return cls(**reservation)
+            reservation_obj: Reservation = cls(**reservation)
+            return reservation_obj
         raise ReservationNotFound("La reservacion con el ID dado no existe.")
 
     @classmethod
-    def remove_temporal_reservations(cls):
+    def remove_temporal_reservations(cls) -> None:
+        """
+        Removes those reservations from the Temp Reservation Collection that have expired their TIMEOUT
+        :return: None
+        """
         for temp_reservation in Database.find(COLLECTION_TEMP, {}):
             reservation = cls(**temp_reservation)
             now = datetime.datetime.now().astimezone(get_localzone())
@@ -122,12 +132,15 @@ class Reservation(BaseModel):
                 reservation.delete_from_mongo(COLLECTION_TEMP)
 
     def calculate_price(self):
+        """
+        Pre-calculates the total price of the reservation and brings up it's information summary
+        :return: Reservation object
+        """
         from app.models.payments.payment import Payment
         location = self.location
         licensed_pilots = [pilot.licensed for pilot in self.pilots].count(True)
         license_price = licensed_pilots * location.type.get('LICENCIA')
-        # Modificar para Sucursal Tlalnepantla
-        # pues tiene un tercer tipo que no se considera en reservation.type
+        # This needs to be modified in Tlalnepantla for it has a third type Kartito, for babies
         if self.type == "Adultos":
             prices = location.type.get('GOKART')
         else:
@@ -143,6 +156,11 @@ class Reservation(BaseModel):
         return self
 
     def insert_promo(self, promo_id):
+        """
+        Inserts a promo in the current reservation, given a promo ID
+        :param promo_id: ID of the promo to be applied
+        :return: Updates reservation object or error message if ID was not found
+        """
         promotion = PromoModel.find_promotion(promo_id)
         promo = PromoModel(**promotion.get('promo'))
         coupon = Coupons(**promotion.get('coupon'))
@@ -161,6 +179,7 @@ class Reservation(BaseModel):
         turns_size = len(self.turns)
         turns_price = Payment.calculate_turns_price(turns_size, prices_size, prices)
         self.price_before_promo = license_price + turns_price
+        # Decreases the number of races to be paid
         if promotion.get('promo').get('type') == 'Carreras':
             turns_size -= promotion.get('promo').get('value')
             former_turns_price = turns_price
@@ -171,9 +190,11 @@ class Reservation(BaseModel):
                 turns_price = 0
                 self.discount = former_turns_price - turns_price
         amount = license_price + turns_price
+        # Decreases from the total amount the discount value
         if promotion.get('promo').get('type') == 'Descuento':
             self.discount = amount * (promotion.get('promo').get('value') / 100)
             amount -= self.discount
+        # Sets the total amount to be paid to 0
         elif promotion.get('promo').get('type') == 'Reservación':
             self.discount = amount
             amount = 0
@@ -183,3 +204,18 @@ class Reservation(BaseModel):
         self.amount = amount
         self.update_mongo(COLLECTION_TEMP)
         return self
+
+    @classmethod
+    def get_reservations_in_time(cls, first_date, last_date):
+        """
+        Retrieves the information of every reservation completed (and payed) in a given date range
+        :param first_date: The start date to be accounted
+        :param last_date: The end date to be accounted
+        :return: Array of reservation objects
+        """
+        first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
+        last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        expressions = list()
+        expressions.append({'$match': {'date': {'$gte': first_date, '$lte': last_date}}})
+        result = list(Database.aggregate(REAL_RESERVATIONS, expressions))
+        return [cls(**reservation) for reservation in result]
