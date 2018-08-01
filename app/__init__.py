@@ -1,6 +1,6 @@
 import datetime
 
-from flask import Flask, session
+from flask import Flask, session, request
 from flask_compress import Compress
 from flask_restful import Api
 
@@ -79,9 +79,19 @@ def create_app(config_name):
 
     @app.after_request
     def after_request(response):
+        ending = request.path.split(".")
+        if len(ending) > 1:
+            ending = ending[-1]
+        else:
+            ending = None
+        if ending == 'js':
+            response.headers.add('Content-Type', 'text/javascript')
+        elif ending == 'css':
+            response.headers.add('Content-Type', 'text/css')
         response.headers.add('Access-Control-Allow-Origin', '*')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
         response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+        print(response.headers)
         return response
 
     @app.before_first_request
