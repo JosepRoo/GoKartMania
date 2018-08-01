@@ -11,7 +11,7 @@ import { Location } from '@angular/common';
 })
 export class LogInComponent implements OnInit {
   logIn: FormGroup;
-  loginError:string;
+  error:string;
   constructor(
     private formBuilder: FormBuilder,
     private adminService: AdminService,
@@ -27,6 +27,7 @@ export class LogInComponent implements OnInit {
   }
 
   loginAdmin(){
+    this.error = null;
     if(this.logIn.valid){
       this.adminService.loginAdmin(this.logIn.getRawValue()).subscribe(
         res=>{
@@ -34,7 +35,7 @@ export class LogInComponent implements OnInit {
           this.router.navigate(['admin/home']);
         },
         err =>{
-          this.loginError = err;
+          this.error = err;
         }
       );
     }else{
