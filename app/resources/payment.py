@@ -26,8 +26,64 @@ class Payments(Resource):
     def post(user_id):
         """
         Inserts a new payment to the current user and sends confirmation emails
+
         :param user_id: ID of the user to be found
-        :return: :class:`app.models.payments.Payment`
+
+        .. :quickref: Pagos; Procesa el pago de la reservación
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            POST /user/payments/<string:user_id> HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+            Content-Type: application/json
+
+            {
+                "number": "4111111111111111",
+                "name": "Aldo Arturo Reyna",
+                "month": "04",
+                "year": "2021",
+                "cvv": "123",
+                "payment_method": "MASTERCARD",
+                "payment_type": "Etomin",
+                "promo_id": null,
+                "coupon_id": null
+            }
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": true,
+                "message": "Correos de confirmacion exitosamente enviados."
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 401 Unauthorised
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "El numero de la tarjeta es invalido."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: payment completed
+        :status 401: malformed
+        :status 500: internal error
+
+        :return: :class:`app.models.payments.payment.Payment`
         """
         try:
             card_data, payment_data = {}, PAYMENT_PARSER.parse_args()

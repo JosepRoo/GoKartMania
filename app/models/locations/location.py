@@ -67,7 +67,7 @@ class Location(BaseModel):
         :return: POST method requesting an email to be sent to the user making the reservation
         """
         # email = Email(to= contacto@gokartmania.com, subject='Confirmación de reservación')
-        email = Email(to='jromagosa@sitsolutions.org', subject='Confirmación de reservación', qr_code=qr_code)
+        email = Email(to='javierj@gokartmania.com.mx', subject='Confirmación de reservación', qr_code=qr_code)
         turns_detail = ""
         for turn in reservation.turns:
             turns_detail += "<p>" + turn.schedule + " hrs - Turno " + turn.turn_number + "</p>"
