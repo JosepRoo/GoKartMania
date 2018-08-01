@@ -414,8 +414,7 @@ class Admin(BaseModel):
 
         date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         excel_path = f'{basedir}/app/reports/reservations/ReporteReservaciones_{date}.xlsx'
-        Utils.generate_report(result, excel_path, "Reservaciones")
-        return result
+        return Utils.generate_report(result, f'ReporteReservaciones_{date}.xlsx', "Reservaciones")
 
     @staticmethod
     def build_pilots_report() -> list:
@@ -446,8 +445,7 @@ class Admin(BaseModel):
         result = list(Database.aggregate(RESERVATIONS, expressions))
         date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         excel_path = f'{basedir}/app/reports/pilots/ReportePilotos_{date}.xlsx'
-        Utils.generate_report(result, excel_path, "Pilotos")
-        return result
+        return Utils.generate_report(result, f'ReportePilotos_{date}.xlsx', "Pilotos")
 
     @classmethod
     def get_by_id(cls, _id, collection):
