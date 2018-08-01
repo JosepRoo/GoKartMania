@@ -89,8 +89,8 @@ export class PaymentComponent implements OnInit {
       };
       this.reservationService.postUser(user).subscribe(
         res => {
-            // TODO remove om prod
-            self.paymentDone.emit();
+            // // TODO remove om prod
+            // self.paymentDone.emit();
           self.payment.controls.user_id.setValue(res._id);
           self.reservationService
             .postPayment(self.payment.getRawValue())
