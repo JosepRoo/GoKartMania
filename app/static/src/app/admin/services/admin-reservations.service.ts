@@ -13,6 +13,7 @@ import 'rxjs/add/observable/throw';
 })
 export class AdminReservationsService {
   private apiReservations: string = environment.api + '/admin/licensed_pilots';
+  private apiUpcomingReservations = environment.api + '/user/reservations';
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
     Accept: 'application/json'
@@ -42,5 +43,25 @@ export class AdminReservationsService {
           return Observable.throw(e.error.message);
         }
       });
+  }
+
+  getUpcomingReservations(date){
+    return this.http
+    .get<any>(this.apiUpcomingReservations+'/'+date+'/'+date.substring(0,4)+'-12-31',{
+      headers: this.headers
+    })
+    .pipe(res => {
+      return res;
+    })
+    .catch(e => {
+      if (e.status === 401) {
+        this.location.replaceState('/');
+        this.router.navigate(['/logIn']);
+        return Observable.throw(e.error.message);
+      }
+      if (e.status === 400) {
+        return Observable.throw(e.error.message);
+      }
+    });
   }
 }

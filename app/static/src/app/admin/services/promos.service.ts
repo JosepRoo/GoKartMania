@@ -24,7 +24,7 @@ export class PromosService {
     private location: Location
   ) { }
 
-  getPromos(): Observable<any[]> {
+  getPromos(): Observable<{promos: any, isSuperAdmin: any}> {
     return this.http
       .get<any>(this.apiPromos, {
         headers: this.headers
@@ -42,6 +42,42 @@ export class PromosService {
           return Observable.throw(e.error.message);
         }
       });
+  }
+
+  createPromo(body): Observable<any>{
+    return this.http.post(this.apiPromos,body,{headers:this.headers})
+    .pipe(res=>{
+      return res;
+    })
+    .catch(e => {
+      if (e.status === 401) {
+        this.location.replaceState('/');
+        this.router.navigate(['/logIn']);
+        return Observable.throw(e.error.message);
+      }
+      if (e.status === 400) {
+        return Observable.throw(e.error.message);
+      }
+    });
+  }
+
+
+  //  CHECK
+  changePromo(body): Observable<any>{
+    return this.http.put(this.apiPromos+'/'+body._id,body, {headers:this.headers})
+    .pipe(res=>{
+      return res
+    })
+    .catch(e => {
+      if (e.status === 401) {
+        this.location.replaceState('/');
+        this.router.navigate(['/logIn']);
+        return Observable.throw(e.error.message);
+      }
+      if (e.status === 400) {
+        return Observable.throw(e.error.message);
+      }
+    });
   }
 
 }

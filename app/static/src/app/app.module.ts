@@ -25,6 +25,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTableModule } from '@angular/material/table';
+import { MatDialogModule } from '@angular/material/dialog'
 
 // Calendar
 import { CalendarModule } from 'angular-calendar';
@@ -60,6 +61,8 @@ import { AdminComponent } from './admin/app.component';
 import { LogInComponent } from './log-in/log-in.component';
 import { PromosComponent } from './admin/promos/promos.component';
 import { ReservationsComponent } from './admin/reservations/reservations.component';
+import { NewPromoDialogComponent } from './admin/promos/new-promo-dialog/new-promo-dialog.component';
+import { EditPromoDialogComponent } from './admin/promos/edit-promo-dialog/edit-promo-dialog.component';
 
 registerLocaleData(localeEs, 'es');
 
@@ -80,7 +83,9 @@ registerLocaleData(localeEs, 'es');
     HomeComponent,
     LogInComponent,
     PromosComponent,
-    ReservationsComponent
+    ReservationsComponent,
+    NewPromoDialogComponent,
+    EditPromoDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -103,6 +108,7 @@ registerLocaleData(localeEs, 'es');
     MatRadioModule,
     MatDividerModule,
     MatTableModule,
+    MatDialogModule,
     NgXCreditCardsModule,
     CalendarModule.forRoot(),
     MatSidenavModule,
@@ -119,6 +125,10 @@ registerLocaleData(localeEs, 'es');
     DatePipe,
     { provide: LOCALE_ID, useValue: 'es' }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents:[
+    NewPromoDialogComponent,
+    EditPromoDialogComponent
+	]
 })
 export class AppModule {}
