@@ -1,5 +1,9 @@
 <div class="background">
   <br>
+  <div class="alert alert-danger error" role="alert" *ngIf="error">
+    {{error}}
+  </div>
+  <br>
   <div class="row justify-content-center">
     <div class="col-11 col-sm-4 text-center">
       <img class="img-fluid" src="../assets/logoBlanco.png">
