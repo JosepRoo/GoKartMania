@@ -12,6 +12,57 @@ class User(Resource):
     def post():
         """
         Registers a new user manually given its body parameters
+
+        .. :quickref: Usuario; Login/Registrar un nuevo usuario
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            POST /user HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+            Content-Type: application/json
+
+            {
+                "name": "Josep Romagosa",
+                "email": "josepromll@gmail.com"
+            }
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "_id": "2d092ef7044b42708833bb4f7ab71082",
+                "email": "josepromll@gmail.com",
+                "name": "Josep Romagosa",
+                "reservations": [
+                    a9d6d83a1ba14eae8b2d791e988ae4f
+                ]
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 400 Bad request
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "message": "El token de acceso ha expirado, inicie sesión nuevamente",
+                "success": false
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: user login
+        :status 400: malformed request
+
         :return: A brand new user, or a session to the currently existing user
         """
         parser = reqparse.RequestParser()

@@ -1,0 +1,24 @@
+<div class="container-fluid ">
+  <form [formGroup]="promoData" (ngSubmit)="editPromo()">
+		<mat-form-field *ngIf="startDate > defaultDate.getTime()">
+		  <input matInput [matDatepicker]="startDatePicker" placeholder="Fecha de inicio" formControlName = "start_date" data-date-format='yyyy-mm-dd' [min]="defaultDate" (dateInput)="changeMinDate(promoData.controls.start_date.value)">
+		  <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+		  <mat-datepicker #startDatePicker></mat-datepicker>
+			<mat-error *ngIf="promoData.controls.start_date.hasError('required')">Campo requerido</mat-error>
+		</mat-form-field>
+		<mat-form-field style="padding-top:10px">
+			<input matInput [matDatepicker]="endDatePicker" placeholder="Fecha final" formControlName = "end_date" data-date-format='yyyy-mm-dd' [min]="endDateMin">
+			<mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+			<mat-datepicker #endDatePicker></mat-datepicker>
+			<mat-error *ngIf="promoData.controls.end_date.hasError('required')">Campo requerido</mat-error>
+    </mat-form-field>
+    <div class="row justify-content-md-end justify-content-sm-center">
+			<div class="col-md-4 col-sm-10" style="padding-top:5px;">
+				<button mat-raised-button class="btn-block" color="primary" type="submit"> Guardar promo </button>
+			</div>
+			<div class="col-md-4 col-sm-10" style="padding-top:5px;">
+				<button mat-raised-button class="btn-block" color="primary" mat-dialog-close> Cancelar</button>
+			</div>
+		</div>
+  </form>
+</div>

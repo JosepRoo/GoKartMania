@@ -26,7 +26,7 @@ class Location(BaseModel):
         :param new_location: Location to be added to the Location collection
         :relocation: A brand new location object
         """
-        location = cls(**new_location)
+        location: Location = cls(**new_location)
         location.save_to_mongo(COLLECTION)
         return location
 
@@ -55,14 +55,14 @@ class Location(BaseModel):
         location = Database.find_one(COLLECTION, {'_id': updated_location['_id']})
         if location is None:
             raise LocationNotFound("La ubicacion con el ID dado no existe.")
-        location = cls(**updated_location)
+        location: Location = cls(**updated_location)
         location.update_mongo(COLLECTION)
         return location
 
-    def send_confirmation_message(self, reservation: Reservation, qr_code):
+    def send_confirmation_message(self, reservation: Reservation, qr_code) -> None:
         """
         Sends an email to the current user with the summary of the reservation (all turns)
-        :param qr_code:
+        :param qr_code: QR code path that will be displayed in the email
         :param reservation: Reservation object
         :return: POST method requesting an email to be sent to the user making the reservation
         """
