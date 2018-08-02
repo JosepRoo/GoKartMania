@@ -97,8 +97,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#turnos">Turnos</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#turns">Turns</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#turn">Turn</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#retrieveturn">RetrieveTurn</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#adminchangeturn">AdminChangeTurn</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#fechas">Fechas</a><ul>
@@ -316,14 +316,6 @@ Content-Type: application/json
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>Reservaciones</td>
-<td><a class="reference external" href="#put--user-reservations-(string-reservation_id)">PUT /user/reservations/(string:reservation_id)</a></td>
-<td>Cambia el tipo de reservación Niños-Adultos</td>
-</tr>
-<tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#put--user-reservations">PUT /user/reservations</a></td>
-<td>&#160;</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
 <td><a class="reference external" href="#post--user-reservations-(string-reservation_id)">POST /user/reservations/(string:reservation_id)</a></td>
 <td>Inicia el proceso de una reservación</td>
 </tr>
@@ -332,11 +324,11 @@ Content-Type: application/json
 <td>&#160;</td>
 </tr>
 <tr class="row-even"><td>&#160;</td>
-<td><a class="reference external" href="#get--user-reservations-(string-reservation_id)">GET /user/reservations/(string:reservation_id)</a></td>
-<td>Info de una reservación</td>
+<td><a class="reference external" href="#put--user-reservations-(string-reservation_id)">PUT /user/reservations/(string:reservation_id)</a></td>
+<td>Cambia el tipo de reservación Niños-Adultos</td>
 </tr>
 <tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#get--user-reservations">GET /user/reservations</a></td>
+<td><a class="reference external" href="#put--user-reservations">PUT /user/reservations</a></td>
 <td>&#160;</td>
 </tr>
 <tr class="row-even"><td>&#160;</td>
@@ -347,8 +339,112 @@ Content-Type: application/json
 <td><a class="reference external" href="#delete--user-reservations">DELETE /user/reservations</a></td>
 <td>&#160;</td>
 </tr>
+<tr class="row-even"><td>&#160;</td>
+<td><a class="reference external" href="#get--user-reservations-(string-reservation_id)">GET /user/reservations/(string:reservation_id)</a></td>
+<td>Info de una reservación</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td><a class="reference external" href="#get--user-reservations">GET /user/reservations</a></td>
+<td>&#160;</td>
+</tr>
 </tbody>
 </table>
+<dl class="post">
+<dt id="post--user-reservations-(string-reservation_id)">
+<code class="descname">POST </code><code class="descname">/user/reservations/</code><span class="sig-paren">(</span><em class="property">string: </em><em>reservation_id</em><span class="sig-paren">)</span><a class="headerlink" href="#post--user-reservations-(string-reservation_id)" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="post">
+<dt id="post--user-reservations">
+<code class="descname">POST </code><code class="descname">/user/reservations</code><a class="headerlink" href="#post--user-reservations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers a new reservation given its type</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/user</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Adultos&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;id_location&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;37ed22da4292438ab316b801f3fe4517&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Adultos&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-01 00:00&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;GOKART&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="mi">295</span><span class="p">,</span>
+                <span class="mi">530</span><span class="p">,</span>
+                <span class="mi">690</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;CADET&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="mi">295</span><span class="p">,</span>
+                <span class="mi">530</span><span class="p">,</span>
+                <span class="mi">690</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;LICENCIA&quot;</span><span class="p">:</span> <span class="mi">100</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;turns&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="nt">&quot;pilots&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="nt">&quot;payment&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;amount&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;license_price&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;turns_price&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;price_before_promo&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;promo_id&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;coupon_id&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;discount&quot;</span><span class="p">:</span> <span class="kc">null</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response error</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Error en el tipo de reservacion. Solo puede ser &#39;Adultos&#39; o &#39;Niños&#39;.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – reservation process started</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a> – location ID was not found</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">JSON object with the created reservation</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="put">
 <dt id="put--user-reservations-(string-reservation_id)">
 <code class="descname">PUT </code><code class="descname">/user/reservations/</code><span class="sig-paren">(</span><em class="property">string: </em><em>reservation_id</em><span class="sig-paren">)</span><a class="headerlink" href="#put--user-reservations-(string-reservation_id)" title="Permalink to this definition">¶</a></dt>
@@ -444,25 +540,19 @@ Content-Type: application/json
 </table>
 </dd></dl>
 
-<dl class="post">
-<dt id="post--user-reservations-(string-reservation_id)">
-<code class="descname">POST </code><code class="descname">/user/reservations/</code><span class="sig-paren">(</span><em class="property">string: </em><em>reservation_id</em><span class="sig-paren">)</span><a class="headerlink" href="#post--user-reservations-(string-reservation_id)" title="Permalink to this definition">¶</a></dt>
+<dl class="delete">
+<dt id="delete--user-reservations-(string-reservation_id)">
+<code class="descname">DELETE </code><code class="descname">/user/reservations/</code><span class="sig-paren">(</span><em class="property">string: </em><em>reservation_id</em><span class="sig-paren">)</span><a class="headerlink" href="#delete--user-reservations-(string-reservation_id)" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="post">
-<dt id="post--user-reservations">
-<code class="descname">POST </code><code class="descname">/user/reservations</code><a class="headerlink" href="#post--user-reservations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Registers a new reservation given its type</p>
+<dl class="delete">
+<dt id="delete--user-reservations">
+<code class="descname">DELETE </code><code class="descname">/user/reservations</code><a class="headerlink" href="#delete--user-reservations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the reservation with the given id in the parameters.</p>
 <p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/user</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">DELETE</span> <span class="nn">/user/reservations/&lt;string:reservation_id&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
 <span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Adultos&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;id_location&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span>
-<span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Example response</strong>:</p>
@@ -471,36 +561,8 @@ Content-Type: application/json
 <span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
 
 <span class="p">{</span>
-    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;37ed22da4292438ab316b801f3fe4517&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Adultos&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-01 00:00&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;GOKART&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="mi">295</span><span class="p">,</span>
-                <span class="mi">530</span><span class="p">,</span>
-                <span class="mi">690</span>
-            <span class="p">],</span>
-            <span class="nt">&quot;CADET&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="mi">295</span><span class="p">,</span>
-                <span class="mi">530</span><span class="p">,</span>
-                <span class="mi">690</span>
-            <span class="p">],</span>
-            <span class="nt">&quot;LICENCIA&quot;</span><span class="p">:</span> <span class="mi">100</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;turns&quot;</span><span class="p">:</span> <span class="p">[],</span>
-    <span class="nt">&quot;pilots&quot;</span><span class="p">:</span> <span class="p">[],</span>
-    <span class="nt">&quot;payment&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nt">&quot;amount&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nt">&quot;license_price&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nt">&quot;turns_price&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nt">&quot;price_before_promo&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nt">&quot;promo_id&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nt">&quot;coupon_id&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nt">&quot;discount&quot;</span><span class="p">:</span> <span class="kc">null</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Reservación exitosamente eliminada.&quot;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -511,7 +573,7 @@ Content-Type: application/json
 
 <span class="p">{</span>
     <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Error en el tipo de reservacion. Solo puede ser &#39;Adultos&#39; o &#39;Niños&#39;.&quot;</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;La reservacion con el ID dado no existe.&quot;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -526,14 +588,13 @@ Content-Type: application/json
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – reservation process started</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – reservation deleted</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a> – location ID was not found</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">JSON object with the created reservation</p>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">JSON object with the remaining reservation</p>
 </td>
 </tr>
 </tbody>
@@ -658,67 +719,6 @@ Content-Type: application/json
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.reservations.reservation.Reservation</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="delete">
-<dt id="delete--user-reservations-(string-reservation_id)">
-<code class="descname">DELETE </code><code class="descname">/user/reservations/</code><span class="sig-paren">(</span><em class="property">string: </em><em>reservation_id</em><span class="sig-paren">)</span><a class="headerlink" href="#delete--user-reservations-(string-reservation_id)" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="delete">
-<dt id="delete--user-reservations">
-<code class="descname">DELETE </code><code class="descname">/user/reservations</code><a class="headerlink" href="#delete--user-reservations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes the reservation with the given id in the parameters.</p>
-<p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">DELETE</span> <span class="nn">/user/reservations/&lt;string:reservation_id&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
-<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-</pre></div>
-</div>
-<p><strong>Example response</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Reservación exitosamente eliminada.&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response error</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;La reservacion con el ID dado no existe.&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – reservation deleted</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">JSON object with the remaining reservation</p>
 </td>
 </tr>
 </tbody>
@@ -1506,12 +1506,12 @@ Content-Type: application/json
 <td>Cambia cierta información del piloto</td>
 </tr>
 <tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#get--user-pilot-(string-pilot_id)">GET /user/pilot/(string:pilot_id)</a></td>
-<td>Info del piloto con el ID dado</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
 <td><a class="reference external" href="#delete--user-pilot-(string-pilot_id)">DELETE /user/pilot/(string:pilot_id)</a></td>
 <td>Elimina el piloto con el ID dado</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td><a class="reference external" href="#get--user-pilot-(string-pilot_id)">GET /user/pilot/(string:pilot_id)</a></td>
+<td>Info del piloto con el ID dado</td>
 </tr>
 </tbody>
 </table>
@@ -1604,6 +1604,73 @@ Content-Type: application/json
 </table>
 </dd></dl>
 
+<dl class="delete">
+<dt id="delete--user-pilot-(string-pilot_id)">
+<code class="descname">DELETE </code><code class="descname">/user/pilot/</code><span class="sig-paren">(</span><em class="property">string: </em><em>pilot_id</em><span class="sig-paren">)</span><a class="headerlink" href="#delete--user-pilot-(string-pilot_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the pilot with the given id in the parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pilot_id</strong> – The id of the pilot to be deleted from the reservation</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">DELETE</span> <span class="nn">/user/pilot/&lt;string:pilot_id&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Piloto exitosamente eliminado.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response error</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">404</span> <span class="ne">Not found</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;El piloto con el ID dado no existe&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – reservation deleted</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Success message</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="get">
 <dt id="get--user-pilot-(string-pilot_id)">
 <code class="descname">GET </code><code class="descname">/user/pilot/</code><span class="sig-paren">(</span><em class="property">string: </em><em>pilot_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-pilot-(string-pilot_id)" title="Permalink to this definition">¶</a></dt>
@@ -1680,174 +1747,12 @@ Content-Type: application/json
 </table>
 </dd></dl>
 
-<dl class="delete">
-<dt id="delete--user-pilot-(string-pilot_id)">
-<code class="descname">DELETE </code><code class="descname">/user/pilot/</code><span class="sig-paren">(</span><em class="property">string: </em><em>pilot_id</em><span class="sig-paren">)</span><a class="headerlink" href="#delete--user-pilot-(string-pilot_id)" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes the pilot with the given id in the parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>pilot_id</strong> – The id of the pilot to be deleted from the reservation</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">DELETE</span> <span class="nn">/user/pilot/&lt;string:pilot_id&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
-<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-</pre></div>
-</div>
-<p><strong>Example response</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Piloto exitosamente eliminado.&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response error</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">404</span> <span class="ne">Not found</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;El piloto con el ID dado no existe&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – reservation deleted</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Success message</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </div>
 </div>
 <div class="section" id="turnos">
 <h3>Turnos<a class="headerlink" href="#turnos" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="turns">
-<h4>Turns<a class="headerlink" href="#turns" title="Permalink to this headline">¶</a></h4>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="20%" />
-<col width="45%" />
-<col width="35%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Resource</th>
-<th class="head">Operation</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>Turnos</td>
-<td><a class="reference external" href="#post--user-turns">POST /user/turns</a></td>
-<td>Añade un turno a la reservación</td>
-</tr>
-</tbody>
-</table>
-<dl class="post">
-<dt id="post--user-turns">
-<code class="descname">POST </code><code class="descname">/user/turns</code><a class="headerlink" href="#post--user-turns" title="Permalink to this definition">¶</a></dt>
-<dd><p>Registers a new turn with the given parameters (date, schedule, and turn)</p>
-<p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/user/turns</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
-<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-01&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;15&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;turn_number&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;positions&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;pos1&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;pos2&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;6d76a060d4da4acca026f10dffc960db&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;15&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;turn_number&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;positions&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;pos1&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;pos2&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response error</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">403</span> <span class="ne">Conflict</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Este turno ya no se encuentra disponible.&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – turn added to reservation</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.10">409 Conflict</a> – turn was occupied by someone else</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.turns.turn.Turn</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-<div class="section" id="turn">
-<h4>Turn<a class="headerlink" href="#turn" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="retrieveturn">
+<h4>RetrieveTurn<a class="headerlink" href="#retrieveturn" title="Permalink to this headline">¶</a></h4>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="20%" />
@@ -1862,147 +1767,11 @@ Content-Type: application/json
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>Turno</td>
-<td><a class="reference external" href="#put--user-turn-(string-reservation_id)-(string-turn_id)">PUT /user/turn/(string:reservation_id)/(string:turn_id)</a></td>
-<td>Cambia el turno a otra fecha, horario, turno</td>
-</tr>
-<tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#put--user-turn-(string-turn_id)">PUT /user/turn/(string:turn_id)</a></td>
-<td>&#160;</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
-<td><a class="reference external" href="#get--user-turn-(string-reservation_id)-(string-turn_id)">GET /user/turn/(string:reservation_id)/(string:turn_id)</a></td>
+<td><a class="reference external" href="#get--user-turn-(string-turn_id)">GET /user/turn/(string:turn_id)</a></td>
 <td>Info del turno con el ID dado</td>
 </tr>
-<tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#get--user-turn-(string-turn_id)">GET /user/turn/(string:turn_id)</a></td>
-<td>&#160;</td>
-</tr>
 </tbody>
 </table>
-<dl class="put">
-<dt id="put--user-turn-(string-reservation_id)-(string-turn_id)">
-<code class="descname">PUT </code><code class="descname">/user/turn/</code><span class="sig-paren">(</span><em class="property">string: </em><em>reservation_id</em><span class="sig-paren">)</span><code class="descname">/</code><span class="sig-paren">(</span><em class="property">string: </em><em>turn_id</em><span class="sig-paren">)</span><a class="headerlink" href="#put--user-turn-(string-reservation_id)-(string-turn_id)" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="put">
-<dt id="put--user-turn-(string-turn_id)">
-<code class="descname">PUT </code><code class="descname">/user/turn/</code><span class="sig-paren">(</span><em class="property">string: </em><em>turn_id</em><span class="sig-paren">)</span><a class="headerlink" href="#put--user-turn-(string-turn_id)" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the information of the turn with the given parameters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>reservation_id</strong> – The id of the reservation where the turn is taken</li>
-<li><strong>turn_id</strong> – The id of the pilot to be read from the reservation</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">PUT</span> <span class="nn">/user/turn/&lt;string:reservation_id&gt;/&lt;string:turn_id&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
-<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-31&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;16&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;turn_number&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;positions&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;pos1&quot;</span><span class="p">:</span> <span class="s2">&quot;aldo_chikai@hotmail.com&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;pos2&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;pos3&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;pos4&quot;</span><span class="p">:</span> <span class="s2">&quot;a01370622@gmail.com&quot;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">[</span>
-    <span class="p">{</span>
-        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;688deb7a22f94239901f5d0f2e770b3d&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;14&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;turn_number&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;positions&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;pos1&quot;</span><span class="p">:</span> <span class="s2">&quot;aldo_chikai@hotmail.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;pos2&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;pos3&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;pos4&quot;</span><span class="p">:</span> <span class="s2">&quot;a01370622@gmail.com&quot;</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;bbcdb639647f4246b656d6255465b9c1&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;14&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;turn_number&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;positions&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;pos1&quot;</span><span class="p">:</span> <span class="s2">&quot;aldo_chikai@hotmail.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;pos2&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;pos3&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;pos4&quot;</span><span class="p">:</span> <span class="s2">&quot;a01370622@gmail.com&quot;</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;21d1102232874b06a247c37827eba888&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;16&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;turn_number&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;positions&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;pos1&quot;</span><span class="p">:</span> <span class="s2">&quot;aldo_chikai@hotmail.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;pos2&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;pos3&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;pos4&quot;</span><span class="p">:</span> <span class="s2">&quot;a01370622@gmail.com&quot;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">]</span>
-</pre></div>
-</div>
-<p><strong>Example response error</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">404</span> <span class="ne">Not found</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;El turno con el ID dado no existe&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – turn schedule changed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a> – turn was not found</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.10">409 Conflict</a> – turn was occupied by someone else</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Array of <code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.turns.turn.Turn</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="get">
-<dt id="get--user-turn-(string-reservation_id)-(string-turn_id)">
-<code class="descname">GET </code><code class="descname">/user/turn/</code><span class="sig-paren">(</span><em class="property">string: </em><em>reservation_id</em><span class="sig-paren">)</span><code class="descname">/</code><span class="sig-paren">(</span><em class="property">string: </em><em>turn_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-turn-(string-reservation_id)-(string-turn_id)" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="get">
 <dt id="get--user-turn-(string-turn_id)">
 <code class="descname">GET </code><code class="descname">/user/turn/</code><span class="sig-paren">(</span><em class="property">string: </em><em>turn_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-turn-(string-turn_id)" title="Permalink to this definition">¶</a></dt>
@@ -2076,6 +1845,137 @@ Content-Type: application/json
 </dd></dl>
 
 </div>
+<div class="section" id="adminchangeturn">
+<h4>AdminChangeTurn<a class="headerlink" href="#adminchangeturn" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="45%" />
+<col width="35%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Resource</th>
+<th class="head">Operation</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Turno</td>
+<td><a class="reference external" href="#put--user-turn-(string-reservation_id)">PUT /user/turn/(string:reservation_id)</a></td>
+<td>Cambia el turno a otra fecha, horario, turno</td>
+</tr>
+</tbody>
+</table>
+<dl class="put">
+<dt id="put--user-turn-(string-reservation_id)">
+<code class="descname">PUT </code><code class="descname">/user/turn/</code><span class="sig-paren">(</span><em class="property">string: </em><em>reservation_id</em><span class="sig-paren">)</span><a class="headerlink" href="#put--user-turn-(string-reservation_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the information of the turn with the given parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>reservation_id</strong> – The id of the reservation where the turn is taken</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">PUT</span> <span class="nn">/user/turn/&lt;string:reservation_id&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;turns&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-31&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;15&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;turn_number&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;positions&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;pos2&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;pos3&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-31&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;15&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;turn_number&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;positions&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;pos2&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;pos3&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">[</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;5eab6bc8f4fb48a8a615520cf75fe086&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;15&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;turn_number&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;positions&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;pos2&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;pos3&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;96e91813a5ee49ac95161b25693083f5&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;15&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;turn_number&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;positions&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;pos2&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;pos3&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>Example response error</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">404</span> <span class="ne">Not found</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;El turno con el ID dado no existe&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – turn schedule changed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a> – turn was not found</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.10">409 Conflict</a> – turn was occupied by someone else</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Array of <code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.turns.turn.Turn</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 </div>
 <div class="section" id="fechas">
 <h3>Fechas<a class="headerlink" href="#fechas" title="Permalink to this headline">¶</a></h3>
@@ -2095,19 +1995,19 @@ Content-Type: application/json
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>Fechas</td>
-<td><a class="reference external" href="#put--dates-(string-start_date)-(string-end_date)">PUT /dates/(string:start_date)/(string:end_date)</a></td>
-<td>Llena un rango de fechas con turnos y pilotos al azar</td>
-</tr>
-<tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#put--dates">PUT /dates</a></td>
-<td>&#160;</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
 <td><a class="reference external" href="#post--dates-(string-start_date)-(string-end_date)">POST /dates/(string:start_date)/(string:end_date)</a></td>
 <td>Añade fechas en el mes y año dados</td>
 </tr>
 <tr class="row-odd"><td>&#160;</td>
 <td><a class="reference external" href="#post--dates">POST /dates</a></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td><a class="reference external" href="#put--dates-(string-start_date)-(string-end_date)">PUT /dates/(string:start_date)/(string:end_date)</a></td>
+<td>Llena un rango de fechas con turnos y pilotos al azar</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td><a class="reference external" href="#put--dates">PUT /dates</a></td>
 <td>&#160;</td>
 </tr>
 <tr class="row-even"><td>&#160;</td>
@@ -2120,6 +2020,73 @@ Content-Type: application/json
 </tr>
 </tbody>
 </table>
+<dl class="post">
+<dt id="post--dates-(string-start_date)-(string-end_date)">
+<code class="descname">POST </code><code class="descname">/dates/</code><span class="sig-paren">(</span><em class="property">string: </em><em>start_date</em><span class="sig-paren">)</span><code class="descname">/</code><span class="sig-paren">(</span><em class="property">string: </em><em>end_date</em><span class="sig-paren">)</span><a class="headerlink" href="#post--dates-(string-start_date)-(string-end_date)" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="post">
+<dt id="post--dates">
+<code class="descname">POST </code><code class="descname">/dates</code><a class="headerlink" href="#post--dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts date objects to the collection in the month and year given in the parameters</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/dates</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="s2">&quot;2018&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;month&quot;</span><span class="p">:</span> <span class="s2">&quot;10&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Registro del mes exitoso&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response error</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – dates added to collection</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Successful response if the insertion was completed</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="put">
 <dt id="put--dates-(string-start_date)-(string-end_date)">
 <code class="descname">PUT </code><code class="descname">/dates/</code><span class="sig-paren">(</span><em class="property">string: </em><em>start_date</em><span class="sig-paren">)</span><code class="descname">/</code><span class="sig-paren">(</span><em class="property">string: </em><em>end_date</em><span class="sig-paren">)</span><a class="headerlink" href="#put--dates-(string-start_date)-(string-end_date)" title="Permalink to this definition">¶</a></dt>
@@ -2187,73 +2154,6 @@ Content-Type: application/json
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Successful response if the update was completed</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="post">
-<dt id="post--dates-(string-start_date)-(string-end_date)">
-<code class="descname">POST </code><code class="descname">/dates/</code><span class="sig-paren">(</span><em class="property">string: </em><em>start_date</em><span class="sig-paren">)</span><code class="descname">/</code><span class="sig-paren">(</span><em class="property">string: </em><em>end_date</em><span class="sig-paren">)</span><a class="headerlink" href="#post--dates-(string-start_date)-(string-end_date)" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="post">
-<dt id="post--dates">
-<code class="descname">POST </code><code class="descname">/dates</code><a class="headerlink" href="#post--dates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inserts date objects to the collection in the month and year given in the parameters</p>
-<p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/dates</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
-<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="s2">&quot;2018&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;month&quot;</span><span class="p">:</span> <span class="s2">&quot;10&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Registro del mes exitoso&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response error</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – dates added to collection</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Successful response if the insertion was completed</p>
 </td>
 </tr>
 </tbody>
@@ -7410,19 +7310,19 @@ Content-Type: application/json
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>Promos</td>
-<td><a class="reference external" href="#put--promos-(string-promo_id)">PUT /promos/(string:promo_id)</a></td>
-<td>Cambia cierta información de la promoción</td>
-</tr>
-<tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#put--promos">PUT /promos</a></td>
-<td>&#160;</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
 <td><a class="reference external" href="#post--promos-(string-promo_id)">POST /promos/(string:promo_id)</a></td>
 <td>Añade una promoción</td>
 </tr>
 <tr class="row-odd"><td>&#160;</td>
 <td><a class="reference external" href="#post--promos">POST /promos</a></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td><a class="reference external" href="#put--promos-(string-promo_id)">PUT /promos/(string:promo_id)</a></td>
+<td>Cambia cierta información de la promoción</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td><a class="reference external" href="#put--promos">PUT /promos</a></td>
 <td>&#160;</td>
 </tr>
 <tr class="row-even"><td>&#160;</td>
@@ -7435,6 +7335,78 @@ Content-Type: application/json
 </tr>
 </tbody>
 </table>
+<dl class="post">
+<dt id="post--promos-(string-promo_id)">
+<code class="descname">POST </code><code class="descname">/promos/</code><span class="sig-paren">(</span><em class="property">string: </em><em>promo_id</em><span class="sig-paren">)</span><a class="headerlink" href="#post--promos-(string-promo_id)" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="post">
+<dt id="post--promos">
+<code class="descname">POST </code><code class="descname">/promos</code><a class="headerlink" href="#post--promos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts a new promotion to the Promos Collection</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/promos</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;existence&quot;</span> <span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="nt">&quot;start_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-01&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;end_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-31&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Descuento&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Descuento del 15% sobre el total de la reservación&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+    <span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;gokartmania&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Registro satisfactorio de la promoción.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response error</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – promo added</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Successful response if the insertion was completed</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="put">
 <dt id="put--promos-(string-promo_id)">
 <code class="descname">PUT </code><code class="descname">/promos/</code><span class="sig-paren">(</span><em class="property">string: </em><em>promo_id</em><span class="sig-paren">)</span><a class="headerlink" href="#put--promos-(string-promo_id)" title="Permalink to this definition">¶</a></dt>
@@ -7586,78 +7558,6 @@ Content-Type: application/json
 </table>
 </dd></dl>
 
-<dl class="post">
-<dt id="post--promos-(string-promo_id)">
-<code class="descname">POST </code><code class="descname">/promos/</code><span class="sig-paren">(</span><em class="property">string: </em><em>promo_id</em><span class="sig-paren">)</span><a class="headerlink" href="#post--promos-(string-promo_id)" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="post">
-<dt id="post--promos">
-<code class="descname">POST </code><code class="descname">/promos</code><a class="headerlink" href="#post--promos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inserts a new promotion to the Promos Collection</p>
-<p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/promos</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
-<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;existence&quot;</span> <span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="nt">&quot;start_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-01&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;end_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-31&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Descuento&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Descuento del 15% sobre el total de la reservación&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
-    <span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;gokartmania&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Registro satisfactorio de la promoción.&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response error</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – promo added</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Successful response if the insertion was completed</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="get">
 <dt id="get--promos-(string-promo_id)">
 <code class="descname">GET </code><code class="descname">/promos/</code><span class="sig-paren">(</span><em class="property">string: </em><em>promo_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--promos-(string-promo_id)" title="Permalink to this definition">¶</a></dt>
@@ -7780,19 +7680,19 @@ Content-Type: application/json
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>Sucursales</td>
-<td><a class="reference external" href="#put--locations-(string-location_id)">PUT /locations/(string:location_id)</a></td>
-<td>Cambia cierta información de la sucursal e.g. precios</td>
-</tr>
-<tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#put--locations">PUT /locations</a></td>
-<td>&#160;</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
 <td><a class="reference external" href="#post--locations-(string-location_id)">POST /locations/(string:location_id)</a></td>
 <td>Añade una nueva sucursal a la BD</td>
 </tr>
 <tr class="row-odd"><td>&#160;</td>
 <td><a class="reference external" href="#post--locations">POST /locations</a></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td><a class="reference external" href="#put--locations-(string-location_id)">PUT /locations/(string:location_id)</a></td>
+<td>Cambia cierta información de la sucursal e.g. precios</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td><a class="reference external" href="#put--locations">PUT /locations</a></td>
 <td>&#160;</td>
 </tr>
 <tr class="row-even"><td>&#160;</td>
@@ -7805,79 +7705,6 @@ Content-Type: application/json
 </tr>
 </tbody>
 </table>
-<dl class="put">
-<dt id="put--locations-(string-location_id)">
-<code class="descname">PUT </code><code class="descname">/locations/</code><span class="sig-paren">(</span><em class="property">string: </em><em>location_id</em><span class="sig-paren">)</span><a class="headerlink" href="#put--locations-(string-location_id)" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="put">
-<dt id="put--locations">
-<code class="descname">PUT </code><code class="descname">/locations</code><a class="headerlink" href="#put--locations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the location with the given parameters</p>
-<p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">PUT</span> <span class="nn">/locations</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
-<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>   <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;GOKART&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">315</span><span class="p">,</span> <span class="mi">580</span><span class="p">,</span> <span class="mi">700</span><span class="p">],</span>
-        <span class="nt">&quot;CADET&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">295</span><span class="p">,</span> <span class="mi">530</span><span class="p">,</span> <span class="mi">690</span><span class="p">]</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>   <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;GOKART&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">315</span><span class="p">,</span> <span class="mi">580</span><span class="p">,</span> <span class="mi">700</span><span class="p">],</span>
-        <span class="nt">&quot;CADET&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">295</span><span class="p">,</span> <span class="mi">530</span><span class="p">,</span> <span class="mi">690</span><span class="p">]</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response error</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">404</span> <span class="ne">Not Found</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – pilot info changed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.locations.location.Locations</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="post">
 <dt id="post--locations-(string-location_id)">
 <code class="descname">POST </code><code class="descname">/locations/</code><span class="sig-paren">(</span><em class="property">string: </em><em>location_id</em><span class="sig-paren">)</span><a class="headerlink" href="#post--locations-(string-location_id)" title="Permalink to this definition">¶</a></dt>
@@ -7948,6 +7775,79 @@ Content-Type: application/json
 </tr>
 <tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – location added to DB</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.locations.location.Locations</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="put">
+<dt id="put--locations-(string-location_id)">
+<code class="descname">PUT </code><code class="descname">/locations/</code><span class="sig-paren">(</span><em class="property">string: </em><em>location_id</em><span class="sig-paren">)</span><a class="headerlink" href="#put--locations-(string-location_id)" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="put">
+<dt id="put--locations">
+<code class="descname">PUT </code><code class="descname">/locations</code><a class="headerlink" href="#put--locations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the location with the given parameters</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">PUT</span> <span class="nn">/locations</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>   <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;GOKART&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">315</span><span class="p">,</span> <span class="mi">580</span><span class="p">,</span> <span class="mi">700</span><span class="p">],</span>
+        <span class="nt">&quot;CADET&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">295</span><span class="p">,</span> <span class="mi">530</span><span class="p">,</span> <span class="mi">690</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>   <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;GOKART&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">315</span><span class="p">,</span> <span class="mi">580</span><span class="p">,</span> <span class="mi">700</span><span class="p">],</span>
+        <span class="nt">&quot;CADET&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">295</span><span class="p">,</span> <span class="mi">530</span><span class="p">,</span> <span class="mi">690</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response error</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">404</span> <span class="ne">Not Found</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – pilot info changed</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
 </ul>
