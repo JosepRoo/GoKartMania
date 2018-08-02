@@ -99,7 +99,7 @@ class Turns(Resource):
 
 class Turn(Resource):
     @staticmethod
-    @Utils.login_required
+    @Utils.admin_login_required
     def get(turn_id):
         """
         Retrieves the information of the turn with the given id in the parameters.
@@ -155,8 +155,7 @@ class Turn(Resource):
         :return: :class:`app.models.turns.turn.Turn`
         """
         try:
-            reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-            return TurnModel.get(reservation, turn_id).json(), 200
+            return TurnModel.get(turn_id), 200
         except TurnNotFound as e:
             return Response(message=e.message).json(), 404
         except ReservationErrors as e:
