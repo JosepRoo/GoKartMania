@@ -6,7 +6,7 @@ from app.common.database import Database
 from app.models.baseModel import BaseModel
 from app.models.dates.constants import COLLECTION
 from app.models.dates.errors import DateNotAvailable
-from app.models.reservations.constants import COLLECTION_TEMP
+from app.models.reservations.constants import COLLECTION_TEMP, COLLECTION as REAL_RESERVATIONS
 from app.models.reservations.reservation import Reservation
 from app.models.schedules.errors import ScheduleNotAvailable
 from app.models.schedules.schedule import Schedule
@@ -43,17 +43,16 @@ class Turn(BaseModel):
         return turn
 
     @staticmethod
-    def get(reservation: Reservation, turn_id):
+    def get(turn_id):
         """
         Retrieves the information of the turn with the given id.
-        :param reservation: Reservation object
         :param turn_id: The id of the turn to be read from the reservation
         :return: The requested turn
         """
-        for turn in reservation.turns:
-            if turn._id == turn_id:
-                return turn
-        raise TurnNotFound("El turno con el ID dado no existe")
+        turn = list(Database.find(REAL_RESERVATIONS, {'turns._id': turn_id}))
+        if turn is None or turn == []:
+            raise TurnNotFound("El turno con el ID dado no existe")
+        return list(filter(lambda x: x.get('_id') == turn_id, turn[0].get('turns')))[0]
 
     @classmethod
     def check_and_add(cls, reservation: Reservation, new_turn):
@@ -163,24 +162,22 @@ class Turn(BaseModel):
         :param former_turn: Previous turn information
         :return: True if the update was successful; error message otherwise
         """
-        first_date = reservation.date
-        last_date = reservation.date + datetime.timedelta(days=1)
+
+        first_date = datetime.datetime.strptime(reservation.date.strftime("%Y-%m-%d"), "%Y-%m-%d")
+        last_date = first_date + datetime.timedelta(days=1)
         query = {'date': {'$gte': first_date, '$lte': last_date}}
         for date in Database.find(COLLECTION, query):
             new_date = DateModel(**date)
             for schedule in new_date.schedules:
                 if schedule.hour == former_turn.schedule:
-                    # print(schedule._id)
                     for turn in schedule.turns:
                         if turn.turn_number == int(former_turn.turn_number):
-                            # print(turn.turn_number, [pilot._id for pilot in turn.pilots])
                             pilots = turn.pilots.copy()
                             for pilot in pilots:
                                 if pilot._id in [pilot._id for pilot in reservation.pilots]:
                                     turn.pilots.remove(pilot)
                             if turn.pilots is None or turn.pilots == []:
                                 turn.type = None
-                                # print(new_date.schedules[4].turns[0].pilots)
                             new_date.update_mongo(COLLECTION)
         available_dates = DateModel.get_available_dates_user(reservation, updated_turn.get('date'), updated_turn.get('date'))
         if cls.check_date_availability(available_dates[0], updated_turn):
@@ -231,7 +228,7 @@ class Turn(BaseModel):
                 reservation.date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d") + datetime.timedelta(days=1)
                 reservation.turns.remove(turn)
                 reservation.turns.append(new_turn)
-                reservation.update_mongo(COLLECTION_TEMP)
+                reservation.update_mongo(REAL_RESERVATIONS)
                 return reservation.turns
         raise TurnNotFound("El piloto con el ID dado no existe")
 

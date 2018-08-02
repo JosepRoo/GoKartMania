@@ -84,7 +84,7 @@ class Admin(BaseModel):
         :param promo: Promotion object containing the information of the promo to be confirmed
         :return: POST method requesting an email to be sent to the user making the reservation
         """
-        email = Email(to='jromagosa@sitsolutions.org', subject='Confirmación de promoción', qr_code=None)
+        email = Email(to='javierj@gokartmania.com.mx', subject='Confirmación de promoción', qr_code=None)
         # email = Email(to='areyna@sitsolutions.org', subject='Confirmación de promoción', qr_code=None)
 
         email_html = """

@@ -194,6 +194,7 @@ class Date(BaseModel):
                         busy_turns += 1
                     else:
                         availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 1
+                        busy_turns += 1
                     i += 1
                 if busy_turns == 5:
                     availability_dict[date_str][schedule.hour]["cupo"] = 0

@@ -150,17 +150,316 @@
    <h1>HTTP Routing Table</h1>
 
    <div class="modindex-jumpbox">
+   <a href="#cap-/admin"><strong>/admin</strong></a> | 
+   <a href="#cap-/available_dates"><strong>/available_dates</strong></a> | 
+   <a href="#cap-/available_schedules"><strong>/available_schedules</strong></a> | 
+   <a href="#cap-/dates"><strong>/dates</strong></a> | 
+   <a href="#cap-/locations"><strong>/locations</strong></a> | 
+   <a href="#cap-/promos"><strong>/promos</strong></a> | 
    <a href="#cap-/user"><strong>/user</strong></a>
    </div>
 
    <table class="indextable modindextable">
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/admin"><td></td><td>
+       <strong>/admin</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--admin-available_dates-(string-start_date)-(string-end_date)"><code class="xref">GET /admin/available_dates/(string:start_date)/(string:end_date)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--admin-available_schedules-(string-date)"><code class="xref">GET /admin/available_schedules/(string:date)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--admin-build_pilots_report"><code class="xref">GET /admin/build_pilots_report</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--admin-build_reservations_report-(string-start_date)-(string-end_date)"><code class="xref">GET /admin/build_reservations_report/(string:start_date)/(string:end_date)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--admin-busy_hours"><code class="xref">GET /admin/busy_hours</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--admin-licensed_pilots"><code class="xref">GET /admin/licensed_pilots</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--admin-party_avg_size"><code class="xref">GET /admin/party_avg_size</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--admin-promos_income_qty-(string-start_date)-(string-end_date)"><code class="xref">GET /admin/promos_income_qty/(string:start_date)/(string:end_date)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--admin-reservation_avg_price"><code class="xref">GET /admin/reservation_avg_price</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--admin-reservation_income_qty-(string-start_date)-(string-end_date)"><code class="xref">GET /admin/reservation_income_qty/(string:start_date)/(string:end_date)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--admin-who_reserved-(string-date)-(string-schedule)-(string-turn)"><code class="xref">GET /admin/who_reserved/(string:date)/(string:schedule)/(string:turn)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#post--admin"><code class="xref">POST /admin</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#post--admin-payments"><code class="xref">POST /admin/payments</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#post--admin-payments-(string-user_id)"><code class="xref">POST /admin/payments/(string:user_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/available_dates"><td></td><td>
+       <strong>/available_dates</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--available_dates-(string-start_date)-(string-end_date)"><code class="xref">GET /available_dates/(string:start_date)/(string:end_date)</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/available_schedules"><td></td><td>
+       <strong>/available_schedules</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--available_schedules-(string-date)"><code class="xref">GET /available_schedules/(string:date)</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/dates"><td></td><td>
+       <strong>/dates</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--dates"><code class="xref">GET /dates</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--dates-(string-start_date)-(string-end_date)"><code class="xref">GET /dates/(string:start_date)/(string:end_date)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#post--dates"><code class="xref">POST /dates</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#post--dates-(string-start_date)-(string-end_date)"><code class="xref">POST /dates/(string:start_date)/(string:end_date)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#put--dates"><code class="xref">PUT /dates</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#put--dates-(string-start_date)-(string-end_date)"><code class="xref">PUT /dates/(string:start_date)/(string:end_date)</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/locations"><td></td><td>
+       <strong>/locations</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--locations"><code class="xref">GET /locations</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--locations-(string-location_id)"><code class="xref">GET /locations/(string:location_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#post--locations"><code class="xref">POST /locations</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#post--locations-(string-location_id)"><code class="xref">POST /locations/(string:location_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#put--locations"><code class="xref">PUT /locations</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#put--locations-(string-location_id)"><code class="xref">PUT /locations/(string:location_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-/promos"><td></td><td>
+       <strong>/promos</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--promos"><code class="xref">GET /promos</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--promos-(string-promo_id)"><code class="xref">GET /promos/(string:promo_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#post--promos"><code class="xref">POST /promos</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#post--promos-(string-promo_id)"><code class="xref">POST /promos/(string:promo_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#put--promos"><code class="xref">PUT /promos</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#put--promos-(string-promo_id)"><code class="xref">PUT /promos/(string:promo_id)</code></a></td><td>
+       <em></em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-/user"><td></td><td>
        <strong>/user</strong></td><td></td></tr>
      <tr>
        <td></td>
        <td>
+       <a href="resources.html#get--user-pilot-(string-pilot_id)"><code class="xref">GET /user/pilot/(string:pilot_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--user-pilots"><code class="xref">GET /user/pilots</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--user-reservations"><code class="xref">GET /user/reservations</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--user-reservations-(string-reservation_id)"><code class="xref">GET /user/reservations/(string:reservation_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--user-reservations-(string-start_date)-(string-end_date)"><code class="xref">GET /user/reservations/(string:start_date)/(string:end_date)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--user-turn-(string-reservation_id)-(string-turn_id)"><code class="xref">GET /user/turn/(string:reservation_id)/(string:turn_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#get--user-turn-(string-turn_id)"><code class="xref">GET /user/turn/(string:turn_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
        <a href="resources.html#post--user"><code class="xref">POST /user</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#post--user-payments-(string-user_id)"><code class="xref">POST /user/payments/(string:user_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#post--user-pilots"><code class="xref">POST /user/pilots</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#post--user-reservations"><code class="xref">POST /user/reservations</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#post--user-reservations-(string-reservation_id)"><code class="xref">POST /user/reservations/(string:reservation_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#post--user-turns"><code class="xref">POST /user/turns</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#put--user-pilot-(string-pilot_id)"><code class="xref">PUT /user/pilot/(string:pilot_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#put--user-reservations"><code class="xref">PUT /user/reservations</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#put--user-reservations-(string-reservation_id)"><code class="xref">PUT /user/reservations/(string:reservation_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#put--user-reservations_promo"><code class="xref">PUT /user/reservations_promo</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#put--user-turn-(string-reservation_id)-(string-turn_id)"><code class="xref">PUT /user/turn/(string:reservation_id)/(string:turn_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#put--user-turn-(string-turn_id)"><code class="xref">PUT /user/turn/(string:turn_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#delete--user-pilot-(string-pilot_id)"><code class="xref">DELETE /user/pilot/(string:pilot_id)</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#delete--user-reservations"><code class="xref">DELETE /user/reservations</code></a></td><td>
+       <em></em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="resources.html#delete--user-reservations-(string-reservation_id)"><code class="xref">DELETE /user/reservations/(string:reservation_id)</code></a></td><td>
        <em></em></td></tr>
    </table>
 
