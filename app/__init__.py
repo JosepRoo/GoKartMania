@@ -1,7 +1,6 @@
 import datetime
 
 from flask import Flask, session, request
-from flask_compress import Compress
 from flask_restful import Api
 
 from app.common.database import Database
