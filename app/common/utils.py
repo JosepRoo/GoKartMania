@@ -1,9 +1,10 @@
 import datetime
 import os
+import io
 import xlsxwriter
 import pandas as pd
 
-from flask import session
+from flask import session, Response as RESPONSE
 from passlib.hash import pbkdf2_sha512
 from app import Response
 import re
@@ -92,17 +93,43 @@ class Utils(object):
         return wrap
 
     @staticmethod
-    def generate_report(arr_dict, path, type):
+    def generate_report(arr_dict, file_name, type):
+        # Create an in-memory output file for the new workbook.
+        output = io.BytesIO()
+
         # Create a Pandas dataframe from the data.
         data = {key: [item[key] if key in item else 0 for item in arr_dict] for key in arr_dict[-1].keys()}
         df = pd.DataFrame(data)
 
         # Create a Pandas Excel writer using XlsxWriter as the engine.
-        writer = pd.ExcelWriter(path, engine='xlsxwriter')
+        writer = pd.ExcelWriter(output, engine='xlsxwriter')
 
         # Convert the dataframe to an XlsxWriter Excel object.
         df.to_excel(writer, sheet_name=type)
 
+        # Get the xlsxwriter workbook and worksheet objects.
+        workbook = writer.book
+        worksheet = writer.sheets[type]
+
+        col_widths = Utils.get_col_widths(df)
+        for i, width in enumerate(col_widths):
+            worksheet.set_column(i, i, width)
+
         # Close the Pandas Excel writer and output the Excel file.
         writer.save()
+
+        xlsx_data = output.getvalue()
+
+        response = RESPONSE(xlsx_data,
+                            headers={"Content-Disposition": f"attachment;filename={file_name}"},
+                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+        return response
+
+    @staticmethod
+    def get_col_widths(dataframe):
+        # First we find the maximum length of the index column
+        idx_max = max([len(str(s)) for s in dataframe.index.values] + [len(str(dataframe.index.name))])
+        # Then, we concatenate this to the max of the lengths of column name and its values for each column
+        return [idx_max] + [max([len(str(s)) for s in dataframe[col].values] + [len(col)]) for col in dataframe.columns]
 
