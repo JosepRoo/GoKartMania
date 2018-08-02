@@ -2,6 +2,7 @@ from flask import session
 import datetime
 from tzlocal import get_localzone
 from app.models.baseModel import BaseModel
+from app.models.locations.errors import LocationNotFound
 from app.models.promos.promotion import Promotion as PromoModel, Coupons
 from app.common.database import Database
 from app.models.reservations.constants import COLLECTION_TEMP, TIMEOUT, COLLECTION as REAL_RESERVATIONS
@@ -55,6 +56,8 @@ class Reservation(BaseModel):
 
         id_location = new_reservation.pop('id_location')
         location = Database.find_one(COLLECTION, {'_id': id_location})
+        if location is None:
+            raise LocationNotFound("La sucursal con este ID no fue encontrada.")
         now = datetime.datetime.now().astimezone(get_localzone())
         reservation: Reservation = cls(**new_reservation, date=now)
         # print(reservation.date)
@@ -79,6 +82,8 @@ class Reservation(BaseModel):
         from app.models.qrs.qr import QR
         from app.models.pilots.pilot import AbstractPilot
         from app.models.dates.date import Date
+        if type != "Niños" and type != "Adultos":
+            raise WrongReservationType("Error en el tipo de reservacion. Solo puede ser 'Adultos' o 'Niños'.")
         self.type = type
         self.update_mongo(COLLECTION_TEMP)
         # QR.remove_reservation_qrs()

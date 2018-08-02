@@ -47,50 +47,45 @@ class Pilot(BaseModel):
         return pilot
 
     @staticmethod
-    def get(reservation: Reservation, pilot_id):
+    def get(pilot_id) -> dict:
         """
         Retrieves the information of the pilot with the given id.
-        :param reservation: Reservation object
         :param pilot_id: The id of the pilot to be read from the reservation
         :return: The requested pilot
         """
-        for pilot in reservation.pilots:
-            if pilot._id == pilot_id:
-                return pilot
-        raise PilotNotFound("El piloto con el ID dado no existe")
+        pilot = list(Database.find(PILOTS, {"_id": pilot_id}))
+        if pilot is None or pilot == []:
+            raise PilotNotFound("El piloto con el ID dado no existe")
+        return pilot[0]
 
     @classmethod
-    def update(cls, reservation: Reservation, updated_pilot, pilot_id):
+    def update(cls, updated_pilot, pilot_id):
         """
         Updates the information from the pilot with the given id.
-        :param reservation: Reservation object containing the array of pilots
         :param updated_pilot: The pilot data to be updated to the previous one
         :param pilot_id: the ID of the pilot to be updated
         :return: All the pilots of the current reservation, with updated data
         """
-        for pilot in reservation.pilots:
-            if pilot._id == pilot_id:
-                new_pilot = cls(**updated_pilot, _id=pilot_id)
-                reservation.pilots.remove(pilot)
-                reservation.pilots.append(new_pilot)
-                reservation.update_mongo(COLLECTION_TEMP)
-                return reservation.pilots
-        raise PilotNotFound("El piloto con el ID dado no existe")
+        pilot = list(Database.find(PILOTS, {"_id": pilot_id}))
+        if pilot is None or pilot == []:
+            raise PilotNotFound("El piloto con el ID dado no existe")
+        new_pilot: Pilot = cls(**updated_pilot, _id=pilot_id)
+        new_pilot.update_mongo(PILOTS)
+        return new_pilot
 
-    @staticmethod
-    def delete(reservation: Reservation, pilot_id):
+    @classmethod
+    def delete(cls, pilot_id) -> None:
         """
         Removes from the reservations array of pilots the pilot with the given id.
         :param reservation: Reservation object
         :param pilot_id: The id of the pilot to be deleted from the reservation
         :return: The remaining pilots of the reservation
         """
-        for pilot in reservation.pilots:
-            if pilot._id == pilot_id:
-                reservation.pilots.remove(pilot)
-                reservation.update_mongo(COLLECTION_TEMP)
-                return reservation.pilots
-        raise PilotNotFound("El piloto con el ID dado no existe")
+        pilot = list(Database.find(PILOTS, {"_id": pilot_id}))
+        if pilot is None or pilot == []:
+            raise PilotNotFound("El piloto con el ID dado no existe")
+        bye_pilot: Pilot = cls(**pilot[0])
+        bye_pilot.delete_from_mongo(PILOTS)
 
     @staticmethod
     def send_confirmation_message(reservation: Reservation, qr_code) -> None:

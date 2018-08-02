@@ -53,7 +53,7 @@ class Email(object):
             pass
             # self.to = [self.to]
         if not from_addr:
-            from_addr = 'contacto@iualia.com'
+            from_addr = 'info@gokartmania.com.mx'
         if not self._html and not self._text:
             raise FailedToSendEmail('Debes proporcionar un mensaje de texto o cuerpo HTML valido.')
         if not self._html:
