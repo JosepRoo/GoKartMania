@@ -1,0 +1,55 @@
+<div class="container" style="overflow: hidden !important">
+
+    <br/>
+  
+    <span class="h3">
+      Editar Reservación
+    </span>
+  
+    <div class="alert alert-danger error" role="alert" *ngIf="error">
+      {{error}}
+    </div>
+
+    <br/>
+
+    <form [formGroup]="datesAndTurns">
+      <div class="row">
+        <div class="col-md-6 col-sm-12">
+          <mat-form-field style="padding-top: 5px">
+            <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="turnDatePicker" placeholder="Fecha de la Reservación" formControlName = "date" data-date-format='yyyy-mm-dd' [min]="today" [max]="maxReservationDate" (dateInput)="getAvailableSchedules(datesAndTurns.controls.date.value)">
+            <mat-datepicker-toggle matSuffix [for]="turnDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #turnDatePicker></mat-datepicker>
+            <mat-error *ngIf="datesAndTurns.controls.date.hasError('required')">Campo requerido</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <mat-form-field style="padding-top: 5px">
+            <mat-select formControlName="schedule" placeholder="Horario de la reservación" [disabled]="!datesAndTurns.controls.date.value" (selectionChange)="getAvailableTurns(datesAndTurns.controls.schedule.value)">
+              <mat-option *ngFor="let schedule of availableSchedules" [value]="schedule.schedule">{{schedule.schedule}}:00hrs</mat-option>
+            </mat-select>
+            <mat-error *ngIf="datesAndTurns.controls.schedule.hasError('required')">Campo requerido</mat-error>
+          </mat-form-field>
+        </div>
+        <mat-form-field>
+          <mat-select formControlName="turn_number" placeholder="Turno" [disabled]="!datesAndTurns.controls.schedule.value" (selectionChange)="getAvailablePositions(datesAndTurns.controls.turn_number.value)">
+            <mat-option *ngFor="let turn of availableTurns" [value]="turn.turn">Turno {{turn.turn}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </form>
+
+    <mat-grid-list cols="4" rowHeight="2:1">
+      <mat-grid-tile *ngFor="let position of availablePositions">
+        <mat-checkbox [disabled]="!position.status || (selectedPositions.length == pilots.length && !selectedPositions.includes(position.position))" (change)="selectPosition(position.position)">Posición {{position.position}}</mat-checkbox>
+      </mat-grid-tile>
+    </mat-grid-list>
+  
+    <div class="row justify-content-end">
+      <div class="col-md-4 col-sm-12" style="padding-top: 5px">
+        <button mat-raised-button class="btn-block" color="primary" mat-dialog-close>Cancelar</button>
+      </div>
+      <div class="col-md-4 col-sm-12" style="padding-top: 5px">
+        <button mat-raised-button class="btn-block" color="primary" (click)="updateTurn()">Actualizar Reservación</button>
+      </div>
+    </div>
+  </div>

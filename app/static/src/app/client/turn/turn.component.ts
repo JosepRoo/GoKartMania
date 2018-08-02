@@ -100,9 +100,6 @@ export class TurnComponent implements OnInit {
             }
           );
           this.availableDates = res;
-        },
-        error => {
-          console.log(error);
         }
       );
   }
@@ -213,7 +210,6 @@ export class TurnComponent implements OnInit {
         Object.keys(this.turn.controls.positions.value).length >=
         this.reservation.pilots.length
       ) {
-        console.log(this.turn.getRawValue());
         this.datesService.createTurn(this.turn.getRawValue()).subscribe(
           res => {
             res.date = this.turn.controls.date.value;

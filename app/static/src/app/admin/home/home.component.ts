@@ -42,7 +42,6 @@ export class HomeComponent implements OnInit {
       lastDay.toISOString().substring(0, 10)
     ).subscribe(res => {
       this.promos = res;
-      console.log(res);
     });
   }
 }

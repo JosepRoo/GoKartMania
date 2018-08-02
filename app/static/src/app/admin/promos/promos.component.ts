@@ -1,7 +1,8 @@
 import { MatDialog } from '@angular/material/dialog';
-import { Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy} from '@angular/core';
 import { MatSort, MatTableDataSource, MatIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as XLSX from 'xlsx';
 
 //components
 import { NewPromoDialogComponent } from './new-promo-dialog/new-promo-dialog.component';
@@ -15,9 +16,11 @@ import { PromosService } from './../services/promos.service';
   templateUrl: './promos.component.html',
   styleUrls: ['./promos.component.scss']
 })
-export class PromosComponent implements OnInit {
+export class PromosComponent implements OnInit, OnDestroy {
   promos = [];
   dataSource;
+  editPromoDialogRef;
+  newPromoDialogRef;
   defaultDate = new Date().getTime();
 
   displayedColumns: string[] = [
@@ -27,8 +30,6 @@ export class PromosComponent implements OnInit {
     'existence',
     'start_date',
     'end_date',
-    'actions',
-    
   ];
   @ViewChild(MatSort) sort: MatSort;
 
@@ -49,15 +50,25 @@ export class PromosComponent implements OnInit {
     this.getPromos();
   }
 
+  ngOnDestroy(){
+    if (this.newPromoDialogRef){
+      this.newPromoDialogRef.close();
+    }
+    if(this.editPromoDialogRef){
+      this.editPromoDialogRef.close();
+    }
+  }
+
 
 	openNewPromoDialog() {
-		const newPromoDialogRef = this.dialog.open(NewPromoDialogComponent, {
+		this.newPromoDialogRef = this.dialog.open(NewPromoDialogComponent, {
 			width: '70%'
 		});
 
-		newPromoDialogRef.afterClosed().subscribe(
+		this.newPromoDialogRef.afterClosed().subscribe(
 			()=>{
         this.getPromos();
+        this.newPromoDialogRef = null;
 			}
 		);
   }
@@ -66,8 +77,9 @@ export class PromosComponent implements OnInit {
     this.promosService.getPromos().subscribe(res => {
       this.promos = [];
       if (res.isSuperAdmin && (this.displayedColumns[this.displayedColumns.length-1])=='actions'){
-        // this.displayedColumns.push('downloads');
+        this.displayedColumns.push('actions');
         this.displayedColumns.push('authorize');
+        this.displayedColumns.push('download');
       }
       let promos = res.promos;
       
@@ -88,26 +100,30 @@ export class PromosComponent implements OnInit {
     this.promosService.changePromo(element).subscribe(
       res=>{
         this.getPromos();
-      },
-      err=>{
-        console.log("err");
       }
     )
   }
 
   openEditPromoDialog(element) {
-		const editPromoDialogRef = this.dialog.open(EditPromoDialogComponent, {
+		this.editPromoDialogRef = this.dialog.open(EditPromoDialogComponent, {
       width: '70%',
       data: element
     });
-    editPromoDialogRef.afterClosed().subscribe(
+    this.editPromoDialogRef.afterClosed().subscribe(
       ()=>{
         this.getPromos();
+        this.editPromoDialogRef = null;
       }
     )
   }
 
-  // exportCoupons(coupons){
+  exportCoupons(coupons){
+    let excelFileName = "Cupones";
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(coupons);
+    
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'data');
+    XLSX.writeFile(workbook, 'test.xlsx');
 
-  // }
+  }
 }

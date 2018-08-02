@@ -1,0 +1,161 @@
+<div class="container" style="overflow: hidden !important">
+
+  <br/>
+
+  <span class="h3">
+    Nueva Reservación
+  </span>
+
+  <div class="alert alert-danger error" role="alert" *ngIf="error">
+    {{error}}
+  </div>
+  
+  <mat-horizontal-stepper [linear]=true #stepper >
+    <mat-step [stepControl]="reservationData">
+      <form [formGroup] = "reservationData">
+        <ng-template matStepLabel>Registra los pilotos</ng-template>
+        <mat-form-field style="padding-top: 5px">
+          <mat-select formControlName="location" placeholder="Lugar de reservación">
+            <mat-option value = "Plaza Carso">Plaza Carso</mat-option>
+            <mat-option value = "Tlanepantla">Tlanepantla</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field style="padding-top: 5px">
+          <mat-select formControlName="type" placeholder="Tipo de grupo">
+            <mat-option value = "Niños">Niño (6 - 11 años)</mat-option>
+            <mat-option value = "Adultos">Adulto (mayor a 12 años)</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="row" style="padding-top:5px">
+          <div class="col-md-4">
+            <button mat-raised-button class="btn-block" color="primary" (click)="addPilot()" *ngIf="reservationData.controls.type.value" [disabled]="reservationData.get('pilots').length>=8">+ Agregar piloto</button>
+          </div>
+        </div>
+
+        <div class="row justify-content-center" formArrayName="pilots" *ngFor="let pilot of getFormData().controls; let i = index;">
+          <div class="row">
+            <span class="h4"> Datos del piloto
+              <span>0{{i+1}}</span>
+              <span>
+                <a (click)="deletePilot(i)">
+                  <mat-icon color="primary" style="align-self: center">delete</mat-icon>
+                </a>
+              </span>
+            </span>
+          </div>
+        
+          <div class="row" [formGroupName]="i">
+            <div class="col-md-6 col-sm-12">
+              <mat-form-field style="padding-top: 5px">
+                <input matInput formControlName="name" placeholder="Nombre del piloto">
+              </mat-form-field>
+            </div>
+            <div class="col-md-6 col-sm-12">
+              <mat-form-field style="padding-top: 5px">
+                <input matInput formControlName="last_name" placeholder="Apellido del piloto">
+              </mat-form-field>
+            </div>
+            <div class="col-12">
+              <mat-form-field style="padding-top: 5px">
+                <input matInput formControlName="email" placeholder="Correo electrónico del piloto">
+              </mat-form-field>
+            </div>
+            <div class="col-md-6 col-sm-12">
+              <mat-form-field style="padding-top: 5px">
+                <input matInput formControlName="nickname" placeholder="Nickname del piloto">
+              </mat-form-field>
+            </div>
+            <div class="col-md-6 col-sm-12">
+              <mat-form-field style="padding-top: 5px">
+                <input matInput [matDatepicker]="birthdatePicker" placeholder="Fecha de Nacimiento" formControlName = "birth_date" data-date-format='yyyy-mm-dd' [min]="minBirthDayDate" [max]="today">
+                <mat-datepicker-toggle matSuffix [for]="birthdatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #birthdatePicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="col-md-6 col-sm-12">
+              <mat-form-field style="padding-top: 5px">
+                <input matInput formControlName="postal_code" placeholder="Código Postal">
+              </mat-form-field>
+            </div>
+            <div class="col-md-6 col-sm-12">
+              <mat-form-field style="padding-top: 5px">
+                <input matInput formControlName="city" placeholder="Ciudad">
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-end">
+          <div class="col-md-4 col-sm-12" style="padding-top: 5px">
+            <button mat-raised-button class="btn-block" color="primary" mat-dialog-close>Cancelar</button>
+          </div>
+          <div class="col-md-4 col-sm-12" style="padding-top: 5px">
+            <button mat-raised-button class="btn-block" color="primary" (click)="registerPilots()" [disabled]="reservationData.get('pilots').length===0">Registrar pilotos</button>
+          </div>
+        </div>
+      </form>
+
+    </mat-step>
+
+    <mat-step [stepControl]="datesAndTurns">
+      <form [formGroup]="datesAndTurns">
+        <ng-template matStepLabel>Selecciona la fecha y turno</ng-template>
+        <div class="row">
+          <div class="col-md-6 col-sm-12">
+            <mat-form-field style="padding-top: 5px">
+              <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="turnDatePicker" placeholder="Fecha de la Reservación" formControlName = "date" data-date-format='yyyy-mm-dd' [min]="today" [max]="maxReservationDate" (dateInput)="getAvailableSchedules(datesAndTurns.controls.date.value)">
+              <mat-datepicker-toggle matSuffix [for]="turnDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #turnDatePicker></mat-datepicker>
+              <mat-error *ngIf="datesAndTurns.controls.date.hasError('required')">Campo requerido</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6 col-sm-12">
+            <mat-form-field style="padding-top: 5px">
+              <mat-select formControlName="schedule" placeholder="Horario de la reservación" [disabled]="!datesAndTurns.controls.date.value" (selectionChange)="getAvailableTurns(datesAndTurns.controls.schedule.value)">
+                <mat-option *ngFor="let schedule of availableSchedules" [value]="schedule.schedule">{{schedule.schedule}}:00hrs</mat-option>
+              </mat-select>
+              <mat-error *ngIf="datesAndTurns.controls.schedule.hasError('required')">Campo requerido</mat-error>
+            </mat-form-field>
+          </div>
+          <mat-form-field>
+            <mat-select formControlName="turn_number" placeholder="Turno" [disabled]="!datesAndTurns.controls.schedule.value" (selectionChange)="getAvailablePositions(datesAndTurns.controls.turn_number.value)">
+              <mat-option *ngFor="let turn of availableTurns" [value]="turn.turn">Turno {{turn.turn}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </form>
+
+      <mat-grid-list cols="4" rowHeight="2:1">
+        <mat-grid-tile *ngFor="let position of availablePositions">
+          <mat-checkbox [disabled]="!position.status || (selectedPositions.length == pilots.length && !selectedPositions.includes(position.position))" (change)="selectPosition(position.position)">Posición {{position.position}}</mat-checkbox>
+        </mat-grid-tile>
+      </mat-grid-list>
+
+      <br/>
+      <span class="h4">
+        Usuario que pagará la reservación
+      </span>
+      <form [formGroup] = "user">
+        <mat-form-field>
+          <input matInput formControlName="name" placeholder="Nombre Completo">
+          <mat-error *ngIf="user.controls.name.hasError('required')">Campo requerido</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput formControlName="email" placeholder="email">
+          <mat-error *ngIf="user.controls.email.hasError('required')">Campo requerido</mat-error>
+          <mat-error *ngIf="user.controls.email.hasError('email')">Formato incorrecto</mat-error>
+        </mat-form-field>
+      </form>
+
+      <div class="row justify-content-end">
+        <div class="col-md-4 col-sm-12" style="padding-top: 5px">
+          <button mat-raised-button #backBtn matStepperPrevious class="btn-block" color="primary" (click)="datesAndTurns.reset()">Atrás</button>
+        </div>
+        <div class="col-md-4 col-sm-12" style="padding-top: 5px">
+          <button mat-raised-button class="btn-block"  color="primary" [disabled]="!datesAndTurns.valid" (click)="createTurn()">Crear reservación</button>
+        </div>
+      </div>
+      
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>

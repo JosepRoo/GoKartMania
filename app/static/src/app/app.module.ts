@@ -26,6 +26,9 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog'
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatGridListModule } from '@angular/material/grid-list';
+
 
 // Calendar
 import { CalendarModule } from 'angular-calendar';
@@ -63,6 +66,10 @@ import { PromosComponent } from './admin/promos/promos.component';
 import { ReservationsComponent } from './admin/reservations/reservations.component';
 import { NewPromoDialogComponent } from './admin/promos/new-promo-dialog/new-promo-dialog.component';
 import { EditPromoDialogComponent } from './admin/promos/edit-promo-dialog/edit-promo-dialog.component';
+import { AdminPilotsComponent } from './admin/admin-pilots/admin-pilots.component';
+import { NewReservationDialogComponent } from './admin/reservations/new-reservation-dialog/new-reservation-dialog.component';
+import { EditReservationDialogComponent } from './admin/reservations/edit-reservation-dialog/edit-reservation-dialog.component';
+import { CreateReportDialogComponent } from './admin/reservations/create-report-dialog/create-report-dialog.component';
 
 registerLocaleData(localeEs, 'es');
 
@@ -85,7 +92,11 @@ registerLocaleData(localeEs, 'es');
     PromosComponent,
     ReservationsComponent,
     NewPromoDialogComponent,
-    EditPromoDialogComponent
+    EditPromoDialogComponent,
+    AdminPilotsComponent,
+    NewReservationDialogComponent,
+    EditReservationDialogComponent,
+    CreateReportDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -109,6 +120,8 @@ registerLocaleData(localeEs, 'es');
     MatDividerModule,
     MatTableModule,
     MatDialogModule,
+    MatStepperModule,
+    MatGridListModule,
     NgXCreditCardsModule,
     CalendarModule.forRoot(),
     MatSidenavModule,
@@ -128,7 +141,10 @@ registerLocaleData(localeEs, 'es');
   bootstrap: [AppComponent],
   entryComponents:[
     NewPromoDialogComponent,
-    EditPromoDialogComponent
+    EditPromoDialogComponent,
+    NewReservationDialogComponent,
+    EditReservationDialogComponent,
+    CreateReportDialogComponent
 	]
 })
 export class AppModule {}
