@@ -1,4 +1,8 @@
 <div class="container-fluid ">
+	<div class="alert alert-danger error" role="alert" *ngIf="error">
+		{{error}}
+	</div>
+			  
   <form [formGroup]="promoData" (ngSubmit)="createPromo()">
 		<mat-form-field >
 		  <input matInput [matDatepicker]="startDatePicker" placeholder="Fecha de inicio" formControlName = "start_date" data-date-format='yyyy-mm-dd' [min]="defaultDate" (dateInput)="changeMinDate()">

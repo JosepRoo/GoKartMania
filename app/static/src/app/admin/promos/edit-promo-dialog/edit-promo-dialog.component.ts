@@ -24,6 +24,8 @@ export class EditPromoDialogComponent implements OnInit {
 
   promoData: FormGroup;
 
+  error;
+
   ngOnInit() {
     this.promoData = this._formBuilder.group({
 			start_date: [this.data.start_date, [Validators.required]],
@@ -39,19 +41,19 @@ export class EditPromoDialogComponent implements OnInit {
   }
   
   editPromo(){
+    this.error = null;
     if(this.promoData.valid){
       this.data.start_date = new Date(this.promoData.controls.start_date.value).toISOString().substring(0,10);
       this.data.end_date =  new Date(this.promoData.controls.end_date.value).toISOString().substring(0,10);
       this.data.password = null;
       this.promosService.changePromo(this.data).subscribe(
         res=>{
-          console.log("promo cambiada");
+          this.dialogRef.close();
         },
         err=>{
-          console.log("promo no cambiada");
+          this.error = err;
         }
       );
-      this.dialogRef.close();
     }
   }
 

@@ -10,6 +10,7 @@ import { ClientComponent } from './client/app.component';
 import { HomeComponent } from './admin/home/home.component';
 import { PromosComponent } from './admin/promos/promos.component';
 import { ReservationsComponent } from './admin/reservations/reservations.component';
+import { AdminPilotsComponent } from './admin/admin-pilots/admin-pilots.component';
 
 export const routes: Routes = [
   {
@@ -30,6 +31,10 @@ export const routes: Routes = [
       },
       {
         path: 'pilots',
+        component: AdminPilotsComponent
+      },
+      {
+        path: 'reservations',
         component: ReservationsComponent
       },
       {

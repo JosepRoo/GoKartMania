@@ -16,7 +16,7 @@ export class NewPromoDialogComponent implements OnInit {
 	
 	placeholder = "";
 
-
+	error;
 	
 	constructor(
 	private _formBuilder: FormBuilder,
@@ -39,19 +39,19 @@ export class NewPromoDialogComponent implements OnInit {
 	}
 
 	createPromo(){
+		this.error= null;
 		if (this.promoData.valid){
 			let data = this.promoData.getRawValue();
 			data.start_date = new Date(data.start_date).toISOString().substring(0,10);
 			data.end_date = new Date(data.end_date).toISOString().substring(0,10);
 			this.promosService.createPromo(data).subscribe(
 				res=>{
-					console.log("promo creada");
+					this.dialogRef.close();
 				},
 				err=>{
-				  console.log("promo no creada");
+				  this.error = err;
 				}
 			);
-			this.dialogRef.close();
 		}else{
 			this.promoData.updateValueAndValidity();
 		}
