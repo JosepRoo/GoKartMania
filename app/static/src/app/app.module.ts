@@ -25,7 +25,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTableModule } from '@angular/material/table';
-import { MatDialogModule } from '@angular/material/dialog'
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatGridListModule } from '@angular/material/grid-list';
 
@@ -120,7 +120,6 @@ registerLocaleData(localeEs, 'es');
     MatDialogModule,
     MatStepperModule,
     MatGridListModule,
-    NgXCreditCardsModule,
     CalendarModule.forRoot(),
     MatSidenavModule,
     MDBBootstrapModule.forRoot(),

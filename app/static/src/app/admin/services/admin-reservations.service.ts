@@ -28,9 +28,9 @@ export class AdminReservationsService {
     private location: Location
   ) {}
 
-  getUpcomingReservations(date):Observable<any>{
+  getUpcomingReservations(date): Observable<any> {
     return this.http
-    .get<any>(this.apiReservations+'/'+date+'/'+date.substring(0,4)+'-12-31',{
+    .get<any>(this.apiReservations + '/' + date + '/' + date.substring(0, 4) + '-12-31', {
       headers: this.headers
     })
     .pipe(res => {
@@ -68,10 +68,10 @@ export class AdminReservationsService {
       });
   }
 
-  addTurn(turn): Observable<any>{
-    turn.date = turn.date.toISOString().substring(0,10);
+  addTurn(turn): Observable<any> {
+    turn.date = turn.date.toISOString().substring(0, 10);
     return this.http
-    .post<any>(this.apiTurns,turn,{
+    .post<any>(this.apiTurns, turn, {
       headers: this.headers
     })
     .pipe(res => {
@@ -83,15 +83,15 @@ export class AdminReservationsService {
         this.router.navigate(['/logIn']);
         return Observable.throw(e.error.message);
       }
-      if (e.status === 400 || e.status ===409) {
+      if (e.status === 400 || e.status === 409) {
         return Observable.throw(e.error.message);
       }
     });
   }
 
-  getReservations():Observable<any>{
+  getReservations(): Observable<any> {
     return this.http
-    .get<any>(this.apiReservations,{
+    .get<any>(this.apiReservations, {
       headers: this.headers
     })
     .pipe(res => {
@@ -109,24 +109,23 @@ export class AdminReservationsService {
     });
   }
 
-  payReservationAsAdmin(userID){    
-    let body = {
-      "coupon_id": null,
-      "cvv": null,
-      "month": null,
-      "name": null,
-      "number": null,
-      "payment_method": null,
-      "payment_type": "Admin",
-      "promo_id": null,
-      "user_email": null,
-      "user_id": null,
-      "user_name": null,
-      "year": null
-    }
-
+  payReservationAsAdmin(userID) {
+    const body = {
+      'coupon_id': null,
+      'cvv': null,
+      'month': null,
+      'name': null,
+      'number': null,
+      'payment_method': null,
+      'payment_type': 'Admin',
+      'promo_id': null,
+      'user_email': null,
+      'user_id': null,
+      'user_name': null,
+      'year': null
+    };
     return this.http
-    .post<any>(this.apiPayment+'/'+userID,body,{
+    .post<any>(this.apiPayment + '/' + userID , body, {
       headers: this.headers
     })
     .pipe(res => {
@@ -144,9 +143,9 @@ export class AdminReservationsService {
     });
   }
 
-  setUserToPay(body){
+  setUserToPay(body) {
     return this.http
-    .post<any>(this.apiUser,body,{
+    .post<any>(this.apiUser, body, {
       headers: this.headers
     })
     .pipe(res => {
@@ -161,13 +160,13 @@ export class AdminReservationsService {
       if (e.status === 400) {
         return Observable.throw(e.error.message);
       }
-    }); 
+    });
   }
 
-  updateTurns(reservationId:string, body){
+  updateTurns(reservationId: string, body) {
     return this.http
-    .put<any>(this.apiTurn+'/'+reservationId,body,{
-      headers:this.headers
+    .put<any>(this.apiTurn + '/' + reservationId, body, {
+      headers: this.headers
     })
     .pipe(res => {
       return res;
@@ -178,15 +177,14 @@ export class AdminReservationsService {
         this.router.navigate(['/logIn']);
         return Observable.throw(e.error.message);
       }
-      if (e.status === 400 || e.status ===409) {
+      if (e.status === 400 || e.status === 409) {
         return Observable.throw(e.error.message);
       }
-    }); 
+    });
   }
 
-  generateReport(startDate: string, endDate:string){
-    let url = environment.api + '/admin/build_reservations_report/' + startDate+'/'+endDate;
-
+  generateReport(startDate: string, endDate: string) {
+    const url = environment.api + '/admin/build_reservations_report/' + startDate + '/' + endDate;
     window.open(url);
   }
 }

@@ -109,9 +109,9 @@ export class AdminService {
   }
 
 
-  //CHECK
-  loginAdmin(body){
-    body.name = "name";
+  // CHECK
+  loginAdmin(body) {
+    body.name = 'name';
     return this.http
     .post<any>(
       this.apiAdmin,
@@ -120,7 +120,7 @@ export class AdminService {
         headers: this.headers
       }
     )
-    .pipe( res=>{
+    .pipe( res => {
       return res;
     })
     .catch(e => {

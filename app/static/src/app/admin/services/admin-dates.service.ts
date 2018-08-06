@@ -14,7 +14,7 @@ import 'rxjs/add/observable/throw';
 export class AdminDatesService {
   // private apiAvailableDates = environment.api + '/admin/available_dates';
   private apiAvailableDates = environment.api + '/admin/available_dates';
-  private apiAvalableSchedules = environment.api + '/admin/available_schedules';
+  private apiAvailableSchedules = environment.api + '/admin/available_schedules';
 
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
@@ -27,9 +27,9 @@ export class AdminDatesService {
     private location: Location
   ) {}
 
-  getAvailableDates(startDate, endDate){
+  getAvailableDates(startDate, endDate) {
     return this.http
-    .get<any>(this.apiAvailableDates+'/'+startDate+'/'+endDate,{
+    .get<any>(this.apiAvailableDates + '/' + startDate + '/' + endDate, {
       headers: this.headers
     })
     .pipe(res => {
@@ -47,10 +47,10 @@ export class AdminDatesService {
     });
   }
 
-  getAvailableSchedules(date:string){
+  getAvailableSchedules(date: string) {
     return this.http
-    .get<any>(this.apiAvalableSchedules+'/'+date,{
-      headers:this.headers
+    .get<any>(this.apiAvailableSchedules + '/' + date, {
+      headers: this.headers
     })
     .pipe(res => {
       return res;

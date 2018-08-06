@@ -44,9 +44,9 @@ export class PromosService {
       });
   }
 
-  createPromo(body): Observable<any>{
-    return this.http.post(this.apiPromos,body,{headers:this.headers})
-    .pipe(res=>{
+  createPromo(body): Observable<any> {
+    return this.http.post(this.apiPromos, body, {headers: this.headers})
+    .pipe(res => {
       return res;
     })
     .catch(e => {
@@ -61,12 +61,11 @@ export class PromosService {
     });
   }
 
-
   //  CHECK
-  changePromo(body): Observable<any>{
-    return this.http.put(this.apiPromos+'/'+body._id,body, {headers:this.headers})
-    .pipe(res=>{
-      return res
+  changePromo(body): Observable<any> {
+    return this.http.put(this.apiPromos + '/' + body._id, body, {headers: this.headers})
+    .pipe(res => {
+      return res;
     })
     .catch(e => {
       if (e.status === 401) {

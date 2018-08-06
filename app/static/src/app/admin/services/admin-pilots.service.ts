@@ -66,9 +66,8 @@ export class AdminPilotsService {
       });
   }
 
-  generateReport(){
-    let url = environment.api+ '/admin/build_pilots_report';
-
+  generateReport() {
+    const url = environment.api + '/admin/build_pilots_report';
     window.open(url);
   }
 }
