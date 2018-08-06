@@ -62,7 +62,6 @@ export class EditReservationDialogComponent implements OnInit {
   }
 
   ngOnInit(){
-    console.log("DATA",this.data);
     this.display=false;
     this.getAvailableDates();
     this.getAvailableSchedules(this.data.date.substring(0,10));
@@ -146,7 +145,6 @@ export class EditReservationDialogComponent implements OnInit {
   getAvailableTurns(schedule,i){
     this.availableTurns[i]=[];
     if (this.result){
-      console.log(this.result);
 
       let arr =this.result.find(x=>x.schedule==schedule).turns;
       arr.filter(turn=>{
@@ -166,7 +164,6 @@ export class EditReservationDialogComponent implements OnInit {
       let arr =this.result.find(x=>x.schedule==schedule).turns;
       arr = arr.find(x=>x.turn ==turn).positions;
       this.availablePositions[i]= arr;
-      console.log("AP",this.availablePositions);
       if(this.availablePositions[this.availablePositions.length-1].length!==0){
         this.display=true;
       }
@@ -179,10 +176,8 @@ export class EditReservationDialogComponent implements OnInit {
 
   changeDate(){
     let turns = this.datesAndTurns.get('turns').value;
-    console.log("FECHA",this.datesAndTurns.controls.date.value.toISOString().substring(0,10));
     this.getAvailableSchedules(this.datesAndTurns.controls.date.value.toISOString().substring(0,10));
     for(let i = 0; i <  this.reservationTurns.length;i++){
-      console.log("SCH",turns[i].schedule);
       this.getAvailableTurns(turns[i].schedule,i);
       this.getAvailablePositions(turns[i].schedule,turns[i].turn_number,i);
     }
