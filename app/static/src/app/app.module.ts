@@ -143,7 +143,6 @@ registerLocaleData(localeEs, 'es');
     NewReservationDialogComponent,
     EditReservationDialogComponent,
     CreateReportDialogComponent
-	]
-]
+  ]
 })
 export class AppModule {}
