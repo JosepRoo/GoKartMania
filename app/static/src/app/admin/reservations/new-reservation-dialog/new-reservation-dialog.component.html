@@ -90,7 +90,7 @@
             <button mat-raised-button class="btn-block" color="primary" mat-dialog-close>Cancelar</button>
           </div>
           <div class="col-md-4 col-sm-12" style="padding-top: 5px">
-            <button mat-raised-button class="btn-block" color="primary" (click)="registerPilots()" [disabled]="reservationData.get('pilots').length===0">Registrar pilotos</button>
+            <button mat-raised-button class="btn-block" color="primary" (click)="registerPilots()" [disabled]="formArray().length === 0">Registrar pilotos</button>
           </div>
         </div>
       </form>

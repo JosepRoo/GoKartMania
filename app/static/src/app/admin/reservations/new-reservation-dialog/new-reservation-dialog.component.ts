@@ -109,6 +109,10 @@ export class NewReservationDialogComponent implements OnInit {
     pilots.removeAt(index);
   }
 
+  formArray() {
+    return <FormArray> this.reservationData.get('pilots');
+  }
+
   getAvailableDates(){
     const startDate = this.today.toISOString().substring(0,10);
     const endDate = new Date(new Date().setMonth(this.today.getMonth() + 3)).toISOString().substring(0, 10);
