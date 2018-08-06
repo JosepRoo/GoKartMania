@@ -70,7 +70,8 @@ export class ReservationsComponent implements OnInit, OnDestroy {
   openEditReservationDialog(element){
     this.editReservationDialogRef = this.dialog.open(EditReservationDialogComponent,{
       width:"90%",
-      data : element
+      data : element,
+      maxHeight:800
     });
     this.editReservationDialogRef.afterClosed().subscribe(
       ()=>{
@@ -81,7 +82,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
 
   openCreateReportDialog(){
     this.createReportDialogRef = this.dialog.open(CreateReportDialogComponent,{
-      width:'70%',
+      width:'90%',
     });
 
   }
@@ -93,8 +94,5 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  downloadDB(){
-
-  }
 
 }

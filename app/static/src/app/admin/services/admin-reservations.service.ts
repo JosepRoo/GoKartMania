@@ -164,10 +164,9 @@ export class AdminReservationsService {
     }); 
   }
 
-  updateTurn(reservationId:string, turnId:string, body){
-    body.date = body.date.toISOString().substring(0,10);
+  updateTurns(reservationId:string, body){
     return this.http
-    .put<any>(this.apiTurn+'/'+reservationId+'/'+turnId,body,{
+    .put<any>(this.apiTurn+'/'+reservationId,body,{
       headers:this.headers
     })
     .pipe(res => {
