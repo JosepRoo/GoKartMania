@@ -13,7 +13,7 @@ from app.resources.date import Dates, AvailableDatesUser, AvailableSchedulesUser
 from app.resources.location import Locations
 from app.resources.promo import Promos
 from app.resources.payment import Payments
-from app.resources.turn import Turns, Turn
+from app.resources.turn import Turns, RetrieveTurn, AdminChangeTurn
 from app.resources.user import User
 from app.resources.pilot import Pilots, Pilot
 from app.resources.reservation import Reservations, ReservationWithPromo, ReservationsDates
@@ -56,7 +56,8 @@ def create_app(config_name):
     api.add_resource(AvailableSchedulesAdmin, '/admin/available_schedules/<string:date>')
 
     api.add_resource(Turns, '/user/turns')
-    api.add_resource(Turn, '/user/turn/<string:turn_id>', '/user/turn/<string:reservation_id>/<string:turn_id>')
+    api.add_resource(RetrieveTurn, '/user/turn/<string:turn_id>')
+    api.add_resource(AdminChangeTurn, '/user/turn/<string:reservation_id>')
 
     api.add_resource(Payments, '/user/payments/<string:user_id>')
     api.add_resource(AdminPayments, '/admin/payments', '/admin/payments/<string:user_id>')
