@@ -25,7 +25,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTableModule } from '@angular/material/table';
-import { MatDialogModule } from '@angular/material/dialog'
+import { MatDialogModule } from '@angular/material/dialog';
 
 // Calendar
 import { CalendarModule } from 'angular-calendar';
@@ -37,7 +37,6 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
 // Dependencies
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgXCreditCardsModule } from 'ngx-credit-cards';
 
 // Services
 import { ReservationService } from './client/services/reservation.service';
@@ -109,7 +108,6 @@ registerLocaleData(localeEs, 'es');
     MatDividerModule,
     MatTableModule,
     MatDialogModule,
-    NgXCreditCardsModule,
     CalendarModule.forRoot(),
     MatSidenavModule,
     MDBBootstrapModule.forRoot(),
@@ -126,9 +124,9 @@ registerLocaleData(localeEs, 'es');
     { provide: LOCALE_ID, useValue: 'es' }
   ],
   bootstrap: [AppComponent],
-  entryComponents:[
+  entryComponents: [
     NewPromoDialogComponent,
     EditPromoDialogComponent
-	]
+]
 })
 export class AppModule {}
