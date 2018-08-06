@@ -78,25 +78,25 @@ Pilot
 Turnos
 ------
 
-Turns
-+++++
+RetrieveTurn
+++++++++++++
 
 .. qrefflask:: app:create_app('default')
-    :endpoints: turns
+    :endpoints: retrieveturn
 
 
 .. autoflask:: app:create_app('default')
-    :endpoints: turns
+    :endpoints: retrieveturn
 
-Turn
-++++
+AdminChangeTurn
++++++++++++++++
 
 .. qrefflask:: app:create_app('default')
-    :endpoints: turn
+    :endpoints: adminchangeturn
 
 
 .. autoflask:: app:create_app('default')
-    :endpoints: turn
+    :endpoints: adminchangeturn
 
 Fechas
 ------

@@ -38,7 +38,7 @@ export class PilotsComponent implements OnInit {
     private reservationService: ReservationService,
     private pilotService: PilotService
   ) {
-    this.numbers = Array(7)
+    this.numbers = Array(8)
       .fill(0)
       .map((x, i) => i);
   }
@@ -62,18 +62,9 @@ export class PilotsComponent implements OnInit {
     let pilot = pilots.controls[index] as FormGroup;
     const name = pilot.controls.name.value;
     const wasLicensed = pilot.controls.buy_license.value;
-    if (!pilot.controls.buy_license.value) {
-      pilots.controls[index] = this.createPilot(0);
-    }
-    // tslint:disable-next-line:one-line
-    else {
-      pilots.controls[index] = this.createPilot(1);
-    }
+    pilots.controls[index] = this.createPilot(0);
     pilot = pilots.controls[index] as FormGroup;
     pilot.controls.name.setValue(name);
-    if (wasLicensed) {
-      pilot.controls.buy_license.setValue(true);
-    }
   }
 
   buyLicense(index) {
@@ -81,18 +72,9 @@ export class PilotsComponent implements OnInit {
     let pilot = pilots.controls[index] as FormGroup;
     const name = pilot.controls.name.value;
     const wasLicensed = pilot.controls.licensed.value;
-    if (!pilot.controls.buy_license.value) {
-      pilots.controls[index] = this.createPilot(0);
-    }
-    // tslint:disable-next-line:one-line
-    else {
-      pilots.controls[index] = this.createPilot(1);
-    }
+    pilots.controls[index] = this.createPilot(1);
     pilot = pilots.controls[index] as FormGroup;
     pilot.controls.name.setValue(name);
-    if (wasLicensed) {
-      pilot.controls.licensed.setValue(true);
-    }
   }
 
   // create pilot form
@@ -109,7 +91,7 @@ export class PilotsComponent implements OnInit {
         ],
         nickname: [null, Validators.required],
         city: [null, Validators.required],
-        licensed: [false],
+        licensed: [true],
         buy_license: [false],
         location: ['Carso']
       });
@@ -123,7 +105,7 @@ export class PilotsComponent implements OnInit {
       nickname: [null],
       city: [null],
       licensed: [false],
-      buy_license: [false],
+      buy_license: [true],
       location: ['Carso']
     });
   }

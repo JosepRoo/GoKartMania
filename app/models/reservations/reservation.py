@@ -1,6 +1,7 @@
 from flask import session
 import datetime
 from tzlocal import get_localzone
+from bson import CodecOptions
 from app.models.baseModel import BaseModel
 from app.models.locations.errors import LocationNotFound
 from app.models.promos.promotion import Promotion as PromoModel, Coupons
@@ -222,5 +223,7 @@ class Reservation(BaseModel):
         last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
         expressions = list()
         expressions.append({'$match': {'date': {'$gte': first_date, '$lte': last_date}}})
-        result = list(Database.aggregate(REAL_RESERVATIONS, expressions))
+        result = list(Database.DATABASE[REAL_RESERVATIONS].with_options(
+            codec_options=CodecOptions(
+                tz_aware=True, tzinfo=get_localzone())).aggregate(expressions))
         return [cls(**reservation) for reservation in result]

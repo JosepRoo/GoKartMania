@@ -18,7 +18,7 @@
             "polyfills": "src/polyfills.ts",
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.png"
             ],
             "styles": [
               "node_modules/font-awesome/scss/font-awesome.scss",
@@ -87,7 +87,7 @@
             ],
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.png"
             ]
           }
         },

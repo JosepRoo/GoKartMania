@@ -1,5 +1,6 @@
+import flask_restful
 from flask import session
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 
 from app import Response
 from app.common.utils import Utils
@@ -97,7 +98,7 @@ class Turns(Resource):
             return Response.generic_response(e), 500
 
 
-class Turn(Resource):
+class RetrieveTurn(Resource):
     @staticmethod
     @Utils.admin_login_required
     def get(turn_id):
@@ -163,14 +164,15 @@ class Turn(Resource):
         except Exception as e:
             return Response.generic_response(e), 500
 
+
+class AdminChangeTurn(Resource):
     @staticmethod
     @Utils.admin_login_required
-    def put(turn_id, reservation_id=None):
+    def put(reservation_id):
         """
         Updates the information of the turn with the given parameters
 
         :param reservation_id: The id of the reservation where the turn is taken
-        :param turn_id: The id of the pilot to be read from the reservation
 
         .. :quickref: Turno; Cambia el turno a otra fecha, horario, turno
 
@@ -178,21 +180,32 @@ class Turn(Resource):
 
         .. sourcecode:: http
 
-            PUT /user/turn/<string:reservation_id>/<string:turn_id> HTTP/1.1
+            PUT /user/turn/<string:reservation_id> HTTP/1.1
             Host: gokartmania.com.mx
             Accept: application/json
             Content-Type: application/json
 
             {
-                "date": "2018-08-31",
-                "schedule": "16",
-                "turn_number": "1",
-                "positions": {
-                    "pos1": "aldo_chikai@hotmail.com",
-                    "pos2": "lmgs.0610@gmail.com",
-                    "pos3": "psanchez@sitsolutions.org",
-                    "pos4": "a01370622@gmail.com"
-                }
+                "turns": [
+                    {
+                        "date": "2018-08-31",
+                        "schedule": "15",
+                        "turn_number": "1",
+                        "positions": {
+                            "pos2": "lmgs.0610@gmail.com",
+                            "pos3": "psanchez@sitsolutions.org"
+                        }
+                    },
+                    {
+                        "date": "2018-08-31",
+                        "schedule": "15",
+                        "turn_number": "3",
+                        "positions": {
+                            "pos2": "lmgs.0610@gmail.com",
+                            "pos3": "psanchez@sitsolutions.org"
+                        }
+                    }
+                ]
             }
 
         **Example response**:
@@ -205,36 +218,21 @@ class Turn(Resource):
 
             [
                 {
-                    "_id": "688deb7a22f94239901f5d0f2e770b3d",
-                    "schedule": "14",
-                    "turn_number": "2",
-                    "positions": {
-                        "pos1": "aldo_chikai@hotmail.com",
-                        "pos2": "lmgs.0610@gmail.com",
-                        "pos3": "psanchez@sitsolutions.org",
-                        "pos4": "a01370622@gmail.com"
-                    }
-                },
-                {
-                    "_id": "bbcdb639647f4246b656d6255465b9c1",
-                    "schedule": "14",
-                    "turn_number": "3",
-                    "positions": {
-                        "pos1": "aldo_chikai@hotmail.com",
-                        "pos2": "lmgs.0610@gmail.com",
-                        "pos3": "psanchez@sitsolutions.org",
-                        "pos4": "a01370622@gmail.com"
-                    }
-                },
-                {
-                    "_id": "21d1102232874b06a247c37827eba888",
-                    "schedule": "16",
+                    "_id": "5eab6bc8f4fb48a8a615520cf75fe086",
+                    "schedule": "15",
                     "turn_number": "1",
                     "positions": {
-                        "pos1": "aldo_chikai@hotmail.com",
                         "pos2": "lmgs.0610@gmail.com",
-                        "pos3": "psanchez@sitsolutions.org",
-                        "pos4": "a01370622@gmail.com"
+                        "pos3": "psanchez@sitsolutions.org"
+                    }
+                },
+                {
+                    "_id": "96e91813a5ee49ac95161b25693083f5",
+                    "schedule": "15",
+                    "turn_number": "3",
+                    "positions": {
+                        "pos2": "lmgs.0610@gmail.com",
+                        "pos3": "psanchez@sitsolutions.org"
                     }
                 }
             ]
@@ -261,13 +259,28 @@ class Turn(Resource):
 
         :return: Array of :class:`app.models.turns.turn.Turn`
         """
+        parser = reqparse.RequestParser()
+        parser.add_argument('turns',
+                            type=dict,
+                            required=True,
+                            help="Este campo no puede ser dejado en blanco.",
+                            action='append'
+                            )
+        turns = parser.parse_args()
+
         try:
-            data = PARSER.parse_args()
-            if reservation_id is None:
-                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-            else:
-                reservation = ReservationModel.get_by_id(reservation_id, COLLECTION)
-            return [turn.json() for turn in TurnModel.check_and_update(reservation, data, turn_id)], 200
+            for turn in turns.get('turns'):
+                # for item in list(turn.keys()):
+                #     if item not in [a.name for a in PARSER.args]:
+                #         del turn[item]
+                for argument in [a.name for a in PARSER.args if a.required]:
+                    if argument not in turn.keys():
+                        msg = {argument: "Este campo no puede ser dejado en blanco."}
+                        flask_restful.abort(400, message=msg)
+            reservation = ReservationModel.get_by_id(reservation_id, COLLECTION)
+            reservation_turns = [TurnModel.check_and_update(reservation, turns.get('turns')[i]).json()
+                                 for i in range(len(turns.get('turns')))]
+            return reservation_turns, 200
         except TurnNotFound as e:
             return Response(message=e.message).json(), 404
         except ScheduleErrors as e:
@@ -276,5 +289,5 @@ class Turn(Resource):
             return Response(message=e.message).json(), 409
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
-        except Exception as e:
-            return Response.generic_response(e), 500
+        # except Exception as e:
+        #     return Response.generic_response(e), 500
