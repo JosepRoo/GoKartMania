@@ -10,6 +10,7 @@ from app.models.emails.errors import EmailErrors
 from app.models.payments.constants import PAYMENT_PARSER, CARD_PARSER
 from app.models.payments.errors import PaymentErrors
 from app.models.promos.errors import PromotionErrors
+from app.models.recoveries.errors import RecoveryErrors
 from app.models.reservations.constants import COLLECTION_TEMP
 from app.models.reservations.errors import ReservationErrors
 from app.models.reservations.reservation import Reservation as ReservationModel
@@ -1326,3 +1327,153 @@ class AdminPayments(Resource):
             return Response(message=e.message).json(), 401
         except Exception as e:
             return Response.generic_response(e), 500
+
+
+class ForgotPassword(Resource):
+    @staticmethod
+    def put():
+        """
+        Recovers the password of the admin by sending a recovery_id through email, using Amazon Web Services
+
+        .. :quickref: Olvidó contraseña; Envía mensaje de recuperación
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            PUT /admin/forgot_password/ HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+            Content-Type: application/json
+
+            {
+                "email": "test@test.com"
+            }
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": true,
+                "message": "Correo de recuperación exitosamente enviado."
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 400 Bad request
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "Debes proporcionar un mensaje de texto o cuerpo HTML válido."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: email sent
+        :status 400: malformed request
+
+        :return: Confirmation message
+        """
+        parser = reqparse.RequestParser()
+        parser.add_argument('email',
+                            type=str,
+                            required=True,
+                            help="Este campo no puede ser dejado en blanco."
+                            )
+        data = parser.parse_args()
+        try:
+            admin = AdminModel.get_by_email(data['email'])
+            if admin is None:
+                return Response(success=False, message="El administrador con el correo dado no existe.").json(), 400
+            AdminModel.send_recovery_message(admin)
+            return Response(success=True, message="Correo de recuperación exitosamente enviado.").json(), 200
+        except AdminErrors as e:
+            return Response(message=e.message).json(), 400
+        except EmailErrors as e:
+            return Response(message=e.message).json(), 400
+
+
+class ResetPassword(Resource):
+    @staticmethod
+    def put(recovery_id):
+        """
+        Resets the password of the admin by using the recovery_id in tbe parameter
+
+        .. :quickref: Reestablece contraseña; Renueva la contraseña con aquella que el administrador proporcione
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            PUT /admin/reset_password/bd40995130a04067b6d6726c11e73c5e HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+            Content-Type: application/json
+
+            {
+                "email": "test@test.com",
+                "new_password": "4321"
+            }
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": true,
+                "message": "Contraseña del administrador exitosamente actualizada."
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 400 Bad request
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "No se pudo hacer la recuperación de la contraseña."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: admin updated password
+        :status 400: malformed request
+
+        :return: Confirmation message
+        """
+        parser = reqparse.RequestParser()
+        parser.add_argument('new_password',
+                            type=str,
+                            required=True,
+                            help="Este campo no puede ser dejado en blanco."
+                            )
+        parser.add_argument('email',
+                            type=str,
+                            required=True,
+                            help="Este campo no puede ser dejado en blanco."
+                            )
+        data = parser.parse_args()
+        try:
+            admin = AdminModel.get_by_email(data['email'])
+            if admin is None:
+                return Response(success=False, message="El administrador con el correo dado no existe.").json(), 400
+            AdminModel.recover_password(recovery_id, admin.email, data.new_password)
+            return Response(success=True, message="Contraseña del administrador exitosamente actualizada.").json(), 200
+        except AdminErrors as e:
+            return Response(message=e.message).json(), 400
+        except RecoveryErrors as e:
+            return Response(message=e.message).json(), 400

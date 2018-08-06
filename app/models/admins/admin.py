@@ -9,6 +9,8 @@ from app.models.admins.errors import InvalidEmail, InvalidLogin, AdminNotFound
 from app.models.baseModel import BaseModel
 from app.models.admins.constants import COLLECTION, SUPERADMINS
 from app.models.dates.constants import COLLECTION as DATES
+from app.models.recoveries.errors import UnableToRecoverPassword
+from app.models.recoveries.recovery import Recovery
 from app.models.reservations.constants import COLLECTION as RESERVATIONS
 from app.models.dates.date import Date
 from app.models.emails.email import Email
@@ -32,7 +34,7 @@ class Admin(BaseModel):
     @classmethod
     def get_by_email(cls, email):
         """
-        Attempts to find a user according to the given email
+        Attempts to find an admin according to the given email
         :param email: The email to be found in the Admin Collection
         :return: Found Admin object
         """
@@ -54,35 +56,187 @@ class Admin(BaseModel):
         :return: Admin object
         """
         email = data.get('email')
-        if email[email.index('@') + 1:] != 'gokartmania.com.mx':
-            raise InvalidEmail("Credenciales incorrectas")
-        # Esta contraseña debería ser comparada con la que guardemos en la BD
         password = data.get('password')
-        #
-        # if Utils.check_hashed_password(password, new_admin.password):
-        #     pass
-
-        if password != os.environ.get('GKM_PB_KEY') and password != Utils.generate_password():
-            raise InvalidLogin("Credenciales incorrectas")
         admin = Admin.get_by_email(email)
-        if admin is None:
-            new_admin: Admin = cls(**data)
-            new_admin.password = Utils.hash_password(new_admin.password)
+        if admin and Utils.check_hashed_password(password, admin.password):
             if password == Utils.generate_password():
-                session['sudo'] = new_admin._id
-                new_admin.save_to_mongo(SUPERADMINS)
-            else:
-                new_admin.save_to_mongo(COLLECTION)
+                session['sudo'] = admin._id
+            session['admin_id'] = admin._id
+            return admin
         else:
-            new_admin: Admin = cls(**data, _id=admin._id)
-            new_admin.password = Utils.hash_password(new_admin.password)
-            if password == Utils.generate_password():
-                session['sudo'] = new_admin._id
-                new_admin.update_mongo(SUPERADMINS)
-            else:
-                new_admin.update_mongo(COLLECTION)
-        session['admin_id'] = new_admin._id
-        return new_admin
+            raise InvalidLogin("Credenciales incorrectas")
+
+    def send_recovery_message(self):
+        """
+        Sends an email to the given admin with the instructions to change their password
+        :param self: Admin
+        :return: POST method requesting an email to be sent to the admin
+        """
+        recovery = Recovery(admin_email=self.email)
+        recovery.save_to_mongo()
+        # email = Email(to=self.email, subject='Recuperación de contraseña', qr_code=None)
+        email: Email = Email(to='areyna@sitsolutions.org', subject='Recuperación de contraseña', qr_code=None)
+        email.text(f"Hola, {self.name}:\nHas recibido este correo electrónico porque recientemente solicitaste restablecer "
+                   "la contraseña asociada a tu cuenta de GoKartMania. Si no solicitaste este cambio, puedes hacer caso "
+                   "omiso de este correo.\n\nCopia y pega el siguiente enlace en tu navegador de internet para restablecer tu contraseña:\n"
+                   f"reservas.gokartmania.com.mx/#/admin/reset_password/{recovery._id}\n\nSaludos,\nEl equipo de GoKartMania.")
+
+        email_html = """
+        <html>
+        <head>
+          <meta charset='utf-8' />
+          <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+          <title>GoKartMania</title>
+          <meta name='viewport' content='width=device-width, initial-scale=1'>
+          <link rel='stylesheet' type='text/css' media='screen' href='main.css' />
+          <script src='main.js'></script>
+          <style>
+              @import url('https://fonts.googleapis.com/css?family=Open+Sans:100,300,400,700');
+              @import url('https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700');
+            body {
+              font-family: 'Open Sans', sans-serif;
+            		margin-top: 0px;
+        			margin-right: 0px;
+        			margin-bottom: 0px;
+        			margin-left: 0px;
+        			color: white;
+            }
+            span {
+                color: white;
+            }
+            .primary {
+              color: #B9261A;
+            }
+          </style>
+        </head>
+        <body>
+
+          <table  border='0' cellpadding='0' cellspacing='0' height='100%' width='100%'>
+            <tr>
+              <td  align='center' valign='top'>
+                <table style='background-color: black;' border='0' cellpadding='20' cellspacing='0' width='600'>
+                  <tr>
+                    <td  align='center' valign='top' style='padding-bottom: 0px;'>
+                      <table border='0' cellpadding='20' cellspacing='0' width='100%'>
+                        <tr>
+                          <td align='center' valign='top' style='padding-top: 0px;'>
+                            <table width='100%' border='0' cellspacing='0' cellpadding='0'>
+                              <tr>
+                                <td>
+                                  <table>
+                                    <tr>
+                                      <td style='text-align:center;' align='center'>
+                                        <a href='http://gokartmania.com.mx/'>
+                                          <img style='padding-left:110px;' src='http://138.197.209.15/assets/logoBlanco.png'>
+                                          <a/>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style='background-color: #B9261A; height:10px;'></td>
+                  </tr>
+                  <tr>
+                    <td align='center' valign='top' style='padding-top: 0px;'>
+                      <table border='0' cellpadding='20' cellspacing='0' width='100%'>
+                        <tr>
+                          <td align='center' valign='top' style='padding-top: 0px;'>
+                            <table width='100%' border='0' cellspacing='0' cellpadding='0'>
+                              <tr>
+                                <td align='left' style='padding-top: 0px !important; font-weight: 700; padding-bottom:15px; font-size: 20px; color: white'>
+                                  <br>"""
+        email_html += f"""
+                                   <p style='font-size:28px;'>Recuperación de <span class='primary'>contraseña</span>.</p>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <table width="100%">
+                                    <tr>
+                                      <td align="left" style="font-weight: 400; padding-bottom:15px; font-size: 20px; color: white">
+                                          <p>
+                                            Hola, {self.name}:
+                                          </p>
+                                          <p>
+                                            Has recibido este correo electrónico porque recientemente solicitaste
+                                            restablecer la contraseña asociada a tu cuenta de GoKartMania. Si no
+                                            solicitaste este cambio, puedes hacer caso omiso de este correo.
+                                          </p>
+                                          <br>
+                                          <p>
+                                            Copia y pega el siguiente enlace en tu navegador de internet para
+                                            restablecer tu contraseña:
+                                          </p>
+                                          <p>
+                                            <a href='http://gokartmania.com.mx/#/admin/reset_password/{recovery._id}'>
+                                              <span style="font-weight: 700;">reservas.gokartmania.com.mx/#/admin/reset_password/</span> <span class="primary">{recovery._id}</span>
+                                            </a>
+                                          </p>
+                                          <p>
+                                            <span style="font-weight: 700;">Saludos, </span>
+                                          </p>
+                                          <p>
+                                            <span style="font-weight: 700;">El equipo de </span>
+                                            <span class="primary">GoKartMania</span>.
+                                          </p>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                  <br>
+                                  <td>
+                              </tr>
+                            </table>
+                            </td>
+                        </tr>
+                      </table>
+                      </td>
+                  </tr>
+                      <tr>
+                        <td style="background-color: #B9261A; height:10px;"></td>
+                      </tr>
+                </table>
+                </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+                """
+
+        email.html(email_html)
+        email.send()
+        return email
+
+    def set_password(self, password) -> None:
+        """
+        Creates a new password for the admin and updates the previous one
+        :param password: password to be updated
+        :return: None
+        """
+        self.password = Utils.hash_password(password)
+
+    @staticmethod
+    def recover_password(recovery_id, email, new_password):
+        """
+        Updates the password of the admin with the given email to the database, provided a recovery ID
+        :param recovery_id: token to ensure a safe recovery
+        :param email: email of the admin to be found
+        :param new_password: password to be updated
+        :return: Admin object
+        """
+        if Recovery.recover_in_db(recovery_id):
+            admin = Admin.get_by_email(email)
+            admin.set_password(new_password)
+            admin.update_mongo(COLLECTION)
+            return admin
+        else:
+            raise UnableToRecoverPassword("No se pudo hacer la recuperación de la contraseña.")
 
     @staticmethod
     def send_alert_message(promo: Promotion) -> None:
