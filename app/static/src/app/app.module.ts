@@ -29,7 +29,6 @@ import { MatDialogModule } from '@angular/material/dialog'
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatGridListModule } from '@angular/material/grid-list';
 
-
 // Calendar
 import { CalendarModule } from 'angular-calendar';
 
@@ -40,7 +39,6 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
 // Dependencies
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgXCreditCardsModule } from 'ngx-credit-cards';
 
 // Services
 import { ReservationService } from './client/services/reservation.service';
@@ -139,12 +137,13 @@ registerLocaleData(localeEs, 'es');
     { provide: LOCALE_ID, useValue: 'es' }
   ],
   bootstrap: [AppComponent],
-  entryComponents:[
+  entryComponents: [
     NewPromoDialogComponent,
     EditPromoDialogComponent,
     NewReservationDialogComponent,
     EditReservationDialogComponent,
     CreateReportDialogComponent
 	]
+]
 })
 export class AppModule {}

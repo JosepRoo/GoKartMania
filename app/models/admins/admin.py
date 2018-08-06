@@ -23,10 +23,11 @@ This is the admin user model that will be used to manage different dashboard inf
 
 
 class Admin(BaseModel):
-    def __init__(self, email, name, _id=None):
+    def __init__(self, email, name, password, _id=None):
         super().__init__(_id)
         self.email = email
         self.name = name
+        self.password = password
 
     @classmethod
     def get_by_email(cls, email):
@@ -53,15 +54,20 @@ class Admin(BaseModel):
         :return: Admin object
         """
         email = data.get('email')
-        if email[email.index('@') + 1:] != 'gokartmania.com':
+        if email[email.index('@') + 1:] != 'gokartmania.com.mx':
             raise InvalidEmail("Credenciales incorrectas")
         # Esta contraseña debería ser comparada con la que guardemos en la BD
-        password = data.pop('password')
+        password = data.get('password')
+        #
+        # if Utils.check_hashed_password(password, new_admin.password):
+        #     pass
+
         if password != os.environ.get('GKM_PB_KEY') and password != Utils.generate_password():
             raise InvalidLogin("Credenciales incorrectas")
         admin = Admin.get_by_email(email)
         if admin is None:
             new_admin: Admin = cls(**data)
+            new_admin.password = Utils.hash_password(new_admin.password)
             if password == Utils.generate_password():
                 session['sudo'] = new_admin._id
                 new_admin.save_to_mongo(SUPERADMINS)
@@ -69,6 +75,7 @@ class Admin(BaseModel):
                 new_admin.save_to_mongo(COLLECTION)
         else:
             new_admin: Admin = cls(**data, _id=admin._id)
+            new_admin.password = Utils.hash_password(new_admin.password)
             if password == Utils.generate_password():
                 session['sudo'] = new_admin._id
                 new_admin.update_mongo(SUPERADMINS)

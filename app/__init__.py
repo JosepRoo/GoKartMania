@@ -1,7 +1,6 @@
 import datetime
 
-from flask import Flask, session
-from flask_compress import Compress
+from flask import Flask, session, request
 from flask_restful import Api
 
 from app.common.database import Database
@@ -14,7 +13,7 @@ from app.resources.date import Dates, AvailableDatesUser, AvailableSchedulesUser
 from app.resources.location import Locations
 from app.resources.promo import Promos
 from app.resources.payment import Payments
-from app.resources.turn import Turns, Turn
+from app.resources.turn import Turns, RetrieveTurn, AdminChangeTurn
 from app.resources.user import User
 from app.resources.pilot import Pilots, Pilot
 from app.resources.reservation import Reservations, ReservationWithPromo, ReservationsDates
@@ -24,7 +23,6 @@ from config import config
 def create_app(config_name):
     app = Flask(__name__)
     api = Api(app)
-    Compress(app)
     app.config.from_object(config[config_name])
     # Register our blueprints
     from .default import default as default_blueprint, qrs as qrs_blueprint, documentation as doc_blueprint
@@ -58,7 +56,8 @@ def create_app(config_name):
     api.add_resource(AvailableSchedulesAdmin, '/admin/available_schedules/<string:date>')
 
     api.add_resource(Turns, '/user/turns')
-    api.add_resource(Turn, '/user/turn/<string:turn_id>', '/user/turn/<string:reservation_id>/<string:turn_id>')
+    api.add_resource(RetrieveTurn, '/user/turn/<string:turn_id>')
+    api.add_resource(AdminChangeTurn, '/user/turn/<string:reservation_id>')
 
     api.add_resource(Payments, '/user/payments/<string:user_id>')
     api.add_resource(AdminPayments, '/admin/payments', '/admin/payments/<string:user_id>')
@@ -80,6 +79,15 @@ def create_app(config_name):
 
     @app.after_request
     def after_request(response):
+        ending = request.path.split(".")
+        if len(ending) > 1:
+            ending = ending[-1]
+        else:
+            ending = None
+        if ending == 'js':
+            response.headers.add('Content-Type', 'text/javascript')
+        elif ending == 'css':
+            response.headers.add('Content-Type', 'text/css')
         response.headers.add('Access-Control-Allow-Origin', '*')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
         response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
