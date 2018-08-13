@@ -135,4 +135,10 @@ export class AdminService {
     });
   }
 
+  logOutAdmin(){
+    this.location.replaceState('/');
+    this.router.navigate(['logIn']);
+    // console.log("Aqui va el servicio");
+  }
+
 }

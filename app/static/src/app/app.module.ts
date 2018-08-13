@@ -68,6 +68,7 @@ import { AdminPilotsComponent } from './admin/admin-pilots/admin-pilots.componen
 import { NewReservationDialogComponent } from './admin/reservations/new-reservation-dialog/new-reservation-dialog.component';
 import { EditReservationDialogComponent } from './admin/reservations/edit-reservation-dialog/edit-reservation-dialog.component';
 import { CreateReportDialogComponent } from './admin/reservations/create-report-dialog/create-report-dialog.component';
+import { LogoutDialogComponent } from './admin/logout-dialog/logout-dialog.component';
 
 registerLocaleData(localeEs, 'es');
 
@@ -94,7 +95,8 @@ registerLocaleData(localeEs, 'es');
     AdminPilotsComponent,
     NewReservationDialogComponent,
     EditReservationDialogComponent,
-    CreateReportDialogComponent
+    CreateReportDialogComponent,
+    LogoutDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -141,7 +143,8 @@ registerLocaleData(localeEs, 'es');
     EditPromoDialogComponent,
     NewReservationDialogComponent,
     EditReservationDialogComponent,
-    CreateReportDialogComponent
+    CreateReportDialogComponent,
+    LogoutDialogComponent
   ]
 })
 export class AppModule {}

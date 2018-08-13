@@ -31,7 +31,7 @@
           <!-- Weight Column -->
           <ng-container matColumnDef="value">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Valor </th>
-            <td mat-cell *matCellDef="let element"> <label *ngIf="element.type == 'Descuento'">%</label>{{element.value}} </td>
+            <td mat-cell *matCellDef="let element"> <label *ngIf="element.type == 'Descuento'" style="margin: 0px">%</label>{{element.value}} </td>
           </ng-container>
         
           <!-- Symbol Column -->
