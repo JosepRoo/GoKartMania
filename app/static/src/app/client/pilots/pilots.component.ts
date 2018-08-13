@@ -129,10 +129,10 @@ export class PilotsComponent implements OnInit {
   // calls the service to add the reservation
   sendPilots() {
     const self = this;
-    this.loading = true;
-    this.error = { show: false, text: '' };
-    this.reservation.setValue(this.reservation.getRawValue());
     if (self.reservation.valid) {
+      this.loading = true;
+      this.error = { show: false, text: '' };
+      this.reservation.setValue(this.reservation.getRawValue());
       if (this.validateAge()) {
         const reservationData = self.reservation.getRawValue();
         self.reservationService.addReservation(reservationData).subscribe(
