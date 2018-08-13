@@ -15,3 +15,7 @@ class InvalidLogin(AdminErrors):
 
 class InvalidEmail(AdminErrors):
     pass
+
+
+class ReportFailed(AdminErrors):
+    pass

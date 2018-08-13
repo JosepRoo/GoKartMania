@@ -1399,6 +1399,8 @@ class ForgotPassword(Resource):
             return Response(message=e.message).json(), 400
         except EmailErrors as e:
             return Response(message=e.message).json(), 400
+        except Exception as e:
+            return Response.generic_response(e), 500
 
 
 class ResetPassword(Resource):
@@ -1477,3 +1479,18 @@ class ResetPassword(Resource):
             return Response(message=e.message).json(), 400
         except RecoveryErrors as e:
             return Response(message=e.message).json(), 400
+        except Exception as e:
+            return Response.generic_response(e), 500
+
+
+class Logout(Resource):
+    @staticmethod
+    @Utils.admin_login_required
+    def post():
+        try:
+            session.clear()
+            return Response(success=True, message="Sesión finalizada").json(), 200
+        except AdminErrors as e:
+            return Response(message=e.message).json(), 400
+        except Exception as e:
+            return Response.generic_response(e), 500
