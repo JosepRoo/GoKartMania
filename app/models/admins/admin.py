@@ -59,7 +59,7 @@ class Admin(BaseModel):
         password = data.get('password')
         admin = Admin.get_by_email(email)
         if admin and Utils.check_hashed_password(password, admin.password):
-            if password == Utils.generate_password():
+            if admin.email == 'javierj@gokartmania.com.mx':
                 session['sudo'] = admin._id
             session['admin_id'] = admin._id
             return admin
@@ -499,7 +499,14 @@ class Admin(BaseModel):
         expressions.append({"$match": {"pilots.licensed": True}})
         expressions.append({"$project": {"pilots": "$pilots"}})
         expressions.append({"$group": {
-            "_id": {"name": "$pilots.name", "last_name": "$pilots.last_name"}
+            "_id": {"name": "$pilots.name",
+                    "last_name": "$pilots.last_name",
+                    "email": "$pilots.email",
+                    "location": "$pilots.location",
+                    "birth_date": "$pilots.birth_date",
+                    "postal_code": "$pilots.postal_code",
+                    "nickname": "$pilots.nickname",
+                    "city": "$pilots.city"}
         }})
         result = list(Database.aggregate(RESERVATIONS, expressions))
         return result
