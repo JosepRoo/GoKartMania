@@ -5,7 +5,7 @@ from flask import session
 
 from app import Database
 from app.common.utils import Utils
-from app.models.admins.errors import InvalidEmail, InvalidLogin, AdminNotFound
+from app.models.admins.errors import InvalidEmail, InvalidLogin, AdminNotFound, ReportFailed
 from app.models.baseModel import BaseModel
 from app.models.admins.constants import COLLECTION, SUPERADMINS
 from app.models.dates.constants import COLLECTION as DATES
@@ -572,6 +572,8 @@ class Admin(BaseModel):
                                          "Número_Carreras": {"$size": "$turns"},
                                          "Precio_Total": "$amount"}})
         result = list(Database.aggregate(RESERVATIONS, expressions))
+        if not result:
+            raise ReportFailed("El reporte generó cero datos. Intente con otra fecha.")
 
         date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         excel_path = f'{basedir}/app/reports/reservations/ReporteReservaciones_{date}.xlsx'
@@ -604,6 +606,9 @@ class Admin(BaseModel):
                                            "_id.Total_Gastado": "$Total_Gastado"}})
         expressions.append({"$replaceRoot": {"newRoot": "$_id"}})
         result = list(Database.aggregate(RESERVATIONS, expressions))
+        if not result:
+            raise ReportFailed("El reporte generó cero datos. Intente con otra fecha.")
+
         date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         excel_path = f'{basedir}/app/reports/pilots/ReportePilotos_{date}.xlsx'
         return Utils.generate_report(result, f'ReportePilotos_{date}.xlsx', "Pilotos")
