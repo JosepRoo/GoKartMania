@@ -5,6 +5,7 @@ import { AdminReservationsService } from './../services/admin-reservations.servi
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NewReservationDialogComponent } from './new-reservation-dialog/new-reservation-dialog.component';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ReservationDetailsDialogComponent } from './reservation-details-dialog/reservation-details-dialog.component';
 
 @Component({
   selector: 'app-reservations',
@@ -13,12 +14,13 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class ReservationsComponent implements OnInit, OnDestroy {
 
-  reservations;
+  reservations; 
   dataSourceReservations;
   defaultDate = new Date().toISOString().substring(0, 10);
   newReservationDialogRef;
   editReservationDialogRef;
   createReportDialogRef;
+  reservationDetailsDialogRef;
   @ViewChild(MatSort) sort: MatSort;
 
   displayedColumnsReservations: string[] = [
@@ -93,5 +95,12 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     });
   }
 
+  openReservationDetail(reservation){
+    this.reservationDetailsDialogRef = this.dialog.open(ReservationDetailsDialogComponent,{
+      width:'70%',
+      maxHeight:600,
+      data:reservation
+    });
+  }
 
 }

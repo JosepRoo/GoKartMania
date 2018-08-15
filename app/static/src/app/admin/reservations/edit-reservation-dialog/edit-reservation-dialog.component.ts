@@ -42,7 +42,7 @@ export class EditReservationDialogComponent implements OnInit {
   availableTurns = [];
   availablePositions = [];
 
-  selectedPositions = [];
+  selectedPositions =[];
 
   myFilter = (d: Date): boolean => {
     return this.availableDates.includes(d.toISOString().substring(0,10));
@@ -62,17 +62,19 @@ export class EditReservationDialogComponent implements OnInit {
   }
 
   ngOnInit(){
+
     this.display=false;
     this.getAvailableDates();
     this.getAvailableSchedules(this.data.date.substring(0,10));
 
     this.reservationTurns = this.data.turns;
+    console.log(this.reservationTurns);
     this.pilots= this.data.pilots;
     const formTurns = this.datesAndTurns.get('turns') as FormArray;
     for (let turn of this.reservationTurns){
       this.availableTurns.push([]);
       this.availablePositions.push([]);
-      this.selectedPositions.push([]);
+      this.selectedPositions.push([]);      
     }
 
     for(let i = 0; i < this.reservationTurns.length; i++){
@@ -81,6 +83,11 @@ export class EditReservationDialogComponent implements OnInit {
       this.selectedPositions[i] = Object.keys(this.reservationTurns[i].positions);
       formTurns.push(this.createReservationTurns(this.reservationTurns[i].schedule, this.reservationTurns[i].turn_number,i));
     }
+    console.log(this.availablePositions); 
+    console.log(this.availableTurns);
+    console.log(this.selectedPositions);
+    console.log(this.pilots);
+    console.log(this.positions);
   }
 
   createReservationTurns(schedule, turn_number, i){
@@ -226,7 +233,7 @@ export class EditReservationDialogComponent implements OnInit {
 
       this.adminReservationsService.updateTurns(this.data._id,body).subscribe(
         res=>{
-          this.dialogRef.close("La reservación se ha actualizado");
+          this.dialogRef.close(body);
         },
         err=>{
           this.error= err;

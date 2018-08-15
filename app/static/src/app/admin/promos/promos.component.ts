@@ -10,6 +10,7 @@ import { EditPromoDialogComponent } from './edit-promo-dialog/edit-promo-dialog.
 
 //services
 import { PromosService } from './../services/promos.service';
+import { PromoDetailsDialogComponent } from './promo-details-dialog/promo-details-dialog.component';
 
 @Component({
   selector: 'app-promos',
@@ -21,7 +22,9 @@ export class PromosComponent implements OnInit, OnDestroy {
   dataSource;
   editPromoDialogRef;
   newPromoDialogRef;
+  promoDetailsDialogRef;
   defaultDate = new Date().getTime();
+  isSuperAdmin;
 
   displayedColumns: string[] = [
     'authorised',
@@ -57,6 +60,9 @@ export class PromosComponent implements OnInit, OnDestroy {
     if(this.editPromoDialogRef){
       this.editPromoDialogRef.close();
     }
+    if (this.promoDetailsDialogRef){
+      this.promoDetailsDialogRef.quit();
+    }
   }
 
 
@@ -76,6 +82,7 @@ export class PromosComponent implements OnInit, OnDestroy {
   getPromos(){
     this.promosService.getPromos().subscribe(res => {
       this.promos = [];
+      this.isSuperAdmin=res.isSuperAdmin;
       if (res.isSuperAdmin && (this.displayedColumns[this.displayedColumns.length-1])=='actions'){
         this.displayedColumns.push('actions');
         this.displayedColumns.push('authorize');
@@ -125,5 +132,23 @@ export class PromosComponent implements OnInit, OnDestroy {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'data');
     XLSX.writeFile(workbook, 'test.xlsx');
 
+  }
+
+  openPromoDetail(promo, isSuperAdmin){
+    this.promoDetailsDialogRef = this.dialog.open(PromoDetailsDialogComponent,{
+      width: '70%',
+      data:{
+        'promo': promo,
+        'isSuperAdmin': isSuperAdmin
+      },
+      maxHeight: 600
+    });
+    this.promoDetailsDialogRef.afterClosed().subscribe(
+      ()=>{
+        this.getPromos();
+        this.editPromoDialogRef=null;
+        this.promoDetailsDialogRef=null;
+      }
+    );
   }
 }

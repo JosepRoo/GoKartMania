@@ -48,7 +48,7 @@ export class EditPromoDialogComponent implements OnInit {
       this.data.password = null;
       this.promosService.changePromo(this.data).subscribe(
         res=>{
-          this.dialogRef.close();
+          this.dialogRef.close(res);
         },
         err=>{
           this.error = err;

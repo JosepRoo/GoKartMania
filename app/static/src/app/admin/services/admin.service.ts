@@ -13,6 +13,7 @@ import 'rxjs/add/observable/throw';
 })
 export class AdminService {
   private apiAdmin: string = environment.api + '/admin';
+  private apiLogout: string = environment.api + '/logout';
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
     Accept: 'application/json'
@@ -135,9 +136,16 @@ export class AdminService {
     });
   }
 
-  logOutAdmin(){
-    this.location.replaceState('/');
-    this.router.navigate(['logIn']);
+  logOutAdmin():Observable<any>{
+    return this.http.post<any>(this.apiLogout,{headers:this.headers})
+    .pipe(res=>{
+      this.location.replaceState('/');
+      this.router.navigate(['logIn']);
+      return res;
+    })
+    .catch(e=>{
+      return Observable.throw(e.error.message);
+    });
     // console.log("Aqui va el servicio");
   }
 
