@@ -59,7 +59,8 @@ class User(BaseModel):
         :param reservation: Reservation object
         :return: POST method requesting an email to be sent to the user making the reservation
         """
-        email = Email(to=self.email, subject='Confirmación de reservación', qr_code=qr_code)
+        #email = Email(to=self.email, subject='Confirmación de reservación', qr_code=qr_code)
+        email = Email(to='areyna@sitsolutions.org', subject='Confirmación de reservación', qr_code=qr_code)
 
         turns_detail = ""
         for turn in reservation.turns:
@@ -257,6 +258,7 @@ class User(BaseModel):
                                 <img src={} alt='QR Code' />
                                 <br>
                                 <br>
+                                <p>Favor de llegar al menos 20 minutos previos a la hora de tu reservación.</p>
                                 <span style="font-weight: 700; font-size: 32px; text-align: center;">En sus marcas. Listos.
                                   <span class="primary">¡Fuera!</span>
                                 </span>

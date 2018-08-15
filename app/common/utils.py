@@ -73,6 +73,16 @@ class Utils(object):
         return wrap
 
     @staticmethod
+    def turn_required(f):
+        @wraps(f)
+        def wrap(*args, **kwargs):
+            if session.get('reservation_date'):
+                return f(*args, **kwargs)
+            else:
+                return Response(message="Necesitas crear un turno para este servicio.").json(), 401
+        return wrap
+
+    @staticmethod
     def admin_login_required(f):
         @wraps(f)
         def wrap(*args, **kwargs):

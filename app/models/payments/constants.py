@@ -55,3 +55,8 @@ PAYMENT_PARSER.add_argument('coupon_id',
                             type=str,
                             required=False
                             )
+PAYMENT_PARSER.add_argument('phone',
+                            type=str,
+                            required=True,
+                            help="Este campo no puede ser dejado en blanco."
+                            )

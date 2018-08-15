@@ -322,7 +322,7 @@ class Date(BaseModel):
                     now = datetime.datetime.now().astimezone(get_localzone())  # + datetime.timedelta(days=3)
                     AbstractPilot.add(schedule.turns[turn_number - 1], {'_id': new_turn.get('positions').get(position),
                                                                         'position': position_num,
-                                                                        'allocation_date': None})
+                                                                        'allocation_date': now})
                 # Update the type of turn, if it's None
                 if schedule.turns[turn_number - 1].type is None:
                     schedule.turns[turn_number - 1].type = reservation_type

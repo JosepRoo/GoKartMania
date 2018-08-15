@@ -258,6 +258,7 @@ class Reservations(Resource):
 
     @staticmethod
     @Utils.login_required
+    @Utils.turn_required
     def get():
         """
         Retrieves the information of the current reservation
@@ -377,6 +378,127 @@ class Reservations(Resource):
                 return reservation.json(), 200
             except ReservationErrors as e:
                 return Response(message=e.message).json(), 401
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response.generic_response(e), 500
+
+
+class RetrieveReservation(Resource):
+    @staticmethod
+    @Utils.admin_login_required
+    def get(reservation_id):
+        """
+        Retrieves the reservation with the given id in the parameters.
+
+        .. :quickref: Reservaciones; Obtiene una reservación con el ID especificado
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            GET /reservation/<string:reservation_id> HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "_id": "349294d63f414c6d8f1e2557b0821ee5",
+                "type": "Adultos",
+                "date": "2018-08-15 10:47",
+                "location": {
+                    "_id": "1",
+                    "name": "Plaza Carso",
+                    "type": {
+                        "GOKART": [
+                            295,
+                            530,
+                            690
+                        ],
+                        "CADET": [
+                            295,
+                            530,
+                            690
+                        ],
+                        "LICENCIA": 100
+                    }
+                },
+                "turns": [
+                    {
+                        "_id": "1369f9d0c9a3402daf0e47c5f517b92d",
+                        "schedule": "11",
+                        "turn_number": "2",
+                        "positions": {
+                            "pos5": "areyna@sitsolutions.org",
+                            "pos6": "lmgs.0610@gmail.com"
+                        }
+                    }
+                ],
+                "pilots": [
+                    {
+                        "_id": "areyna@sitsolutions.org",
+                        "name": "Aldo Arturo",
+                        "last_name": "Reyna Gómez",
+                        "email": "areyna@sitsolutions.org",
+                        "location": "Plaza Carso",
+                        "birth_date": "01-04-95",
+                        "postal_code": "07270",
+                        "nickname": "iThinkEmo",
+                        "city": "CDMX",
+                        "licensed": true
+                    },
+                    {
+                        "_id": "lmgs.0610@gmail.com",
+                        "name": "Leslie",
+                        "last_name": "Gallegos Salazar",
+                        "email": "lmgs.0610@gmail.com",
+                        "location": "Plaza Carso",
+                        "birth_date": "22-08-96",
+                        "postal_code": "50840",
+                        "nickname": "Leslie",
+                        "city": "Estado de México",
+                        "licensed": true
+                    }
+                ],
+                "amount": 790,
+                "license_price": 200,
+                "turns_price": 590,
+                "price_before_promo": null,
+                "promo_id": null,
+                "coupon_id": null,
+                "discount": null
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 401 Unauthorised
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "La reservacion con el ID dado no existe."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: reservation retrieved
+        :status 401: malformed
+        :status 500: internal error
+
+        :return: JSON object with the reservation
+        """
+        try:
+            reservation = ReservationModel.get_by_id(reservation_id, REAL_RESERVATIONS)
+            return reservation.json(), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:

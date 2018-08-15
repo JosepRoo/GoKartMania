@@ -3,6 +3,7 @@ import requests
 import json
 import datetime
 
+from flask import session
 from tzlocal import get_localzone
 
 from app.models.promos.errors import PromotionUsed
@@ -10,6 +11,7 @@ from app.models.promos.promotion import Promotion as PromoModel
 from app.models.promos.promotion import Coupons as CouponsModel
 from app.models.promos.constants import COLLECTION as PROMO_COLLECTION
 from app.models.reservations.constants import COLLECTION_TEMP, COLLECTION
+from app.models.pilots.constants import COLLECTION as PILOTS
 from app.models.users.user import User
 from app.models.users.constants import COLLECTION as USER
 from app.models.baseModel import BaseModel
@@ -75,7 +77,7 @@ class Card(BaseModel):
 
 
 class Payment(BaseModel):
-    def __init__(self, status, payment_method, payment_type,
+    def __init__(self, status, payment_method, payment_type, phone,
                  promo=None, date=None, etomin_number=None, id_reference=None, _id=None):
         self.status = status
         self.payment_method = payment_method
@@ -83,6 +85,7 @@ class Payment(BaseModel):
         self.etomin_number = etomin_number
         self.date = date
         self.promo = PromoModel(**promo) if promo else promo
+        self.phone = phone
         self.id_reference = id_reference
         super().__init__(_id)
 
@@ -222,6 +225,12 @@ class Payment(BaseModel):
             promo.coupon_applied = coupon._id
             payment.promo = promo
         reservation.payment = payment
+        if session.get('reservation_date') != datetime.datetime.strftime(reservation.date, "%Y-%m-%d"):
+            # Se le suma un día porque Mongo toma en cuenta 19 hrs 00:00 del día exacto -5 hrs.
+            reservation.date = datetime.datetime.strptime(session.get('reservation_date'), "%Y-%m-%d")\
+                               + datetime.timedelta(days=1)
+        for pilot in reservation.pilots:
+            pilot.update_mongo(PILOTS)
         # Guardar en la coleccion de reservaciones reales
         reservation.save_to_mongo(COLLECTION)
         # Borrar de la coleccion de reservaciones temporales

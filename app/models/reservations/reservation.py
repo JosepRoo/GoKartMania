@@ -156,9 +156,12 @@ class Reservation(BaseModel):
         turns_price = Payment.calculate_turns_price(turns_size, prices_size, prices)
 
         self.license_price = license_price
-        self.turns_price = turns_price
-        self.amount = license_price + turns_price
+        self.turns_price = turns_price * len(self.pilots)
+        self.amount = self.license_price + self.turns_price
         self.update_mongo(COLLECTION_TEMP)
+
+        if session.get('reservation_date') != datetime.datetime.strftime(self.date, "%Y-%m-%d"):
+            self.date = datetime.datetime.strptime(session.get('reservation_date'), "%Y-%m-%d")
         return self
 
     def insert_promo(self, promo_id):
