@@ -9,9 +9,12 @@ from app.models.admins.errors import InvalidEmail, InvalidLogin, AdminNotFound, 
 from app.models.baseModel import BaseModel
 from app.models.admins.constants import COLLECTION, SUPERADMINS
 from app.models.dates.constants import COLLECTION as DATES
+from app.models.pilots.errors import PilotNotFound
+from app.models.pilots.pilot import Pilot
 from app.models.recoveries.errors import UnableToRecoverPassword
 from app.models.recoveries.recovery import Recovery
 from app.models.reservations.constants import COLLECTION as RESERVATIONS
+from app.models.pilots.constants import COLLECTION as PILOTS
 from app.models.dates.date import Date
 from app.models.emails.email import Email
 from app.models.emails.errors import EmailErrors, FailedToSendEmail
@@ -488,28 +491,57 @@ class Admin(BaseModel):
         return result
 
     @staticmethod
-    def get_licensed_pilots() -> list:
+    def get_licensed_pilots(location: str) -> list:
         """
         Retrieves those pilots that have bought licenses
+        :param location: Carso or Tlalnepantla
         :return: Licensed pilots information
         """
         expressions = list()
-        expressions.append({"$match": {}})
+        expressions.append({"$match": {"location": {"$regex": location}}})
+        result = list(Database.aggregate(PILOTS, expressions))
+        return result
+
+    @staticmethod
+    def get_unprinted_licenses(location: str) -> list:
+        """
+        Retrieves those pilots whose license has not yet been produced
+        :param location: Carso or Tlalnepantla
+        :return: Licensed pilots information
+        """
+        expressions = list()
+        first_date = datetime.datetime.now()
+        expressions.append({'$match': {'date': {'$lte': first_date}}})
         expressions.append({"$unwind": "$pilots"})
-        expressions.append({"$match": {"pilots.licensed": True}})
         expressions.append({"$project": {"pilots": "$pilots"}})
         expressions.append({"$group": {
-            "_id": {"name": "$pilots.name",
-                    "last_name": "$pilots.last_name",
-                    "email": "$pilots.email",
-                    "location": "$pilots.location",
-                    "birth_date": "$pilots.birth_date",
-                    "postal_code": "$pilots.postal_code",
-                    "nickname": "$pilots.nickname",
-                    "city": "$pilots.city"}
-        }})
-        result = list(Database.aggregate(RESERVATIONS, expressions))
-        return result
+            "_id": {"email": "$pilots.email"}}})
+        expressions.append({"$replaceRoot": {"newRoot": "$_id"}})
+        emails = list(Database.aggregate('real_reservations', expressions))
+
+        expressions = list()
+        expressions.append({"$match": {"location": {"$regex": location}}})
+        pilots = list(Database.aggregate('pilots', expressions))
+
+        unprinted_licenses = list(filter(lambda pilot: pilot.get('email') not in [email.get('email')
+                                                                                  for email in emails], pilots))
+        return unprinted_licenses
+
+    @staticmethod
+    def change_license_status(location: str, pilot_id: str):
+        """
+        Updates the status of the pilot when their license has been printed
+        :param pilot_id: ID of the pilot to be updated
+        :param location: Carso or Tlalnepantla
+        :return: Licensed pilot information
+        """
+        pilot = list(Database.find(PILOTS, {"_id": pilot_id}))
+        if pilot is None or pilot == []:
+            raise PilotNotFound("El piloto con el ID dado no existe")
+        updated_pilot: Pilot = Pilot(**pilot[0])
+        updated_pilot.licensed = False
+        updated_pilot.update_mongo(PILOTS)
+        return updated_pilot
 
     @staticmethod
     def get_reservations_income_qty(first_date, last_date) -> list:

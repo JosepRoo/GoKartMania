@@ -93,8 +93,8 @@ class Payments(Resource):
             user = UserModel.get_by_id(user_id, USER_COLLECTION)
             PaymentModel.add(user, reservation, card_data, payment_data).json()
             qr_code = QRModel.create(reservation)
-            UserModel.send_confirmation_message(user, reservation, qr_code)
-            PilotModel.send_confirmation_message(reservation, qr_code)
+            #UserModel.send_confirmation_message(user, reservation, qr_code)
+            #PilotModel.send_confirmation_message(reservation, qr_code)
             LocationModel.send_confirmation_message(user, reservation, qr_code)
             return Response(success=True, message="Correos de confirmacion exitosamente enviados.").json(), 200
         except ReservationErrors as e:

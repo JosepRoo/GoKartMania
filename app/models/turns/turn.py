@@ -1,5 +1,6 @@
 import datetime
 
+from flask import session
 from tzlocal import get_localzone
 
 from app.common.database import Database
@@ -36,8 +37,7 @@ class Turn(BaseModel):
         """
         allocation_date = new_turn.pop('date')
         turn: Turn = cls(**new_turn)
-        if allocation_date != datetime.datetime.strftime(reservation.date, "%Y-%m-%d"):
-            reservation.date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        session['reservation_date'] = allocation_date
         reservation.turns.append(turn)
         reservation.update_mongo(COLLECTION_TEMP)
         return turn
@@ -214,18 +214,17 @@ class Turn(BaseModel):
         """
         first_date = reservation.date
         last_date = reservation.date + datetime.timedelta(days=1)
+
         query = {'date': {'$gte': first_date, '$lte': last_date}}
-        for date in Database.find(COLLECTION, query):
-            new_date = DateModel(**date)
-            for schedule in new_date.schedules:
-                if schedule.hour == current_turn.schedule:
-                    for turn in schedule.turns:
-                        if turn.turn_number == int(current_turn.turn_number):
-                            pilots = turn.pilots.copy()
-                            for pilot in pilots:
-                                if pilot._id in [pilot._id for pilot in reservation.pilots]:
-                                    pilot.allocation_date = None
-                            new_date.update_mongo(COLLECTION)
+        result = list(Database.find(COLLECTION, query))
+        new_date = DateModel(**result[0])
+        for schedule in filter(lambda schedule: schedule.hour == current_turn.schedule, new_date.schedules):
+            for turn in filter(lambda turn: turn.turn_number == int(current_turn.turn_number), schedule.turns):
+                pilots = turn.pilots.copy()
+                for pilot in filter(lambda pilot: pilot._id in [pilot._id for pilot in reservation.pilots],
+                                    pilots):
+                    pilot.allocation_date = None
+        new_date.update_mongo(COLLECTION)
 
     @classmethod
     def update(cls, reservation: Reservation, updated_turn, turn_id) -> dict:
