@@ -62,13 +62,11 @@ export class EditReservationDialogComponent implements OnInit {
   }
 
   ngOnInit(){
-
     this.display=false;
     this.getAvailableDates();
     this.getAvailableSchedules(this.data.date.substring(0,10));
 
     this.reservationTurns = this.data.turns;
-    console.log(this.reservationTurns);
     this.pilots= this.data.pilots;
     const formTurns = this.datesAndTurns.get('turns') as FormArray;
     for (let turn of this.reservationTurns){
@@ -83,11 +81,6 @@ export class EditReservationDialogComponent implements OnInit {
       this.selectedPositions[i] = Object.keys(this.reservationTurns[i].positions);
       formTurns.push(this.createReservationTurns(this.reservationTurns[i].schedule, this.reservationTurns[i].turn_number,i));
     }
-    console.log(this.availablePositions); 
-    console.log(this.availableTurns);
-    console.log(this.selectedPositions);
-    console.log(this.pilots);
-    console.log(this.positions);
   }
 
   createReservationTurns(schedule, turn_number, i){

@@ -109,6 +109,52 @@ export class AdminService {
       });
   }
 
+  getUnprintedLicenses(){
+    return this.http
+      .get<any>(
+        this.apiAdmin + '/unprinted_licenses/Carso',
+      {
+        headers: this.headers
+      }
+      )
+      .pipe(res => {
+        return res;
+      })
+      .catch(e => {
+        if (e.status === 401) {
+          this.location.replaceState('/');
+          this.router.navigate(['/logIn']);
+          return Observable.throw(e.error.message);
+        }
+        if (e.status === 400) {
+          return Observable.throw(e.error.message);
+        }
+      });
+  }
+
+  setLicenseAsPrinted(location,id,body){
+    return this.http
+      .put<any>(
+        this.apiAdmin + '/unprinted_licenses/'+ location+'/'+id,
+      {
+        headers: this.headers
+      }
+      )
+      .pipe(res => {
+        return res;
+      })
+      .catch(e => {
+        if (e.status === 401) {
+          this.location.replaceState('/');
+          this.router.navigate(['/logIn']);
+          return Observable.throw(e.error.message);
+        }
+        if (e.status === 400) {
+          return Observable.throw(e.error.message);
+        }
+      });
+  }
+
 
   // CHECK
   loginAdmin(body) {
@@ -149,4 +195,5 @@ export class AdminService {
     // console.log("Aqui va el servicio");
   }
 
+  
 }

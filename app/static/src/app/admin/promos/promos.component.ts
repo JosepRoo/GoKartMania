@@ -83,7 +83,7 @@ export class PromosComponent implements OnInit, OnDestroy {
     this.promosService.getPromos().subscribe(res => {
       this.promos = [];
       this.isSuperAdmin=res.isSuperAdmin;
-      if (res.isSuperAdmin && (this.displayedColumns[this.displayedColumns.length-1])=='actions'){
+      if (this.isSuperAdmin && (this.displayedColumns[this.displayedColumns.length-1])=='end_date'){
         this.displayedColumns.push('actions');
         this.displayedColumns.push('authorize');
         this.displayedColumns.push('download');
@@ -130,7 +130,7 @@ export class PromosComponent implements OnInit, OnDestroy {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(coupons);
     
     XLSX.utils.book_append_sheet(workbook, worksheet, 'data');
-    XLSX.writeFile(workbook, 'test.xlsx');
+    XLSX.writeFile(workbook, 'Cupones.xlsx');
 
   }
 

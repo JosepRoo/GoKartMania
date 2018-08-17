@@ -27,6 +27,7 @@ export class ReservationDetailsDialogComponent implements OnInit {
   ];
 
   editReservationDialogRef;
+  editAvailable;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) private data: any,
@@ -34,10 +35,10 @@ export class ReservationDetailsDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.data);
-    this.pilots = this.data.pilots;
+    this.pilots = this.data.reservation.pilots;
     this.dataSourcePilots = new MatTableDataSource(this.pilots);
-    this.turns = this.data.turns;
+    this.turns = this.data.reservation.turns;
+    this.editAvailable = this.data.parent == 'home'? 0 : 1;
     this.getPositions();
   }
 
@@ -53,7 +54,7 @@ export class ReservationDetailsDialogComponent implements OnInit {
   openEditReservationDialog(element) {
     this.editReservationDialogRef = this.dialog.open(EditReservationDialogComponent, {
       width: '90%',
-      data : element,
+      data : element.reservation,
       maxHeight: 800
     });
     this.editReservationDialogRef.afterClosed().subscribe(

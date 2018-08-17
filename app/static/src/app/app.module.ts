@@ -71,8 +71,9 @@ import { CreateReportDialogComponent } from './admin/reservations/create-report-
 import { LogoutDialogComponent } from './admin/logout-dialog/logout-dialog.component';
 import { PromoDetailsDialogComponent } from './admin/promos/promo-details-dialog/promo-details-dialog.component';
 import { PilotDetailsDialogComponent } from './admin/admin-pilots/pilot-details-dialog/pilot-details-dialog.component';
-// import { ReservationDetailsComponent } from './admin/reservations/reservation-details/reservation-details.component';
+import { ReservationDetailsComponent } from './admin/reservations/reservation-details/reservation-details.component';
 import { ReservationDetailsDialogComponent } from './admin/reservations/reservation-details-dialog/reservation-details-dialog.component';
+import { PilotsLicensesComponent } from './admin/pilots-licenses/pilots-licenses.component';
 
 registerLocaleData(localeEs, 'es');
 
@@ -104,7 +105,8 @@ registerLocaleData(localeEs, 'es');
     PromoDetailsDialogComponent,
     PilotDetailsDialogComponent,
     ReservationDetailsComponent,
-    ReservationDetailsDialogComponent
+    ReservationDetailsDialogComponent,
+    PilotsLicensesComponent
   ],
   imports: [
     BrowserModule,

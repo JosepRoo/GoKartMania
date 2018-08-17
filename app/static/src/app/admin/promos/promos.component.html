@@ -1,7 +1,7 @@
 <div class="container">
   <div class="row justify-content-between">
     <div class="col-12 col-sm-4">
-      <h4 style="color:white;">Promociones</h4>
+      <h3 style="color:white;">Promociones</h3>
     </div>
     <div class="col-12 col-sm-4">
       <button class="btn btn-block" mat-raised-button color="primary" (click)="openNewPromoDialog()">+ Nueva Promoción</button>
@@ -15,32 +15,32 @@
 
           <ng-container matColumnDef="authorised">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Autorizado. </th>
-            <td mat-cell *matCellDef="let element"> <mat-icon *ngIf="element.authorised">check</mat-icon><mat-icon *ngIf="!element.authorised">clear</mat-icon></td>
+            <td mat-cell *matCellDef="let element"(click)="openPromoDetail(element,isSuperAdmin)"> <mat-icon *ngIf="element.authorised">check</mat-icon><mat-icon *ngIf="!element.authorised">clear</mat-icon></td>
           </ng-container>
         
           <ng-container matColumnDef="type">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo </th>
-            <td mat-cell *matCellDef="let element"> {{element.type}} </td>
+            <td mat-cell *matCellDef="let element"(click)="openPromoDetail(element,isSuperAdmin)"> {{element.type}} </td>
           </ng-container>
         
           <ng-container matColumnDef="value">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Valor </th>
-            <td mat-cell *matCellDef="let element"> <label *ngIf="element.type == 'Descuento'" style="margin: 0px">%</label>{{element.value}} </td>
+            <td mat-cell *matCellDef="let element"(click)="openPromoDetail(element,isSuperAdmin)"> <label *ngIf="element.type == 'Descuento'" style="margin: 0px">%</label>{{element.value}} </td>
           </ng-container>
         
           <ng-container matColumnDef="existence">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Existencia </th>
-            <td mat-cell *matCellDef="let element"> {{element.existence}} </td>
+            <td mat-cell *matCellDef="let element"(click)="openPromoDetail(element,isSuperAdmin)"> {{element.existence}} </td>
           </ng-container>
         
           <ng-container matColumnDef="start_date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Desde </th>
-            <td mat-cell *matCellDef="let element"> {{element.start_date | date}} </td>
+            <td mat-cell *matCellDef="let element"(click)="openPromoDetail(element,isSuperAdmin)"> {{element.start_date | date}} </td>
           </ng-container>
         
           <ng-container matColumnDef="end_date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Hasta </th>
-            <td mat-cell *matCellDef="let element"> {{element.end_date | date}} </td>
+            <td mat-cell *matCellDef="let element"(click)="openPromoDetail(element,isSuperAdmin)"> {{element.end_date | date}} </td>
           </ng-container>
 
           <ng-container matColumnDef="actions">
@@ -74,7 +74,7 @@
             </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openPromoDetail(row,isSuperAdmin)"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
     </div>
   </div>

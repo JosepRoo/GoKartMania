@@ -30,6 +30,7 @@ export class PromoDetailsDialogComponent implements OnInit {
   isSuperAdmin;
 
   ngOnInit() {  
+    console.log(this.data);
     this.isSuperAdmin = this.data.isSuperAdmin;
     this.promo = this.data.promo
     this.coupons = this.data.promo.coupons;
