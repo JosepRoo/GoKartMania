@@ -19,19 +19,21 @@ This is the promotion model that will handle the request of the admin and user i
 
 
 class Coupons(BaseModel):
-    def __init__(self, date_applied=None, status=True, _id=None):
+    def __init__(self, copies_left=None, date_applied=None, status=True, _id=None):
         super().__init__(_id)
         self.date_applied = date_applied
         self.status = status
+        self.copies_left = copies_left
 
     @classmethod
-    def add(cls, promo):
+    def add(cls, promo, copies_left: int) -> None:
         """
         Adds an empty default coupon to the given promotion
+        :param copies_left: The number of copies of a coupon
         :param promo: The promotion Object
-        :return: Promo with coupon added
+        :return: None
         """
-        coupon: Promotion = cls(_id=promo.type[:4].lower()+"-"+uuid.uuid4().hex[:5])
+        coupon: Coupons = cls(_id=promo.type[:4].lower()+"-"+uuid.uuid4().hex[:5], copies_left=copies_left)
         promo.coupons.append(coupon)
 
     @staticmethod
@@ -82,6 +84,7 @@ class Promotion(BaseModel):
             raise WrongPromotionType(
                 "Error en el tipo de promoción. Solo puede ser 'Descuento', 'Reservación' o 'Carreras'.")
         password = new_promo.pop('password')
+        copies_left: int = new_promo.pop('copies_left')
         promo: Promotion = cls(**new_promo, coupons=[])
         admin = AdminModel.get_by_id(session['admin_id'], ADMIN_COLLECTION)
         promo.creator = admin.name
@@ -91,7 +94,7 @@ class Promotion(BaseModel):
             promo.authorised = True
         AdminModel.send_alert_message(promo)
         for i in range(promo.existence):
-            Coupons.add(promo)
+            Coupons.add(promo, copies_left)
         promo.save_to_mongo(COLLECTION)
 
     @classmethod
@@ -106,8 +109,11 @@ class Promotion(BaseModel):
         if promo is None:
             raise PromotionNotFound("La promo con el ID dado no existe.")
         updated_promo.pop('password')
+        copies_left: int = updated_promo.pop('copies_left')
         promo_obj: Promotion = cls(**updated_promo, _id=promo_id, coupons=promo.get('coupons'),
                                    creator=promo.get('creator'))
+        for coupon in promo_obj.coupons:
+            coupon.copies_left = copies_left
         promo_obj.authoriser = "Admnistrador"
         promo_obj.update_mongo(COLLECTION)
         return promo_obj

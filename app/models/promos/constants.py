@@ -1,12 +1,14 @@
-import datetime
-
-from flask import session
 from flask_restful import reqparse
 
 COLLECTION = 'promos'
 
 PARSER = reqparse.RequestParser(bundle_errors=True)
 PARSER.add_argument('existence',
+                    type=int,
+                    required=True,
+                    help="Este campo no puede ser dejado en blanco."
+                    )
+PARSER.add_argument('copies_left',
                     type=int,
                     required=True,
                     help="Este campo no puede ser dejado en blanco."
