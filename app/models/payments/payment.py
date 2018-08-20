@@ -118,7 +118,7 @@ class Payment(BaseModel):
             promo = PromoModel.get_promos(promo_id)[0]
             coupon = CouponsModel.get_coupon_by_id(promo_id, coupon_id)
             if not coupon.status:
-                raise PromotionUsed("Esta promoción ya fue utilizada por otro usuario.")
+                raise PromotionUsed("Este cupón ya fue utilizado el máximo número permitido de veces.")
 
         payment = cls(**new_payment)
 
@@ -216,8 +216,10 @@ class Payment(BaseModel):
             for c in promo.coupons:
                 if c._id == coupon._id:
                     promo.coupons.remove(c)
-                    coupon.status = False
                     coupon.date_applied = payment.date
+                    coupon.copies_left -= 1
+                    if coupon.copies_left == 0:
+                        coupon.status = False
                     promo.coupons.append(coupon)
                     promo.update_mongo(PROMO_COLLECTION)
                     break
