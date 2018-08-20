@@ -29,8 +29,8 @@ class Date(BaseModel):
         :return: A brand new datetime
         """
         from app.models.schedules.schedule import Schedule as ScheduleModel
-        d = datetime.datetime(new_date.get('year'), new_date.get('month'), day, 21)
-        new_day: Date = cls(date=d, schedules=[])
+        aware_datetime = get_localzone().localize(datetime.datetime(new_date.get('year'), new_date.get('month'), day))
+        new_day: Date = cls(date=aware_datetime, schedules=[])
         for i in range(11, 22):
             ScheduleModel.add(new_day, {'hour': f'{i}', 'turns': []})
         new_day.save_to_mongo(COLLECTION)
@@ -187,6 +187,9 @@ class Date(BaseModel):
                             busy_turns += 1
                         else:
                             availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 2
+                    elif turn.type == "BLOQUEADO":
+                        availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 0
+                        busy_turns += 1
                     # Ensures that the type of the reservation matches the turn selected
                     # and that the party size fits in that turn
                     elif turn.type != reservation.type or total_pilots + len(turn.pilots) > 8:
@@ -230,7 +233,7 @@ class Date(BaseModel):
                     if turn['type'] is None:
                         turn_status = 2
                     else:
-                        if len(turn['pilots']) == 8:
+                        if turn['type'] == 'BLOQUEADO' or len(turn['pilots']) == 8:
                             turn_status = 0
                         else:
                             turn_status = 1

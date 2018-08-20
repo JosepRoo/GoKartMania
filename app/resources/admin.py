@@ -1,6 +1,5 @@
 from flask import session
 from flask_restful import Resource, reqparse
-from werkzeug.exceptions import BadRequest
 
 from app import Response
 from app.common.utils import Utils
@@ -22,6 +21,7 @@ from app.models.qrs.qr import QR as QRModel
 from app.models.pilots.pilot import Pilot as PilotModel
 from app.models.locations.location import Location as LocationModel
 from app.models.users.constants import COLLECTION as USER_COLLECTION
+from app.models.admins.constants import PARSER
 
 
 class Admin(Resource):
@@ -1654,3 +1654,17 @@ class Logout(Resource):
             return Response(message=e.message).json(), 400
         except Exception as e:
             return Response.generic_response(e), 500
+
+
+class BlockTurns(Resource):
+    @staticmethod
+    @Utils.admin_login_required
+    def post():
+        try:
+            data = PARSER.parse_args()
+            AdminModel.block_turns(data.get('days'), data.get('schedules'), data.get('turns'))
+            return Response(success=True, message="Días, horarios y turnos exitosamente bloqueados.").json(), 200
+        except AdminErrors as e:
+            return Response(message=e.message).json(), 400
+        # except Exception as e:
+        #     return Response.generic_response(e), 500
