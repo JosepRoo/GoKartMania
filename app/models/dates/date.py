@@ -14,11 +14,11 @@ and extract information about the availability of specific dates and schedules.
 
 
 class Date(BaseModel):
-    def __init__(self, date, schedules=list(), _id=None):
+    def __init__(self, date, schedules=None, _id=None):
         from app.models.schedules.schedule import Schedule
         super().__init__(_id)
         self.date = date
-        self.schedules = [Schedule(**schedule) for schedule in schedules] if schedules else schedules
+        self.schedules = [Schedule(**schedule) for schedule in schedules] if schedules is not None else list()
 
     @classmethod
     def add(cls, new_date, day):
@@ -304,9 +304,10 @@ class Date(BaseModel):
             new_date.update_mongo(COLLECTION)
 
     @classmethod
-    def update_temp(cls, allocation_date, new_turn, reservation_type) -> None:
+    def update_temp(cls, allocation_date, new_turn, reservation_type, is_user: bool) -> None:
         """
         Updates the indicated date with the schedule, turn, type, pilots, and allocation date
+        Only the admin has access to this resource.
         :param reservation_type: The type of reservation (Kids or Adults)
         :param allocation_date: The momentary date when the reservation will be occupied
         :param new_turn: The information of the turn
@@ -323,9 +324,16 @@ class Date(BaseModel):
                 for position in new_turn.get('positions'):
                     position_num = (int(position[-1]))
                     now = datetime.datetime.now().astimezone(get_localzone())  # + datetime.timedelta(days=3)
-                    AbstractPilot.add(schedule.turns[turn_number - 1], {'_id': new_turn.get('positions').get(position),
-                                                                        'position': position_num,
-                                                                        'allocation_date': now})
+                    if is_user:
+                        AbstractPilot.add(schedule.turns[turn_number - 1],
+                                          {'_id': new_turn.get('positions').get(position),
+                                           'position': position_num,
+                                           'allocation_date': now})
+                    else:  # is_admin
+                        AbstractPilot.add(schedule.turns[turn_number - 1],
+                                          {'_id': new_turn.get('positions').get(position),
+                                           'position': position_num,
+                                           'allocation_date': None})
                 # Update the type of turn, if it's None
                 if schedule.turns[turn_number - 1].type is None:
                     schedule.turns[turn_number - 1].type = reservation_type

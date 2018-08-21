@@ -228,9 +228,8 @@ class Payment(BaseModel):
             payment.promo = promo
         reservation.payment = payment
         if session.get('reservation_date') != datetime.datetime.strftime(reservation.date, "%Y-%m-%d"):
-            # Se le suma un día porque Mongo toma en cuenta 19 hrs 00:00 del día exacto -5 hrs.
-            reservation.date = datetime.datetime.strptime(session.get('reservation_date'), "%Y-%m-%d")\
-                               + datetime.timedelta(days=1)
+            aware_datetime = get_localzone().localize(datetime.datetime.strptime(session.get('reservation_date'), "%Y-%m-%d"))
+            reservation.date = aware_datetime
         for pilot in reservation.pilots:
             pilot.update_mongo(PILOTS)
         # Guardar en la coleccion de reservaciones reales
