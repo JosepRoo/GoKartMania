@@ -18,7 +18,7 @@ when they complete the process of reservation and the payment is processed.
 
 
 class Reservation(BaseModel):
-    def __init__(self, type, date, location=None, payment=None, turns=list(), pilots=list(),
+    def __init__(self, type, date, location=None, payment=None, turns=None, pilots=None,
                  amount=None, license_price=None, turns_price=None, price_before_promo=None,
                  promo_id=None, coupon_id=None, discount=None, _id=None):
         from app.models.turns.turn import Turn
@@ -29,8 +29,8 @@ class Reservation(BaseModel):
         self.type = type
         self.date = date
         self.location = Location(**location) if location else location
-        self.turns = [Turn(**turn) for turn in turns] if turns else turns
-        self.pilots = [Pilot(**pilot) for pilot in pilots] if pilots else pilots
+        self.turns = [Turn(**turn) for turn in turns] if turns is not None else list()
+        self.pilots = [Pilot(**pilot) for pilot in pilots] if pilots is not None else list()
         try:
             self.payment = Payment(**payment) if payment else payment
         except TypeError:
@@ -59,7 +59,8 @@ class Reservation(BaseModel):
         location = Database.find_one(COLLECTION, {'_id': id_location})
         if location is None:
             raise LocationNotFound("La sucursal con este ID no fue encontrada.")
-        now = datetime.datetime.now().astimezone(get_localzone())
+        now = datetime.datetime.now()
+        aware_datetime = get_localzone().localize(now)
         reservation: Reservation = cls(**new_reservation, date=now)
         # print(reservation.date)
         reservation.location = LocationModel(**location)
@@ -156,9 +157,12 @@ class Reservation(BaseModel):
         turns_price = Payment.calculate_turns_price(turns_size, prices_size, prices)
 
         self.license_price = license_price
-        self.turns_price = turns_price
-        self.amount = license_price + turns_price
+        self.turns_price = turns_price * len(self.pilots)
+        self.amount = self.license_price + self.turns_price
         self.update_mongo(COLLECTION_TEMP)
+
+        if session.get('reservation_date') != datetime.datetime.strftime(self.date, "%Y-%m-%d"):
+            self.date = datetime.datetime.strptime(session.get('reservation_date'), "%Y-%m-%d")
         return self
 
     def insert_promo(self, promo_id):

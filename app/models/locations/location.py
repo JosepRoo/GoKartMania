@@ -3,6 +3,7 @@ from app.models.baseModel import BaseModel
 from app.models.emails.email import Email
 from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.locations.constants import COLLECTION
+from app.models.admins.constants import COLLECTION as ADMINS
 from app.models.locations.errors import LocationNotFound
 
 """
@@ -66,8 +67,11 @@ class Location(BaseModel):
         :param reservation: Reservation object
         :return: POST method requesting an email to be sent to the user making the reservation
         """
-        # email = Email(to= contacto@gokartmania.com, subject='Confirmación de reservación')
-        email = Email(to='javierj@gokartmania.com.mx', subject='Confirmación de reservación', qr_code=qr_code)
+        for admin in Database.find(ADMINS, {}):
+            pass
+
+        #email = Email(to=admin.get('email'), subject='Confirmación de reservación', qr_code=qr_code)
+        email = Email(to="areyna@sitsolutions.org", subject='Confirmación de reservación', qr_code=qr_code)
         turns_detail = ""
         for turn in reservation.turns:
             turns_detail += "<p>" + turn.schedule + " hrs - Turno " + turn.turn_number + "</p>"
@@ -82,10 +86,20 @@ class Location(BaseModel):
             pilots_detail += "<p>Nombre: " + pilot.name + "</p>"
             if pilot.email is not None:
                 pilots_detail += "<p>Email: " + pilot.email + "</p>"
+            if pilot.location is not None:
+                pilots_detail += "<p>Sucursal: " + pilot.location + "</p>"
+            if pilot.birth_date is not None:
+                pilots_detail += "<p>Fecha de Nacimiento: " + pilot.birth_date + "</p>"
+            if pilot.postal_code is not None:
+                pilots_detail += "<p>Código Postal: " + pilot.postal_code + "</p>"
+            if pilot.nickname is not None:
+                pilots_detail += "<p>Nickname: " + pilot.nickname + "</p>"
+            if pilot.city is not None:
+                pilots_detail += "<p>Ciudad: " + pilot.city + "</p>"
             if pilot.licensed:
-                pilots_detail += "<p>Licencia: Sí" + "</p>"
+                pilots_detail += "<p>Este piloto desea adquirir licencia." + "</p>"
             else:
-                pilots_detail += "<p>Licencia: No" + "</p>"
+                pilots_detail += "<p>Este piloto ya cuenta con licencia." + "</p>"
             pilots_detail += "<br>"
 
         email.text("Estimado {}:\n"
@@ -109,187 +123,192 @@ class Location(BaseModel):
                                                            reservation.date.strftime("%Y-%m-%d"),
                                                            turns_detail, pilots_detail, reservation.amount))
         email_html = """
-        <html>
-        <head>
-          <meta charset='utf-8' />
-          <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-          <title>GoKartMania</title>
-          <meta name='viewport' content='width=device-width, initial-scale=1'>
-          <link rel='stylesheet' type='text/css' media='screen' href='main.css' />
-          <script src='main.js'></script>
-          <style>
-              @import url('https://fonts.googleapis.com/css?family=Open+Sans:100,300,400,700');
-              @import url('https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700');
-            body {
-              font-family: 'Open Sans', sans-serif;
-            		margin-top: 0px;
-        			margin-right: 0px;
-        			margin-bottom: 0px;
-        			margin-left: 0px;
-        			color: white;
-            }
-            span {
-                color: white;
-            }
-            .primary {
-              color: #B9261A;
-            }
-          </style>
-        </head>
-        <body>
+                    <html>
+                    <head>
+                      <meta charset='utf-8' />
+                      <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+                      <title>GoKartMania</title>
+                      <meta name='viewport' content='width=device-width, initial-scale=1'>
+                      <link rel='stylesheet' type='text/css' media='screen' href='main.css' />
+                      <script src='main.js'></script>
+                      <style>
+                          @import url('https://fonts.googleapis.com/css?family=Open+Sans:100,300,400,700');
+                          @import url('https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700');
+                        body {
+                          font-family: 'Open Sans', sans-serif;
+                                margin-top: 0px;
+                                margin-right: 0px;
+                                margin-bottom: 0px;
+                                margin-left: 0px;
+                                color: white;
+                        }
+                        span {
+                            color: white;
+                        }
+                        .primary {
+                          color: #B9261A;
+                        }
+                      </style>
+                    </head>
+                    <body>
 
-          <table  border='0' cellpadding='0' cellspacing='0' height='100%' width='100%'>
-            <tr>
-              <td  align='center' valign='top'>
-                <table style='background-color: black;' border='0' cellpadding='20' cellspacing='0' width='600'>
-                  <tr>
-                    <td  align='center' valign='top' style='padding-bottom: 0px;'>
-                      <table border='0' cellpadding='20' cellspacing='0' width='100%'>
+                      <table  border='0' cellpadding='0' cellspacing='0' height='100%' width='100%'>
                         <tr>
-                          <td align='center' valign='top' style='padding-top: 0px;'>
-                            <table width='100%' border='0' cellspacing='0' cellpadding='0'>
+                          <td  align='center' valign='top'>
+                            <table style='background-color: black;' border='0' cellpadding='20' cellspacing='0' width='600'>
                               <tr>
-                                <td>
-                                  <table>
+                                <td  align='center' valign='top' style='padding-bottom: 0px;'>
+                                  <table border='0' cellpadding='20' cellspacing='0' width='100%'>
                                     <tr>
-                                      <td style='text-align:center;' align='center'>
-                                        <a href='http://gokartmania.com.mx/'>
-                                          <img style='padding-left:110px;' src='http://138.197.209.15/assets/logoBlanco.png'>
-                                          <a/>
+                                      <td align='center' valign='top' style='padding-top: 0px;'>
+                                        <table width='100%' border='0' cellspacing='0' cellpadding='0'>
+                                          <tr>
+                                            <td>
+                                              <table>
+                                                <tr>
+                                                  <td style='text-align:center;' align='center'>
+                                                    <a href='http://gokartmania.com.mx/'>
+                                                      <img style='padding-left:110px;' src='http://138.197.209.15/assets/logoBlanco.png'>
+                                                      <a/>
+                                                  </td>
+                                                </tr>
+                                              </table>
+                                            </td>
+                                          </tr>
+                                        </table>
                                       </td>
                                     </tr>
                                   </table>
                                 </td>
                               </tr>
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style='background-color: #B9261A; height:10px;'></td>
-                  </tr>
-                  <tr>
-                    <td align='center' valign='top' style='padding-top: 0px;'>
-                      <table border='0' cellpadding='20' cellspacing='0' width='100%'>
-                        <tr>
-                          <td align='center' valign='top' style='padding-top: 0px;'>
-                            <table width='100%' border='0' cellspacing='0' cellpadding='0'>
                               <tr>
-                                <td align='left' style='padding-top: 0px !important; font-weight: 700; padding-bottom:15px; font-size: 20px; color: white'>
-                                  <br>"""
-        email_html += """
-                                   <p style='font-size:28px;'>¡Hola <span class='primary'>{}</span>!</p>""".format("GoKartMania ")
-        email_html += """
-                                </td>
+                                <td style='background-color: #B9261A; height:10px;'></td>
                               </tr>
                               <tr>
-                                <td>
-                                  <table width="100%">
+                                <td align='center' valign='top' style='padding-top: 0px;'>
+                                  <table border='0' cellpadding='20' cellspacing='0' width='100%'>
                                     <tr>
-                                      <td align="left" style="font-weight: 400; padding-bottom:15px; font-size: 20px; color: white">
-                                          A continuación se desglosan los datos de la reservación del cliente <span class="primary">{}</span>.
-                                          <p>
-                                            <span style="font-weight: 700;">Número de confirmación:</span> <span class="primary">{}</span></p>
-                                          <p>
-                                            <span style="font-weight: 700;">Ubicación:</span> <span class="primary">{}</span></p>
-                                          <p>
-                                            <span style="font-weight: 700;">Fecha:</span> <span class="primary">{}</span></p>
-                                          <p>""".format(self.name, reservation._id, reservation.location.name,
-                                                        reservation.date.strftime("%Y-%m-%d"))
+                                      <td align='center' valign='top' style='padding-top: 0px;'>
+                                        <table width='100%' border='0' cellspacing='0' cellpadding='0'>
+                                          <tr>
+                                            <td align='left' style='padding-top: 0px !important; font-weight: 700; padding-bottom:15px; font-size: 20px; color: white'>
+                                              <br>"""
         email_html += """
-                                            <span style="font-weight: 700;">Detalle de los turnos:</span></p>
-                                            <div style="padding-left:25px">
-                                              {}
-                                            </div>""".format(turns_detail)
+                                               <p style='font-size:28px;'>¡Hola <span class='primary'>{}</span>!</p>""".format(
+            "GoKartMania")
         email_html += """
-                                          <p>
-                                            <span style="font-weight: 700;">Pilotos:</span></p>
-                                            <div style="padding-left:25px; color: white;">
-                                              {}
-                                            </div>""".format(pilots_detail)
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>
+                                              <table width="100%">
+                                                <tr>
+                                                  <td align="left" style="font-weight: 400; padding-bottom:15px; font-size: 20px; color: white">
+                                                      A continuación se desglosan los datos de la reservación del cliente <span class="primary">{}</span>.
+                                                      <p>
+                                                        <span style="font-weight: 700;">Número de confirmación:</span> <span class="primary">{}</span></p>
+                                                      <p>
+                                                        <span style="font-weight: 700;">Ubicación:</span> <span class="primary">{}</span></p>
+                                                      <p>
+                                                        <span style="font-weight: 700;">Fecha:</span> <span class="primary">{}</span></p>
+                                                      <p>
+                                                        <span style="font-weight: 700;">Número telefónico:</span> <span class="primary">{}</span></p>
+                                                      <p>""".format(self.name, reservation._id,
+                                                                    reservation.location.name,
+                                                                    reservation.date.strftime("%Y-%m-%d"),
+                                                                    reservation.payment.phone)
         email_html += """
-                                          <p>
-                                            <span style="font-weight: 700;">Desglose de la compra:</span>
-                                          </p>
-                                          <div style="padding-left:25px">
-                                            <p>
-                                              Costo de licencia: <span class="primary">${}</span>
-                                            </p>
-                                            <p>
-                                              Costo de las carreras: <span class="primary">${}</span>
-                                            </p>
-                                            <p>
-                                              Subtotal: <span class="primary">${}</span>
-                                            </p>""".format(reservation.license_price,
-                                                           reservation.turns_price,
-                                                           reservation.license_price + reservation.turns_price)
+                                                        <span style="font-weight: 700;">Detalle de los turnos:</span></p>
+                                                        <div style="padding-left:25px">
+                                                          {}
+                                                        </div>""".format(turns_detail)
+        email_html += """
+                                                      <p>
+                                                        <span style="font-weight: 700;">Pilotos:</span></p>
+                                                        <div style="padding-left:25px; color: white;">
+                                                          {}
+                                                        </div>""".format(pilots_detail)
+        email_html += """
+                                                      <p>
+                                                        <span style="font-weight: 700;">Desglose de la compra:</span>
+                                                      </p>
+                                                      <div style="padding-left:25px">
+                                                        <p>
+                                                          Costo de licencia: <span class="primary">${}</span>
+                                                        </p>
+                                                        <p>
+                                                          Costo de las carreras: <span class="primary">${}</span>
+                                                        </p>
+                                                        <p>
+                                                          Subtotal: <span class="primary">${}</span>
+                                                        </p>""".format(reservation.license_price,
+                                                                       reservation.turns_price,
+                                                                       reservation.license_price + reservation.turns_price)
         if reservation.payment.promo:
             email_html += """
-                                            <p>
-                                              Descuento: <span class="primary">${}</span>
-                                            </p>""".format(reservation.discount)
+                                                        <p>
+                                                          Descuento: <span class="primary">${}</span>
+                                                        </p>""".format(reservation.discount)
         else:
             email_html += """
-                                            <p>
-                                              Descuento: <span class="primary">$0</span>
-                                            </p>"""
+                                                        <p>
+                                                          Descuento: <span class="primary">$0</span>
+                                                        </p>"""
         email_html += """
-                                            <p>
-                                              Total: <span class="primary">${}</span>
-                                            </p>
-                                          </div>
-                                          <p>
+                                                        <p>
+                                                          Total: <span class="primary">${}</span>
+                                                        </p>
+                                                      </div>
+                                                      <p>
 
-                                          </p>
-                                            <br>
-                                          <p>
-                                            <span align="center" style="font-weight: 700;">El siguiente <span class="primary">código QR</span> será presentado en taquilla para confirmar la carrera.</span>
-                                          </p>
-                                      </td>
-                                    </tr>
-                                  </table>
-                                  <br />
-                                  <td>
-                              </tr>""".format(reservation.amount)
-        qr_url = "http://138.197.209.15/qr/"+qr_code
+                                                      </p>
+                                                        <br>
+                                                      <p>
+                                                        <span align="center" style="font-weight: 700;">El siguiente <span class="primary">código QR</span> será presentado en taquilla para confirmar la carrera.</span>
+                                                      </p>
+                                                  </td>
+                                                </tr>
+                                              </table>
+                                              <br />
+                                              <td>
+                                          </tr>""".format(reservation.amount)
+        qr_url = "http://138.197.209.15/qr/" + qr_code
         email_html += """
-                              <tr>
-                                <td>
-                                  <table width="100%">
-                                    <tr>
-                                      <td align="center" style="font-weight: 400; padding-bottom:15px; font-size: 20px; color: white; text-align: center;">
-                                        <img src={} alt='QR Code' />
-                                        <br>
-                                        <br>
-                                        <span style="font-weight: 700; font-size: 32px; text-align: center;">En sus marcas. Listos.
-                                          <span class="primary">¡Fuera!</span>
-                                        </span>
-                                      </td>
+                                          <tr>
+                                            <td>
+                                              <table width="100%">
+                                                <tr>
+                                                  <td align="center" style="font-weight: 400; padding-bottom:15px; font-size: 20px; color: white; text-align: center;">
+                                                    <img src={} alt='QR Code' />
+                                                    <br>
+                                                    <br>
+                                                    <span style="font-weight: 700; font-size: 32px; text-align: center;">En sus marcas. Listos.
+                                                      <span class="primary">¡Fuera!</span>
+                                                    </span>
+                                                  </td>
+                                                </tr>
+                                              </table>
+                                              <br />
+                                              <td>
+                                          </tr>
+                                        </table>
+                                        </td>
                                     </tr>
+
                                   </table>
-                                  <br />
-                                  <td>
+                                  </td>
                               </tr>
+                                  <tr>
+                                    <td style="background-color: #B9261A; height:10px;"></td>
+                                  </tr>
                             </table>
                             </td>
                         </tr>
-
                       </table>
-                      </td>
-                  </tr>
-                      <tr>
-                        <td style="background-color: #B9261A; height:10px;"></td>
-                      </tr>
-                </table>
-                </td>
-            </tr>
-          </table>
 
-        </body>
-        </html>
-                """.format(qr_url)
+                    </body>
+                    </html>
+                            """.format(qr_url)
 
         email.html(email_html)
 

@@ -3,6 +3,7 @@ import requests
 import json
 import datetime
 
+from flask import session
 from tzlocal import get_localzone
 
 from app.models.promos.errors import PromotionUsed
@@ -10,6 +11,7 @@ from app.models.promos.promotion import Promotion as PromoModel
 from app.models.promos.promotion import Coupons as CouponsModel
 from app.models.promos.constants import COLLECTION as PROMO_COLLECTION
 from app.models.reservations.constants import COLLECTION_TEMP, COLLECTION
+from app.models.pilots.constants import COLLECTION as PILOTS
 from app.models.users.user import User
 from app.models.users.constants import COLLECTION as USER
 from app.models.baseModel import BaseModel
@@ -75,7 +77,7 @@ class Card(BaseModel):
 
 
 class Payment(BaseModel):
-    def __init__(self, status, payment_method, payment_type,
+    def __init__(self, status, payment_method, payment_type, phone,
                  promo=None, date=None, etomin_number=None, id_reference=None, _id=None):
         self.status = status
         self.payment_method = payment_method
@@ -83,6 +85,7 @@ class Payment(BaseModel):
         self.etomin_number = etomin_number
         self.date = date
         self.promo = PromoModel(**promo) if promo else promo
+        self.phone = phone
         self.id_reference = id_reference
         super().__init__(_id)
 
@@ -115,7 +118,7 @@ class Payment(BaseModel):
             promo = PromoModel.get_promos(promo_id)[0]
             coupon = CouponsModel.get_coupon_by_id(promo_id, coupon_id)
             if not coupon.status:
-                raise PromotionUsed("Esta promoción ya fue utilizada por otro usuario.")
+                raise PromotionUsed("Este cupón ya fue utilizado el máximo número permitido de veces.")
 
         payment = cls(**new_payment)
 
@@ -213,8 +216,10 @@ class Payment(BaseModel):
             for c in promo.coupons:
                 if c._id == coupon._id:
                     promo.coupons.remove(c)
-                    coupon.status = False
                     coupon.date_applied = payment.date
+                    coupon.copies_left -= 1
+                    if coupon.copies_left == 0:
+                        coupon.status = False
                     promo.coupons.append(coupon)
                     promo.update_mongo(PROMO_COLLECTION)
                     break
@@ -222,6 +227,11 @@ class Payment(BaseModel):
             promo.coupon_applied = coupon._id
             payment.promo = promo
         reservation.payment = payment
+        if session.get('reservation_date') != datetime.datetime.strftime(reservation.date, "%Y-%m-%d"):
+            aware_datetime = get_localzone().localize(datetime.datetime.strptime(session.get('reservation_date'), "%Y-%m-%d"))
+            reservation.date = aware_datetime
+        for pilot in reservation.pilots:
+            pilot.update_mongo(PILOTS)
         # Guardar en la coleccion de reservaciones reales
         reservation.save_to_mongo(COLLECTION)
         # Borrar de la coleccion de reservaciones temporales
