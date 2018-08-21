@@ -133,6 +133,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#buildreservationsreport">BuildReservationsReport</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#buildpilotsreport">BuildPilotsReport</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#reservationavgprice">ReservationAvgPrice</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blockturns">BlockTurns</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#logout">Logout</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Logout</a></li>
 </ul>
 </li>
 </ul>
@@ -324,6 +329,14 @@ Content-Type: application/json
 <td>&#160;</td>
 </tr>
 <tr class="row-even"><td>&#160;</td>
+<td><a class="reference external" href="#get--user-reservations-(string-reservation_id)">GET /user/reservations/(string:reservation_id)</a></td>
+<td>Info de una reservación</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td><a class="reference external" href="#get--user-reservations">GET /user/reservations</a></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
 <td><a class="reference external" href="#put--user-reservations-(string-reservation_id)">PUT /user/reservations/(string:reservation_id)</a></td>
 <td>Cambia el tipo de reservación Niños-Adultos</td>
 </tr>
@@ -337,14 +350,6 @@ Content-Type: application/json
 </tr>
 <tr class="row-odd"><td>&#160;</td>
 <td><a class="reference external" href="#delete--user-reservations">DELETE /user/reservations</a></td>
-<td>&#160;</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
-<td><a class="reference external" href="#get--user-reservations-(string-reservation_id)">GET /user/reservations/(string:reservation_id)</a></td>
-<td>Info de una reservación</td>
-</tr>
-<tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#get--user-reservations">GET /user/reservations</a></td>
 <td>&#160;</td>
 </tr>
 </tbody>
@@ -439,6 +444,130 @@ Content-Type: application/json
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">JSON object with the created reservation</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--user-reservations-(string-reservation_id)">
+<code class="descname">GET </code><code class="descname">/user/reservations/</code><span class="sig-paren">(</span><em class="property">string: </em><em>reservation_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-reservations-(string-reservation_id)" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="get">
+<dt id="get--user-reservations">
+<code class="descname">GET </code><code class="descname">/user/reservations</code><a class="headerlink" href="#get--user-reservations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the information of the current reservation</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/user/reservations</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;135327d47c8845aaa7fe1ad094ea9a7a&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Adultos&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-01 00:25&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;GOKART&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="mi">295</span><span class="p">,</span>
+                <span class="mi">530</span><span class="p">,</span>
+                <span class="mi">690</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;CADET&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="mi">295</span><span class="p">,</span>
+                <span class="mi">530</span><span class="p">,</span>
+                <span class="mi">690</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;LICENCIA&quot;</span><span class="p">:</span> <span class="mi">100</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;turns&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;273d2975ee684bc39306d62ee9069bcb&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;11&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;turn_number&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;positions&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;pos1&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;pos2&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;pilots&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Leslie&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Gallegos Salazar&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;22-08-96&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s2">&quot;50840&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;nickname&quot;</span><span class="p">:</span> <span class="s2">&quot;Leslie&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Estado de México&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;licensed&quot;</span><span class="p">:</span> <span class="kc">true</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Pablo Alejandro&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Sanchez Tadeo&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;17-07-96&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s2">&quot;50840&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;nickname&quot;</span><span class="p">:</span> <span class="s2">&quot;Pablito&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Estado de México&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;licensed&quot;</span><span class="p">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;payment&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;amount&quot;</span><span class="p">:</span> <span class="mi">495</span><span class="p">,</span>
+    <span class="nt">&quot;license_price&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="nt">&quot;turns_price&quot;</span><span class="p">:</span> <span class="mi">295</span><span class="p">,</span>
+    <span class="nt">&quot;price_before_promo&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;promo_id&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;coupon_id&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;discount&quot;</span><span class="p">:</span> <span class="kc">null</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response error</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – reservation info retrieved</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.reservations.reservation.Reservation</span></code></p>
 </td>
 </tr>
 </tbody>
@@ -595,130 +724,6 @@ Content-Type: application/json
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">JSON object with the remaining reservation</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="get">
-<dt id="get--user-reservations-(string-reservation_id)">
-<code class="descname">GET </code><code class="descname">/user/reservations/</code><span class="sig-paren">(</span><em class="property">string: </em><em>reservation_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-reservations-(string-reservation_id)" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="get">
-<dt id="get--user-reservations">
-<code class="descname">GET </code><code class="descname">/user/reservations</code><a class="headerlink" href="#get--user-reservations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieves the information of the current reservation</p>
-<p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/user/reservations</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
-<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-</pre></div>
-</div>
-<p><strong>Example response</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;135327d47c8845aaa7fe1ad094ea9a7a&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Adultos&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-01 00:25&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;GOKART&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="mi">295</span><span class="p">,</span>
-                <span class="mi">530</span><span class="p">,</span>
-                <span class="mi">690</span>
-            <span class="p">],</span>
-            <span class="nt">&quot;CADET&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="mi">295</span><span class="p">,</span>
-                <span class="mi">530</span><span class="p">,</span>
-                <span class="mi">690</span>
-            <span class="p">],</span>
-            <span class="nt">&quot;LICENCIA&quot;</span><span class="p">:</span> <span class="mi">100</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;turns&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;273d2975ee684bc39306d62ee9069bcb&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;11&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;turn_number&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;positions&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;pos1&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;pos2&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">],</span>
-    <span class="nt">&quot;pilots&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Leslie&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Gallegos Salazar&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;22-08-96&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s2">&quot;50840&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;nickname&quot;</span><span class="p">:</span> <span class="s2">&quot;Leslie&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Estado de México&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;licensed&quot;</span><span class="p">:</span> <span class="kc">true</span>
-        <span class="p">},</span>
-        <span class="p">{</span>
-            <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Pablo Alejandro&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Sanchez Tadeo&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;17-07-96&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s2">&quot;50840&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;nickname&quot;</span><span class="p">:</span> <span class="s2">&quot;Pablito&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Estado de México&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;licensed&quot;</span><span class="p">:</span> <span class="kc">true</span>
-        <span class="p">}</span>
-    <span class="p">],</span>
-    <span class="nt">&quot;payment&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nt">&quot;amount&quot;</span><span class="p">:</span> <span class="mi">495</span><span class="p">,</span>
-    <span class="nt">&quot;license_price&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
-    <span class="nt">&quot;turns_price&quot;</span><span class="p">:</span> <span class="mi">295</span><span class="p">,</span>
-    <span class="nt">&quot;price_before_promo&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nt">&quot;promo_id&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nt">&quot;coupon_id&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nt">&quot;discount&quot;</span><span class="p">:</span> <span class="kc">null</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response error</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – reservation info retrieved</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.reservations.reservation.Reservation</span></code></p>
 </td>
 </tr>
 </tbody>
@@ -1290,15 +1295,93 @@ Content-Type: application/json
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>Pilotos</td>
-<td><a class="reference external" href="#post--user-pilots">POST /user/pilots</a></td>
-<td>Añade pilotos a la reservación</td>
-</tr>
-<tr class="row-odd"><td>&#160;</td>
 <td><a class="reference external" href="#get--user-pilots">GET /user/pilots</a></td>
 <td>Info de los pilotos en la reservación</td>
 </tr>
+<tr class="row-odd"><td>&#160;</td>
+<td><a class="reference external" href="#post--user-pilots">POST /user/pilots</a></td>
+<td>Añade pilotos a la reservación</td>
+</tr>
 </tbody>
 </table>
+<dl class="get">
+<dt id="get--user-pilots">
+<code class="descname">GET </code><code class="descname">/user/pilots</code><a class="headerlink" href="#get--user-pilots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the information of all the pilots in the given reservation</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/user/pilots</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">[</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Leslie&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Gallegos Salazar&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;22-08-96&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s2">&quot;50840&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;nickname&quot;</span><span class="p">:</span> <span class="s2">&quot;Leslie&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Estado de México&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;licensed&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Pablo Alejandro&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Sanchez Tadeo&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;17-07-96&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s2">&quot;50840&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;nickname&quot;</span><span class="p">:</span> <span class="s2">&quot;Pablito&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Estado de México&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;licensed&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>Example response error</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – pilots info retrieved</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Array of <code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.pilots.pilot.Pilot</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="post">
 <dt id="post--user-pilots">
 <code class="descname">POST </code><code class="descname">/user/pilots</code><a class="headerlink" href="#post--user-pilots" title="Permalink to this definition">¶</a></dt>
@@ -1407,84 +1490,6 @@ Content-Type: application/json
 </table>
 </dd></dl>
 
-<dl class="get">
-<dt id="get--user-pilots">
-<code class="descname">GET </code><code class="descname">/user/pilots</code><a class="headerlink" href="#get--user-pilots" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieves the information of all the pilots in the given reservation</p>
-<p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/user/pilots</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
-<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-</pre></div>
-</div>
-<p><strong>Example response</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">[</span>
-    <span class="p">{</span>
-        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Leslie&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Gallegos Salazar&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;22-08-96&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s2">&quot;50840&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;nickname&quot;</span><span class="p">:</span> <span class="s2">&quot;Leslie&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Estado de México&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;licensed&quot;</span><span class="p">:</span> <span class="kc">true</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Pablo Alejandro&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Sanchez Tadeo&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;17-07-96&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s2">&quot;50840&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;nickname&quot;</span><span class="p">:</span> <span class="s2">&quot;Pablito&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Estado de México&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;licensed&quot;</span><span class="p">:</span> <span class="kc">true</span>
-    <span class="p">}</span>
-<span class="p">]</span>
-</pre></div>
-</div>
-<p><strong>Example response error</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – pilots info retrieved</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Array of <code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.pilots.pilot.Pilot</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </div>
 <div class="section" id="pilot">
 <h4>Pilot<a class="headerlink" href="#pilot" title="Permalink to this headline">¶</a></h4>
@@ -1502,19 +1507,95 @@ Content-Type: application/json
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>Piloto</td>
-<td><a class="reference external" href="#put--user-pilot-(string-pilot_id)">PUT /user/pilot/(string:pilot_id)</a></td>
-<td>Cambia cierta información del piloto</td>
-</tr>
-<tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#delete--user-pilot-(string-pilot_id)">DELETE /user/pilot/(string:pilot_id)</a></td>
-<td>Elimina el piloto con el ID dado</td>
-</tr>
-<tr class="row-even"><td>&#160;</td>
 <td><a class="reference external" href="#get--user-pilot-(string-pilot_id)">GET /user/pilot/(string:pilot_id)</a></td>
 <td>Info del piloto con el ID dado</td>
 </tr>
+<tr class="row-odd"><td>&#160;</td>
+<td><a class="reference external" href="#put--user-pilot-(string-pilot_id)">PUT /user/pilot/(string:pilot_id)</a></td>
+<td>Cambia cierta información del piloto</td>
+</tr>
+<tr class="row-even"><td>&#160;</td>
+<td><a class="reference external" href="#delete--user-pilot-(string-pilot_id)">DELETE /user/pilot/(string:pilot_id)</a></td>
+<td>Elimina el piloto con el ID dado</td>
+</tr>
 </tbody>
 </table>
+<dl class="get">
+<dt id="get--user-pilot-(string-pilot_id)">
+<code class="descname">GET </code><code class="descname">/user/pilot/</code><span class="sig-paren">(</span><em class="property">string: </em><em>pilot_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-pilot-(string-pilot_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the information of the pilot with the given id in the parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pilot_id</strong> – The id of the pilot to be read from the reservation</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/user/pilot/&lt;string:pilot_id&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;a01370622@gmail.com&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Michel&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Martínez Guzmán&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;a01370622@gmail.com&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;28-02-96&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s2">&quot;54700&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;nickname&quot;</span><span class="p">:</span> <span class="s2">&quot;Michigan&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Estado de México&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;licensed&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response error</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">404</span> <span class="ne">Not Found</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;El piloto con el ID dado no existe&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – pilot info retrieved</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a> – pilot was not found</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.pilots.pilot.Pilot</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="put">
 <dt id="put--user-pilot-(string-pilot_id)">
 <code class="descname">PUT </code><code class="descname">/user/pilot/</code><span class="sig-paren">(</span><em class="property">string: </em><em>pilot_id</em><span class="sig-paren">)</span><a class="headerlink" href="#put--user-pilot-(string-pilot_id)" title="Permalink to this definition">¶</a></dt>
@@ -1665,82 +1746,6 @@ Content-Type: application/json
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Success message</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="get">
-<dt id="get--user-pilot-(string-pilot_id)">
-<code class="descname">GET </code><code class="descname">/user/pilot/</code><span class="sig-paren">(</span><em class="property">string: </em><em>pilot_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--user-pilot-(string-pilot_id)" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieves the information of the pilot with the given id in the parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>pilot_id</strong> – The id of the pilot to be read from the reservation</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/user/pilot/&lt;string:pilot_id&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
-<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-</pre></div>
-</div>
-<p><strong>Example response</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;a01370622@gmail.com&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Michel&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Martínez Guzmán&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;a01370622@gmail.com&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;28-02-96&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s2">&quot;54700&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;nickname&quot;</span><span class="p">:</span> <span class="s2">&quot;Michigan&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Estado de México&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;licensed&quot;</span><span class="p">:</span> <span class="kc">true</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response error</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">404</span> <span class="ne">Not Found</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;El piloto con el ID dado no existe&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – pilot info retrieved</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a> – pilot was not found</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.pilots.pilot.Pilot</span></code></p>
 </td>
 </tr>
 </tbody>
@@ -1995,11 +2000,11 @@ Content-Type: application/json
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>Fechas</td>
-<td><a class="reference external" href="#post--dates-(string-start_date)-(string-end_date)">POST /dates/(string:start_date)/(string:end_date)</a></td>
-<td>Añade fechas en el mes y año dados</td>
+<td><a class="reference external" href="#get--dates-(string-start_date)-(string-end_date)">GET /dates/(string:start_date)/(string:end_date)</a></td>
+<td>Info de las fechas en un rango de fechas</td>
 </tr>
 <tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#post--dates">POST /dates</a></td>
+<td><a class="reference external" href="#get--dates">GET /dates</a></td>
 <td>&#160;</td>
 </tr>
 <tr class="row-even"><td>&#160;</td>
@@ -2011,155 +2016,15 @@ Content-Type: application/json
 <td>&#160;</td>
 </tr>
 <tr class="row-even"><td>&#160;</td>
-<td><a class="reference external" href="#get--dates-(string-start_date)-(string-end_date)">GET /dates/(string:start_date)/(string:end_date)</a></td>
-<td>Info de las fechas en un rango de fechas</td>
+<td><a class="reference external" href="#post--dates-(string-start_date)-(string-end_date)">POST /dates/(string:start_date)/(string:end_date)</a></td>
+<td>Añade fechas en el mes y año dados</td>
 </tr>
 <tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#get--dates">GET /dates</a></td>
+<td><a class="reference external" href="#post--dates">POST /dates</a></td>
 <td>&#160;</td>
 </tr>
 </tbody>
 </table>
-<dl class="post">
-<dt id="post--dates-(string-start_date)-(string-end_date)">
-<code class="descname">POST </code><code class="descname">/dates/</code><span class="sig-paren">(</span><em class="property">string: </em><em>start_date</em><span class="sig-paren">)</span><code class="descname">/</code><span class="sig-paren">(</span><em class="property">string: </em><em>end_date</em><span class="sig-paren">)</span><a class="headerlink" href="#post--dates-(string-start_date)-(string-end_date)" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="post">
-<dt id="post--dates">
-<code class="descname">POST </code><code class="descname">/dates</code><a class="headerlink" href="#post--dates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inserts date objects to the collection in the month and year given in the parameters</p>
-<p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/dates</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
-<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="s2">&quot;2018&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;month&quot;</span><span class="p">:</span> <span class="s2">&quot;10&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Registro del mes exitoso&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response error</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – dates added to collection</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Successful response if the insertion was completed</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="put">
-<dt id="put--dates-(string-start_date)-(string-end_date)">
-<code class="descname">PUT </code><code class="descname">/dates/</code><span class="sig-paren">(</span><em class="property">string: </em><em>start_date</em><span class="sig-paren">)</span><code class="descname">/</code><span class="sig-paren">(</span><em class="property">string: </em><em>end_date</em><span class="sig-paren">)</span><a class="headerlink" href="#put--dates-(string-start_date)-(string-end_date)" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="put">
-<dt id="put--dates">
-<code class="descname">PUT </code><code class="descname">/dates</code><a class="headerlink" href="#put--dates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Randomly auto-fills the dates in the parameters with turns and pilots</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>start_date</strong> – The start date in range</li>
-<li><strong>end_date</strong> – The end date in range</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">PUT</span> <span class="nn">/dates/&lt;string:start_date&gt;/&lt;string:end_date&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
-<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
-<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-</pre></div>
-</div>
-<p><strong>Example response</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Actualización del mes exitosa&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>Example response error</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
-<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – turns and pilots added to dates</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Successful response if the update was completed</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="get">
 <dt id="get--dates-(string-start_date)-(string-end_date)">
 <code class="descname">GET </code><code class="descname">/dates/</code><span class="sig-paren">(</span><em class="property">string: </em><em>start_date</em><span class="sig-paren">)</span><code class="descname">/</code><span class="sig-paren">(</span><em class="property">string: </em><em>end_date</em><span class="sig-paren">)</span><a class="headerlink" href="#get--dates-(string-start_date)-(string-end_date)" title="Permalink to this definition">¶</a></dt>
@@ -3265,6 +3130,146 @@ Content-Type: application/json
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Array of <code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.dates.date.Date</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="put">
+<dt id="put--dates-(string-start_date)-(string-end_date)">
+<code class="descname">PUT </code><code class="descname">/dates/</code><span class="sig-paren">(</span><em class="property">string: </em><em>start_date</em><span class="sig-paren">)</span><code class="descname">/</code><span class="sig-paren">(</span><em class="property">string: </em><em>end_date</em><span class="sig-paren">)</span><a class="headerlink" href="#put--dates-(string-start_date)-(string-end_date)" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="put">
+<dt id="put--dates">
+<code class="descname">PUT </code><code class="descname">/dates</code><a class="headerlink" href="#put--dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly auto-fills the dates in the parameters with turns and pilots</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>start_date</strong> – The start date in range</li>
+<li><strong>end_date</strong> – The end date in range</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">PUT</span> <span class="nn">/dates/&lt;string:start_date&gt;/&lt;string:end_date&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Actualización del mes exitosa&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response error</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – turns and pilots added to dates</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Successful response if the update was completed</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="post">
+<dt id="post--dates-(string-start_date)-(string-end_date)">
+<code class="descname">POST </code><code class="descname">/dates/</code><span class="sig-paren">(</span><em class="property">string: </em><em>start_date</em><span class="sig-paren">)</span><code class="descname">/</code><span class="sig-paren">(</span><em class="property">string: </em><em>end_date</em><span class="sig-paren">)</span><a class="headerlink" href="#post--dates-(string-start_date)-(string-end_date)" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="post">
+<dt id="post--dates">
+<code class="descname">POST </code><code class="descname">/dates</code><a class="headerlink" href="#post--dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts date objects to the collection in the month and year given in the parameters</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/dates</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="s2">&quot;2018&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;month&quot;</span><span class="p">:</span> <span class="s2">&quot;10&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Registro del mes exitoso&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response error</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – dates added to collection</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Successful response if the insertion was completed</p>
 </td>
 </tr>
 </tbody>
@@ -7310,11 +7315,11 @@ Content-Type: application/json
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>Promos</td>
-<td><a class="reference external" href="#post--promos-(string-promo_id)">POST /promos/(string:promo_id)</a></td>
-<td>Añade una promoción</td>
+<td><a class="reference external" href="#get--promos-(string-promo_id)">GET /promos/(string:promo_id)</a></td>
+<td>Información de una o todas las promo</td>
 </tr>
 <tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#post--promos">POST /promos</a></td>
+<td><a class="reference external" href="#get--promos">GET /promos</a></td>
 <td>&#160;</td>
 </tr>
 <tr class="row-even"><td>&#160;</td>
@@ -7326,39 +7331,28 @@ Content-Type: application/json
 <td>&#160;</td>
 </tr>
 <tr class="row-even"><td>&#160;</td>
-<td><a class="reference external" href="#get--promos-(string-promo_id)">GET /promos/(string:promo_id)</a></td>
-<td>Información de una o todas las promo</td>
+<td><a class="reference external" href="#post--promos-(string-promo_id)">POST /promos/(string:promo_id)</a></td>
+<td>Añade una promoción</td>
 </tr>
 <tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#get--promos">GET /promos</a></td>
+<td><a class="reference external" href="#post--promos">POST /promos</a></td>
 <td>&#160;</td>
 </tr>
 </tbody>
 </table>
-<dl class="post">
-<dt id="post--promos-(string-promo_id)">
-<code class="descname">POST </code><code class="descname">/promos/</code><span class="sig-paren">(</span><em class="property">string: </em><em>promo_id</em><span class="sig-paren">)</span><a class="headerlink" href="#post--promos-(string-promo_id)" title="Permalink to this definition">¶</a></dt>
+<dl class="get">
+<dt id="get--promos-(string-promo_id)">
+<code class="descname">GET </code><code class="descname">/promos/</code><span class="sig-paren">(</span><em class="property">string: </em><em>promo_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--promos-(string-promo_id)" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="post">
-<dt id="post--promos">
-<code class="descname">POST </code><code class="descname">/promos</code><a class="headerlink" href="#post--promos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inserts a new promotion to the Promos Collection</p>
+<dl class="get">
+<dt id="get--promos">
+<code class="descname">GET </code><code class="descname">/promos</code><a class="headerlink" href="#get--promos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the information of all the promotions in the Promo collection or one in particular</p>
 <p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/promos</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/promos/&lt;string:promo_id&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
 <span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>
-    <span class="nt">&quot;existence&quot;</span> <span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="nt">&quot;start_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-01&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;end_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-31&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Descuento&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Descuento del 15% sobre el total de la reservación&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
-    <span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;gokartmania&quot;</span>
-<span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Example response</strong>:</p>
@@ -7367,8 +7361,49 @@ Content-Type: application/json
 <span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
 
 <span class="p">{</span>
-    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Registro satisfactorio de la promoción.&quot;</span>
+    <span class="nt">&quot;isSuperAdmin&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&quot;promos&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;c8d0b53ce3304eabacb39ef5d2590f81&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;existence&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="nt">&quot;start_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-01&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-31&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Descuento&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;authoriser&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nt">&quot;creator&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;authorised&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nt">&quot;created_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-01 15:47&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Descuento del 15% sobre el total de la reservación&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+            <span class="nt">&quot;coupons&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;desc-92bfc&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;date_applied&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+                    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;desc-ee347&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;date_applied&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+                    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;desc-e02f1&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;date_applied&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+                    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;desc-6be64&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;date_applied&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+                    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;desc-dd4bc&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;date_applied&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+                    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -7379,7 +7414,7 @@ Content-Type: application/json
 
 <span class="p">{</span>
     <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;La promoción con el ID dado ya expiró.&quot;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -7394,13 +7429,13 @@ Content-Type: application/json
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – promo added</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – pilots added to reservation</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Successful response if the insertion was completed</p>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Array of <code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.promos.promo.Promos</span></code></p>
 </td>
 </tr>
 </tbody>
@@ -7558,19 +7593,30 @@ Content-Type: application/json
 </table>
 </dd></dl>
 
-<dl class="get">
-<dt id="get--promos-(string-promo_id)">
-<code class="descname">GET </code><code class="descname">/promos/</code><span class="sig-paren">(</span><em class="property">string: </em><em>promo_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--promos-(string-promo_id)" title="Permalink to this definition">¶</a></dt>
+<dl class="post">
+<dt id="post--promos-(string-promo_id)">
+<code class="descname">POST </code><code class="descname">/promos/</code><span class="sig-paren">(</span><em class="property">string: </em><em>promo_id</em><span class="sig-paren">)</span><a class="headerlink" href="#post--promos-(string-promo_id)" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="get">
-<dt id="get--promos">
-<code class="descname">GET </code><code class="descname">/promos</code><a class="headerlink" href="#get--promos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieves the information of all the promotions in the Promo collection or one in particular</p>
+<dl class="post">
+<dt id="post--promos">
+<code class="descname">POST </code><code class="descname">/promos</code><a class="headerlink" href="#post--promos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts a new promotion to the Promos Collection</p>
 <p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/promos/&lt;string:promo_id&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/promos</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
 <span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;existence&quot;</span> <span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="nt">&quot;start_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-01&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;end_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-31&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Descuento&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Descuento del 15% sobre el total de la reservación&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+    <span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;gokartmania&quot;</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Example response</strong>:</p>
@@ -7579,49 +7625,8 @@ Content-Type: application/json
 <span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
 
 <span class="p">{</span>
-    <span class="nt">&quot;isSuperAdmin&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="nt">&quot;promos&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;c8d0b53ce3304eabacb39ef5d2590f81&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;existence&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-            <span class="nt">&quot;start_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-01&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;end_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-31&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Descuento&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;authoriser&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="nt">&quot;creator&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;authorised&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-            <span class="nt">&quot;created_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-08-01 15:47&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Descuento del 15% sobre el total de la reservación&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
-            <span class="nt">&quot;coupons&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span>
-                    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;desc-92bfc&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;date_applied&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-                    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="kc">true</span>
-                <span class="p">},</span>
-                <span class="p">{</span>
-                    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;desc-ee347&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;date_applied&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-                    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="kc">true</span>
-                <span class="p">},</span>
-                <span class="p">{</span>
-                    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;desc-e02f1&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;date_applied&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-                    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="kc">true</span>
-                <span class="p">},</span>
-                <span class="p">{</span>
-                    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;desc-6be64&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;date_applied&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-                    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="kc">true</span>
-                <span class="p">},</span>
-                <span class="p">{</span>
-                    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;desc-dd4bc&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;date_applied&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-                    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="kc">true</span>
-                <span class="p">}</span>
-            <span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">]</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Registro satisfactorio de la promoción.&quot;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -7632,7 +7637,7 @@ Content-Type: application/json
 
 <span class="p">{</span>
     <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;La promoción con el ID dado ya expiró.&quot;</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -7647,13 +7652,13 @@ Content-Type: application/json
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – pilots added to reservation</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – promo added</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Array of <code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.promos.promo.Promos</span></code></p>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Successful response if the insertion was completed</p>
 </td>
 </tr>
 </tbody>
@@ -7680,11 +7685,11 @@ Content-Type: application/json
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>Sucursales</td>
-<td><a class="reference external" href="#post--locations-(string-location_id)">POST /locations/(string:location_id)</a></td>
-<td>Añade una nueva sucursal a la BD</td>
+<td><a class="reference external" href="#get--locations-(string-location_id)">GET /locations/(string:location_id)</a></td>
+<td>Info de la sucursal con el ID dado, o de todas</td>
 </tr>
 <tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#post--locations">POST /locations</a></td>
+<td><a class="reference external" href="#get--locations">GET /locations</a></td>
 <td>&#160;</td>
 </tr>
 <tr class="row-even"><td>&#160;</td>
@@ -7696,37 +7701,28 @@ Content-Type: application/json
 <td>&#160;</td>
 </tr>
 <tr class="row-even"><td>&#160;</td>
-<td><a class="reference external" href="#get--locations-(string-location_id)">GET /locations/(string:location_id)</a></td>
-<td>Info de la sucursal con el ID dado, o de todas</td>
+<td><a class="reference external" href="#post--locations-(string-location_id)">POST /locations/(string:location_id)</a></td>
+<td>Añade una nueva sucursal a la BD</td>
 </tr>
 <tr class="row-odd"><td>&#160;</td>
-<td><a class="reference external" href="#get--locations">GET /locations</a></td>
+<td><a class="reference external" href="#post--locations">POST /locations</a></td>
 <td>&#160;</td>
 </tr>
 </tbody>
 </table>
-<dl class="post">
-<dt id="post--locations-(string-location_id)">
-<code class="descname">POST </code><code class="descname">/locations/</code><span class="sig-paren">(</span><em class="property">string: </em><em>location_id</em><span class="sig-paren">)</span><a class="headerlink" href="#post--locations-(string-location_id)" title="Permalink to this definition">¶</a></dt>
+<dl class="get">
+<dt id="get--locations-(string-location_id)">
+<code class="descname">GET </code><code class="descname">/locations/</code><span class="sig-paren">(</span><em class="property">string: </em><em>location_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--locations-(string-location_id)" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="post">
-<dt id="post--locations">
-<code class="descname">POST </code><code class="descname">/locations</code><a class="headerlink" href="#post--locations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inserts a new location to the Locations collection</p>
+<dl class="get">
+<dt id="get--locations">
+<code class="descname">GET </code><code class="descname">/locations</code><a class="headerlink" href="#get--locations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the information of all the locations in the Locations collection</p>
 <p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/locations</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/locations/&lt;string:location_id&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
 <span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
-
-<span class="p">{</span>   <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;GOKART&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">295</span><span class="p">,</span> <span class="mi">530</span><span class="p">,</span> <span class="mi">690</span><span class="p">],</span>
-        <span class="nt">&quot;CADET&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">295</span><span class="p">,</span> <span class="mi">530</span><span class="p">,</span> <span class="mi">690</span><span class="p">]</span>
-    <span class="p">}</span>
-<span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Example response</strong>:</p>
@@ -7734,26 +7730,29 @@ Content-Type: application/json
 <span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
 <span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
 
-<span class="p">{</span>
-    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;GOKART&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="mi">295</span><span class="p">,</span>
-            <span class="mi">530</span><span class="p">,</span>
-            <span class="mi">690</span>
-        <span class="p">],</span>
-        <span class="nt">&quot;CADET&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="mi">295</span><span class="p">,</span>
-            <span class="mi">530</span><span class="p">,</span>
-            <span class="mi">690</span>
-        <span class="p">]</span>
+<span class="p">[</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;GOKART&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="mi">295</span><span class="p">,</span>
+                <span class="mi">530</span><span class="p">,</span>
+                <span class="mi">690</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;CADET&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="mi">295</span><span class="p">,</span>
+                <span class="mi">530</span><span class="p">,</span>
+                <span class="mi">690</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;LICENCIA&quot;</span><span class="p">:</span> <span class="mi">100</span>
+        <span class="p">}</span>
     <span class="p">}</span>
-<span class="p">}</span>
+<span class="p">]</span>
 </pre></div>
 </div>
 <p><strong>Example response error</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">403</span> <span class="ne">Forbidden</span>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
 <span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
 <span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
 
@@ -7774,13 +7773,13 @@ Content-Type: application/json
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – location added to DB</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – pilots info retrieved</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.locations.location.Locations</span></code></p>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Array of <code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.locations.location.Locations</span></code></p>
 </td>
 </tr>
 </tbody>
@@ -7860,19 +7859,28 @@ Content-Type: application/json
 </table>
 </dd></dl>
 
-<dl class="get">
-<dt id="get--locations-(string-location_id)">
-<code class="descname">GET </code><code class="descname">/locations/</code><span class="sig-paren">(</span><em class="property">string: </em><em>location_id</em><span class="sig-paren">)</span><a class="headerlink" href="#get--locations-(string-location_id)" title="Permalink to this definition">¶</a></dt>
+<dl class="post">
+<dt id="post--locations-(string-location_id)">
+<code class="descname">POST </code><code class="descname">/locations/</code><span class="sig-paren">(</span><em class="property">string: </em><em>location_id</em><span class="sig-paren">)</span><a class="headerlink" href="#post--locations-(string-location_id)" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="get">
-<dt id="get--locations">
-<code class="descname">GET </code><code class="descname">/locations</code><a class="headerlink" href="#get--locations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieves the information of all the locations in the Locations collection</p>
+<dl class="post">
+<dt id="post--locations">
+<code class="descname">POST </code><code class="descname">/locations</code><a class="headerlink" href="#post--locations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts a new location to the Locations collection</p>
 <p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/locations/&lt;string:location_id&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/locations</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
 <span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>   <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;GOKART&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">295</span><span class="p">,</span> <span class="mi">530</span><span class="p">,</span> <span class="mi">690</span><span class="p">],</span>
+        <span class="nt">&quot;CADET&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">295</span><span class="p">,</span> <span class="mi">530</span><span class="p">,</span> <span class="mi">690</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Example response</strong>:</p>
@@ -7880,29 +7888,26 @@ Content-Type: application/json
 <span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
 <span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
 
-<span class="p">[</span>
-    <span class="p">{</span>
-        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;GOKART&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="mi">295</span><span class="p">,</span>
-                <span class="mi">530</span><span class="p">,</span>
-                <span class="mi">690</span>
-            <span class="p">],</span>
-            <span class="nt">&quot;CADET&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="mi">295</span><span class="p">,</span>
-                <span class="mi">530</span><span class="p">,</span>
-                <span class="mi">690</span>
-            <span class="p">],</span>
-            <span class="nt">&quot;LICENCIA&quot;</span><span class="p">:</span> <span class="mi">100</span>
-        <span class="p">}</span>
+<span class="p">{</span>
+    <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;GOKART&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="mi">295</span><span class="p">,</span>
+            <span class="mi">530</span><span class="p">,</span>
+            <span class="mi">690</span>
+        <span class="p">],</span>
+        <span class="nt">&quot;CADET&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="mi">295</span><span class="p">,</span>
+            <span class="mi">530</span><span class="p">,</span>
+            <span class="mi">690</span>
+        <span class="p">]</span>
     <span class="p">}</span>
-<span class="p">]</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p><strong>Example response error</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">403</span> <span class="ne">Forbidden</span>
 <span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
 <span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
 
@@ -7923,13 +7928,13 @@ Content-Type: application/json
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – pilots info retrieved</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – location added to DB</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Array of <code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.locations.location.Locations</span></code></p>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.locations.location.Locations</span></code></p>
 </td>
 </tr>
 </tbody>
@@ -8898,58 +8903,76 @@ Accept: application/json
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>Pilotos-Licencia</td>
-<td><a class="reference external" href="#get--admin-licensed_pilots">GET /admin/licensed_pilots</a></td>
+<td><a class="reference external" href="#get--admin-licensed_pilots-(string-location)">GET /admin/licensed_pilots/(string:location)</a></td>
 <td>Info de los pilotos que han comprado licencia</td>
 </tr>
 </tbody>
 </table>
 <dl class="get">
-<dt id="get--admin-licensed_pilots">
-<code class="descname">GET </code><code class="descname">/admin/licensed_pilots</code><a class="headerlink" href="#get--admin-licensed_pilots" title="Permalink to this definition">¶</a></dt>
+<dt id="get--admin-licensed_pilots-(string-location)">
+<code class="descname">GET </code><code class="descname">/admin/licensed_pilots/</code><span class="sig-paren">(</span><em class="property">string: </em><em>location</em><span class="sig-paren">)</span><a class="headerlink" href="#get--admin-licensed_pilots-(string-location)" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves the pilots that have requested license</p>
 <p><strong>Example request</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/admin/licensed_pilots</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/admin/licensed_pilots/&lt;string:location&gt;</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
 <span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
 </pre></div>
 </div>
 <p><strong>Example response</strong>:</p>
-<div class="highlight-http notranslate"><div class="highlight"><pre><span></span>HTTP/1.1 200 OK
-Vary: Accept
-Content-Type: application/json
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
 
-[
-    {
-        &quot;_id&quot;: {
-            &quot;name&quot;: &quot;Josep,
-            &quot;last_name&quot;: &quot;Romagosa&quot;
-        }
-    },
-    {
-        &quot;_id&quot;: {
-            &quot;name&quot;: &quot;Aldo Arturo&quot;,
-            &quot;last_name&quot;: &quot;Reyna Gómez&quot;
-        }
-    }
-    {
-        &quot;_id&quot;: {
-            &quot;name&quot;: &quot;Michel&quot;,
-            &quot;last_name&quot;: &quot;Martínez Guzmán&quot;
-        }
-    },
-    {
-        &quot;_id&quot;: {
-            &quot;name&quot;: &quot;Leslie&quot;,
-            &quot;last_name&quot;: &quot;Gallegos Salazar&quot;
-        }
-    },
-    {
-        &quot;_id&quot;: {
-            &quot;name&quot;: &quot;Pablo Alejandro&quot;,
-            &quot;last_name&quot;: &quot;Sánchez Tadeo&quot;
-        }
-    }
-]
+<span class="p">[</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;aldo_chikai@hotmail.com&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Aldo Arturo&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Reyna Gómez&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;aldo_chikai@hotmail.com&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;01-04-95&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s2">&quot;07270&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;nickname&quot;</span><span class="p">:</span> <span class="s2">&quot;iThinkEmo&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;CDMX&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;licensed&quot;</span><span class="p">:</span> <span class="kc">false</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Pablo Alejandro&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Sanchez Tadeo&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;psanchez@sitsolutions.org&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;17-07-96&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s2">&quot;50840&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;nickname&quot;</span><span class="p">:</span> <span class="s2">&quot;Pablito&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Estado de México&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;licensed&quot;</span><span class="p">:</span> <span class="kc">false</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Leslie&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Gallegos Salazar&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;lmgs.0610@gmail.com&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;22-08-96&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s2">&quot;50840&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;nickname&quot;</span><span class="p">:</span> <span class="s2">&quot;Leslie&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Estado de México&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;licensed&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;areyna@sitsolutions.org&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Aldo Arturo&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Reyna Gómez&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;areyna@sitsolutions.org&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Plaza Carso&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;01-04-95&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s2">&quot;07270&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;nickname&quot;</span><span class="p">:</span> <span class="s2">&quot;iThinkEmo&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;CDMX&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;licensed&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">}</span>
+<span class="p">]</span>
 </pre></div>
 </div>
 <p><strong>Example response error</strong>:</p>
@@ -8980,7 +9003,7 @@ Content-Type: application/json
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Array of pilots (name and last name)</p>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Array of <code class="xref py py-class docutils literal notranslate"><span class="pre">app.models.pilots.pilot.Pilot</span></code></p>
 </td>
 </tr>
 </tbody>
@@ -9388,6 +9411,172 @@ and the price of a reservation in a given date range.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Average price</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="blockturns">
+<h4>BlockTurns<a class="headerlink" href="#blockturns" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="45%" />
+<col width="35%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Resource</th>
+<th class="head">Operation</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Bloquear</td>
+<td><a class="reference external" href="#post--admin-block_turns">POST /admin/block_turns</a></td>
+<td>Bloquea un día entero u horarios parciales</td>
+</tr>
+</tbody>
+</table>
+<dl class="post">
+<dt id="post--admin-block_turns">
+<code class="descname">POST </code><code class="descname">/admin/block_turns</code><a class="headerlink" href="#post--admin-block_turns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows the admin to block whole days, or just partial schedules (w/ turns)</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/admin/block_turns</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;days&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;2018-12-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2018-12-02&quot;</span><span class="p">,</span> <span class="s2">&quot;2018-12-03&quot;</span><span class="p">,</span> <span class="s2">&quot;2018-12-04&quot;</span><span class="p">,</span> <span class="s2">&quot;2018-12-05&quot;</span><span class="p">],</span>
+    <span class="nt">&quot;schedules&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;11&quot;</span><span class="p">,</span> <span class="s2">&quot;12&quot;</span><span class="p">,</span> <span class="s2">&quot;13&quot;</span><span class="p">,</span> <span class="s2">&quot;14&quot;</span><span class="p">,</span> <span class="s2">&quot;15&quot;</span><span class="p">],</span>
+    <span class="nt">&quot;turns&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Días, horarios y turnos exitosamente bloqueados.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response error</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – block completed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Success message</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="logout">
+<h3>Logout<a class="headerlink" href="#logout" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h4>Logout<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="45%" />
+<col width="35%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Resource</th>
+<th class="head">Operation</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Logout</td>
+<td><a class="reference external" href="#post--logout">POST /logout</a></td>
+<td>Termina la sesión del usuario</td>
+</tr>
+</tbody>
+</table>
+<dl class="post">
+<dt id="post--logout">
+<code class="descname">POST </code><code class="descname">/logout</code><a class="headerlink" href="#post--logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs out the user from the current session</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/logout</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">gokartmania.com.mx</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Sesión finalizada.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Example response error</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorised</span>
+<span class="na">Vary</span><span class="o">:</span> <span class="l">Accept</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso de variable de sesión no autorizada.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Response Headers:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://tools.ietf.org/html/rfc7231#section-3.1.1.5">Content-Type</a> – application/json</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – logout completed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2">401 Unauthorized</a> – malformed</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a> – internal error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">Success message</p>
 </td>
 </tr>
 </tbody>
