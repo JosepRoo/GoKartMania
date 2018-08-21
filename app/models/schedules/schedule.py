@@ -7,11 +7,11 @@ This is the reservation schedule object which will be used to insert 5 turns and
 
 
 class Schedule(BaseModel):
-    def __init__(self, hour, turns=list(), _id=None):
+    def __init__(self, hour, turns=None, _id=None):
         from app.models.turns.turn import AbstractTurn
         super().__init__(_id)
         self.hour = hour
-        self.turns = [AbstractTurn(**turn) for turn in turns] if turns else turns
+        self.turns = [AbstractTurn(**turn) for turn in turns] if turns is not None else list()
 
     @classmethod
     def add(cls, date: Date, new_schedule):

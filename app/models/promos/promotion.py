@@ -26,14 +26,19 @@ class Coupons(BaseModel):
         self.copies_left = copies_left
 
     @classmethod
-    def add(cls, promo, copies_left: int) -> None:
+    def add(cls, promo, copies_left: int, prefix: str) -> None:
         """
         Adds an empty default coupon to the given promotion
+        :param prefix: The customisable prefix given by the admin
         :param copies_left: The number of copies of a coupon
         :param promo: The promotion Object
         :return: None
         """
-        coupon: Coupons = cls(_id=promo.type[:4].lower()+"-"+uuid.uuid4().hex[:5], copies_left=copies_left)
+        if prefix is not None:
+            coupon: Coupons = cls(_id=prefix.lower() + "-" + promo.type[:4].lower() + "-" + uuid.uuid4().hex[:5],
+                                  copies_left=copies_left)
+        else:
+            coupon: Coupons = cls(_id=promo.type[:4].lower()+"-"+uuid.uuid4().hex[:5], copies_left=copies_left)
         promo.coupons.append(coupon)
 
     @staticmethod
@@ -56,7 +61,7 @@ class Coupons(BaseModel):
 
 class Promotion(BaseModel):
     def __init__(self, existence, start_date, end_date, type, value, creator=None, authoriser=None, authorised=False,
-                 description=None, created_date=None, coupons=list(), _id=None):
+                 description=None, created_date=None, coupons=None, _id=None):
         super().__init__(_id)
         self.existence = existence
         self.start_date = start_date
@@ -68,7 +73,7 @@ class Promotion(BaseModel):
         self.created_date = created_date if created_date else datetime.datetime.now().astimezone(get_localzone())
         self.description = description
         self.value = value
-        self.coupons = [Coupons(**coupon) for coupon in coupons] if coupons else coupons
+        self.coupons = [Coupons(**coupon) for coupon in coupons] if coupons is not None else list()
 
     @classmethod
     def add(cls, new_promo):
@@ -85,6 +90,8 @@ class Promotion(BaseModel):
                 "Error en el tipo de promoción. Solo puede ser 'Descuento', 'Reservación' o 'Carreras'.")
         password = new_promo.pop('password')
         copies_left: int = new_promo.pop('copies_left')
+        prefix: str = new_promo.pop('prefix')
+
         promo: Promotion = cls(**new_promo, coupons=[])
         admin = AdminModel.get_by_id(session['admin_id'], ADMIN_COLLECTION)
         promo.creator = admin.name
@@ -94,7 +101,7 @@ class Promotion(BaseModel):
             promo.authorised = True
         AdminModel.send_alert_message(promo)
         for i in range(promo.existence):
-            Coupons.add(promo, copies_left)
+            Coupons.add(promo, copies_left, prefix)
         promo.save_to_mongo(COLLECTION)
 
     @classmethod

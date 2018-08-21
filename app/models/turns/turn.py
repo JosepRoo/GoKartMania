@@ -75,7 +75,7 @@ class Turn(BaseModel):
             positions_available = cls.check_positions_availability(turn_positions, user_positions)
             if positions_available:
                 allocation_date = new_turn.get('date')
-                DateModel.update_temp(allocation_date, new_turn, reservation.type)
+                DateModel.update_temp(allocation_date, new_turn, reservation.type, True)
                 if reservation.turns != [] and reservation.turns is not None and reservation.turns[0].turn_number == 0:
                     # Update the pre-existing turn by default
                     return cls.update(reservation, new_turn, reservation.turns[0]._id)
@@ -149,7 +149,7 @@ class Turn(BaseModel):
                 allocation_date = updated_turn.get('date')
                 viable_update = cls.verify_update(reservation, updated_turn, turn)
                 if viable_update:
-                    DateModel.update_temp(allocation_date, updated_turn, reservation.type)
+                    DateModel.update_temp(allocation_date, updated_turn, reservation.type, False)
                     return cls.update(reservation, updated_turn, updated_turn.get('_id'))
 
     @classmethod
@@ -239,7 +239,8 @@ class Turn(BaseModel):
             if turn._id == turn_id:
                 allocation_date = updated_turn.pop('date')
                 new_turn = cls(**updated_turn)
-                reservation.date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+                aware_datetime = get_localzone().localize(datetime.datetime.strptime(allocation_date, "%Y-%m-%d"))
+                reservation.date = aware_datetime
                 reservation.turns.remove(turn)
                 reservation.turns.append(new_turn)
                 reservation.update_mongo(REAL_RESERVATIONS)
@@ -262,12 +263,12 @@ class Turn(BaseModel):
 
 
 class AbstractTurn(BaseModel):
-    def __init__(self, turn_number, type=None, pilots=list(), _id=None):
+    def __init__(self, turn_number, type=None, pilots=None, _id=None):
         from app.models.pilots.pilot import AbstractPilot
         super().__init__(_id)
         self.turn_number = turn_number
         self.type = type
-        self.pilots = [AbstractPilot(**pilot) for pilot in pilots] if pilots else pilots
+        self.pilots = [AbstractPilot(**pilot) for pilot in pilots] if pilots is not None else list()
 
     @classmethod
     def add(cls, schedule: Schedule, new_turn):

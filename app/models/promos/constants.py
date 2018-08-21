@@ -47,3 +47,7 @@ PARSER.add_argument('authorised',
                     type=bool,
                     required=False
                     )
+PARSER.add_argument('prefix',
+                    type=str,
+                    required=False
+                    )

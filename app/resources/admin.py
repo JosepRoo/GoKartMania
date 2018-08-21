@@ -1647,6 +1647,52 @@ class Logout(Resource):
     @staticmethod
     @Utils.admin_login_required
     def post():
+        """
+        Logs out the user from the current session
+
+        .. :quickref: Logout; Termina la sesión del usuario
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            POST /logout HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": true,
+                "message": "Sesión finalizada."
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 401 Unauthorised
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "Uso de variable de sesión no autorizada."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: logout completed
+        :status 401: malformed
+        :status 500: internal error
+
+        :return: Success message
+        """
         try:
             session.clear()
             return Response(success=True, message="Sesión finalizada").json(), 200
@@ -1660,11 +1706,64 @@ class BlockTurns(Resource):
     @staticmethod
     @Utils.admin_login_required
     def post():
+        """
+        Allows the admin to block whole days, or just partial schedules (w/ turns)
+
+        .. :quickref: Bloquear; Bloquea un día entero u horarios parciales
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            POST /admin/block_turns HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+            Content-Type: application/json
+
+            {
+                "days": ["2018-12-01", "2018-12-02", "2018-12-03", "2018-12-04", "2018-12-05"],
+                "schedules": ["11", "12", "13", "14", "15"],
+                "turns": [1, 2, 3]
+            }
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": true,
+                "message": "Días, horarios y turnos exitosamente bloqueados."
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 401 Unauthorised
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "Uso de variable de sesión no autorizada."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: block completed
+        :status 401: malformed
+        :status 500: internal error
+
+        :return: Success message
+        """
         try:
             data = PARSER.parse_args()
             AdminModel.block_turns(data.get('days'), data.get('schedules'), data.get('turns'))
             return Response(success=True, message="Días, horarios y turnos exitosamente bloqueados.").json(), 200
         except AdminErrors as e:
             return Response(message=e.message).json(), 400
-        # except Exception as e:
-        #     return Response.generic_response(e), 500
+        except Exception as e:
+            return Response.generic_response(e), 500
