@@ -32,7 +32,7 @@ export class PromosComponent implements OnInit, OnDestroy {
     'value',
     'existence',
     'start_date',
-    'end_date',
+    'end_date'
   ];
   @ViewChild(MatSort) sort: MatSort;
 
@@ -113,7 +113,7 @@ export class PromosComponent implements OnInit, OnDestroy {
 
   openEditPromoDialog(element) {
 		this.editPromoDialogRef = this.dialog.open(EditPromoDialogComponent, {
-      width: '70%',
+      width: '30%',
       data: element
     });
     this.editPromoDialogRef.afterClosed().subscribe(
@@ -136,7 +136,7 @@ export class PromosComponent implements OnInit, OnDestroy {
 
   openPromoDetail(promo, isSuperAdmin){
     this.promoDetailsDialogRef = this.dialog.open(PromoDetailsDialogComponent,{
-      width: '70%',
+      width: '50%',
       data:{
         'promo': promo,
         'isSuperAdmin': isSuperAdmin

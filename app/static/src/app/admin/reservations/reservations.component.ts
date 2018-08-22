@@ -90,14 +90,14 @@ export class ReservationsComponent implements OnInit, OnDestroy {
 
   openNewReservationDialog() {
     this.newReservationDialogRef = this.dialog.open(NewReservationDialogComponent, {
-      width: '90%',
+      width: '60%',
       maxHeight: 700,
     });
   }
 
   openEditReservationDialog(element) {
     this.editReservationDialogRef = this.dialog.open(EditReservationDialogComponent, {
-      width: '90%',
+      width: '60%',
       data : element,
       maxHeight: 800
     });
@@ -106,7 +106,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
 
   openCreateReportDialog() {
     this.createReportDialogRef = this.dialog.open(CreateReportDialogComponent, {
-      width: '70%',
+      width: '60%',
     });
   }
 
@@ -120,7 +120,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
 
   openReservationDetail(reservation){
     this.reservationDetailsDialogRef = this.dialog.open(ReservationDetailsDialogComponent,{
-      width:'70%',
+      width:'60%',
       maxHeight:600,
       data:{
         reservation: reservation,
@@ -198,7 +198,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
       this.closeBanner();
     }else{
       this.blockTurnsDialogRef = this.dialog.open(BlockTurnsDialogComponent,{
-        width:'70%',
+        width:'40%',
         data: this.blockedDates
       })
       this.blockTurnsDialogRef.afterClosed().subscribe(()=>{
