@@ -209,7 +209,7 @@ class Date(BaseModel):
                     availability_dict[date_str][schedule.hour]["cupo"] = 1
             if busy_schedules == 11:
                 availability_dict[date_str]["cupo"] = 0
-            if empty_schedules == 11:
+            elif empty_schedules == 11:
                 availability_dict[date_str]["cupo"] = 2
             else:
                 availability_dict[date_str]["cupo"] = 1
