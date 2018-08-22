@@ -187,7 +187,7 @@ class Payment(BaseModel):
                 "payment_pending": False,
                 "device_session_id": ""
             },
-            "test": True
+            "test": False
         }
         return params
 
