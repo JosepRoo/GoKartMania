@@ -24,6 +24,10 @@ span, p, h1, h2, h3, h4, h5 {
   font-family: 'PT Sans', sans-serif !important;
 }
 
+.cal-month-view .cal-header:hover {
+  background-color: rgba(0,0,0,0) !important;
+}
+
 .cal-day-number{
   color:white !important;
   font-weight: 700 !important;
