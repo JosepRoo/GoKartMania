@@ -1,6 +1,6 @@
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource, MatSort } from '@angular/material';
 import { AdminService } from './../services/admin.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-pilots-licenses',
@@ -19,6 +19,8 @@ export class PilotsLicensesComponent implements OnInit {
     'print_license'
   ];
 
+  @ViewChild(MatSort) sort: MatSort;
+
   constructor(
     private adminService: AdminService
   ) { }
@@ -31,6 +33,7 @@ export class PilotsLicensesComponent implements OnInit {
     this.adminService.getUnprintedLicenses().subscribe(
       res=>{
         this.dataSourceLicenses = new MatTableDataSource(res);
+        this.dataSourceLicenses.sort = this.sort;
       },
       err=>{
         this.error = err;

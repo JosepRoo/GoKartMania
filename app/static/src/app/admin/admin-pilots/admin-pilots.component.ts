@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { AdminPilotsService } from '../services/admin-pilots.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSort } from '@angular/material';
 import { PilotDetailsDialogComponent } from './pilot-details-dialog/pilot-details-dialog.component';
 
 @Component({
@@ -15,6 +15,8 @@ export class AdminPilotsComponent implements OnInit {
   dataSourcePilots;
 
   pilotDetailsDialogRef;
+
+  @ViewChild(MatSort) sort: MatSort;
 
   displayedColumns: string[] = [
     'name',
@@ -30,9 +32,9 @@ export class AdminPilotsComponent implements OnInit {
 
   ngOnInit() {
     this.pilotsService.getPilots().subscribe(res => {
-      console.log(res);
       this.pilots = res;
       this.dataSourcePilots = new MatTableDataSource(this.pilots);
+      this.dataSourcePilots.sort = this.sort;
     });
   }
 

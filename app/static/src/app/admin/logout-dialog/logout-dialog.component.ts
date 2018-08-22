@@ -17,7 +17,6 @@ export class LogoutDialogComponent implements OnInit {
 
   logOut(){
     this.adminService.logOutAdmin().subscribe(res=>{
-      console.log(res);
     })
   }
 

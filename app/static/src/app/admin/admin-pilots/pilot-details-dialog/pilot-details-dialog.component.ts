@@ -8,15 +8,12 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 })
 export class PilotDetailsDialogComponent implements OnInit {
 
-  data;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) private receivedData: any
+    @Inject(MAT_DIALOG_DATA) private data: any
   ) { }
 
   ngOnInit() {
-    this.data = this.receivedData._id;
-    console.log(this.data);
   }
 
 }

@@ -33,13 +33,11 @@ export class ReservationDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private reservationsService: AdminReservationsService
   ) {
-    // console.log(this.route);
     this.id = this.route.snapshot.params['id'];
    }
 
   ngOnInit() {
     this.display = false;
-    console.log("kesptapasdad");
     this.getReservation();
   }
 
@@ -53,7 +51,6 @@ export class ReservationDetailsComponent implements OnInit {
           turn.stringPositions.join(', ');
         }
         this.dataSourceTurns = new MatTableDataSource(this.reservation.turns);
-        console.log(this.dataSourcePilots, this.dataSourceTurns);
         this.display = true;
       },
       err=>{

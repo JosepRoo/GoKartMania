@@ -1,9 +1,40 @@
-<div class="container">
+<div class="container-fluid">
   <div class="row justify-content-between">
     <div class="col-12 col-sm-4">
       <h3 style="color:white;">Reservaciones</h3>
     </div>
 
+    <div class="col-12 col-sm-4">
+      <button class="btn btn-block" mat-raised-button color="primary" *ngIf="mode ==='normal'" (click)="changeMode()"> Bloquear turnos</button>
+      <button class="btn btn-block" mat-raised-button color="primary" *ngIf="mode ==='block'" (click)="blockTurns()"> Seleccionar días</button>
+    </div>
+
+  </div>
+
+  <div class="row justify-content-end" style="padding-top: 5px">
+    <div class="col-12 col-sm-4">
+      <button class="btn btn-block" mat-raised-button color="primary" *ngIf="mode ==='block'" (click)="changeMode()"> Cancelar</button>
+    </div>
+
+  </div>
+  <br>
+  <div class="alert alert-danger error" role="alert" *ngIf="error">
+    {{error}}
+  </div>
+
+  <div *ngIf="!availableDates">
+    <mat-spinner style="margin:0 auto; margin-top: 150px;"></mat-spinner>
+    <br>
+    <span class="tittle-banner">Cargando</span>
+  </div>  
+  <div class="row justify-content-center">
+    <div class="col-12">
+        <app-calendar *ngIf="availableDates" [prevBtnDisabled]="preventBack" [date]="startDate"  [availableDates]="availableDates"
+        (onSelectedDate)="onSelectedDate($event, 0)" (onDateChange)="onDateChange($event)" [mode]="mode" [blockedDates]="blockedDates"></app-calendar>
+    </div>
+  </div>
+
+  <div class="row justify-content-end" style="padding-bottom: 15px">
     <div class="col-12 col-sm-4">
       <button class="btn btn-block" mat-raised-button color="primary" (click)="openCreateReportDialog()"> Descargar base de datos</button>
     </div>
@@ -12,9 +43,8 @@
       <button class="btn btn-block" mat-raised-button color="primary" (click)="openNewReservationDialog()">+ Nueva Reservación</button>
     </div>
   </div>
-  <br>
 
-  <div class="row justify-content-center">
+  <div class="row justify-content-center" style="padding-bottom: 15px">
     <div class="col-12">
       <table style="width: 100%;" mat-table matSort [dataSource]="dataSourceReservations" class="mat-elevation-z4">
 
@@ -75,6 +105,4 @@
       </table>
     </div>
   </div>
-
-  
 </div>

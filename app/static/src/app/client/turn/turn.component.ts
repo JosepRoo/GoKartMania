@@ -36,6 +36,7 @@ export class TurnComponent implements OnInit {
   };
   pilot;
   positions;
+  mode = "normal";
 
   constructor(
     private datesService: DatesService,
@@ -187,7 +188,6 @@ export class TurnComponent implements OnInit {
           this.pilotId
         ]._id;
         this.availablePositions.find(x=> x.position==position.position).pilot = this.reservation.pilots[this.pilotId].nickname;
-        console.log(this.availablePositions);
         if (
           Number(this.reservation.pilots.length) >
           Number(Object.keys(this.turn.controls.positions.value).length)

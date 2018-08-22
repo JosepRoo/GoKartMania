@@ -33,7 +33,7 @@
       </div>    
 
       <app-calendar [prevBtnDisabled]="preventBack" [date]="startDate" *ngIf="availableDates && !alreadyDate" [availableDates]="availableDates"
-        (onSelectedDate)="onSelectedDate($event, 0)" (onDateChange)="onDateChange($event)"></app-calendar>
+        (onSelectedDate)="onSelectedDate($event, 0)" (onDateChange)="onDateChange($event)" [mode]="mode"></app-calendar>
 
       <mat-divider *ngIf="availableDates"></mat-divider>
       <br>

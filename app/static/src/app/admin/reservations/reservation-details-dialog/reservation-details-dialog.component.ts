@@ -59,8 +59,10 @@ export class ReservationDetailsDialogComponent implements OnInit {
     });
     this.editReservationDialogRef.afterClosed().subscribe(
       res=> {
-        this.turns = res.turns;
-        this.getPositions();
+        if (res!== ""){
+          this.turns = res.turns;
+          this.getPositions();
+        }
       }
     );
   }

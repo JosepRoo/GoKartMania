@@ -28,6 +28,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatSortModule } from '@angular/material';
 
 // Calendar
 import { CalendarModule } from 'angular-calendar';
@@ -74,6 +75,7 @@ import { PilotDetailsDialogComponent } from './admin/admin-pilots/pilot-details-
 import { ReservationDetailsComponent } from './admin/reservations/reservation-details/reservation-details.component';
 import { ReservationDetailsDialogComponent } from './admin/reservations/reservation-details-dialog/reservation-details-dialog.component';
 import { PilotsLicensesComponent } from './admin/pilots-licenses/pilots-licenses.component';
+import { BlockTurnsDialogComponent } from './admin/reservations/block-turns-dialog/block-turns-dialog.component';
 
 registerLocaleData(localeEs, 'es');
 
@@ -106,7 +108,8 @@ registerLocaleData(localeEs, 'es');
     PilotDetailsDialogComponent,
     ReservationDetailsComponent,
     ReservationDetailsDialogComponent,
-    PilotsLicensesComponent
+    PilotsLicensesComponent,
+    BlockTurnsDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -135,7 +138,8 @@ registerLocaleData(localeEs, 'es');
     CalendarModule.forRoot(),
     MatSidenavModule,
     MDBBootstrapModule.forRoot(),
-    AppRoutingModule
+    AppRoutingModule,
+    MatSortModule
   ],
   schemas: [NO_ERRORS_SCHEMA],
   providers: [
@@ -157,7 +161,8 @@ registerLocaleData(localeEs, 'es');
     LogoutDialogComponent,
     PromoDetailsDialogComponent,
     PilotDetailsDialogComponent,
-    ReservationDetailsDialogComponent
+    ReservationDetailsDialogComponent,
+    BlockTurnsDialogComponent
   ]
 })
 export class AppModule {}
