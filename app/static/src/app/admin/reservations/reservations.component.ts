@@ -50,6 +50,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
   mode:string = "normal";
   blockedDates = [];
   error: string;
+  selectedDate;
 
   constructor(
     private reservationService: AdminReservationsService,
@@ -127,6 +128,11 @@ export class ReservationsComponent implements OnInit, OnDestroy {
         parent: 'reservation'
       }
     });
+
+    this.reservationDetailsDialogRef.afterClosed().subscribe(()=>{
+      this.getAvailableDates();
+      this.getReservations(this.selectedDate);
+    })
   }
 
   setDateRange(year, month, day) {
@@ -162,11 +168,16 @@ export class ReservationsComponent implements OnInit, OnDestroy {
             }
           );
           this.availableDates = res;
+          if(this.calendar){
+            this.calendar.availableDates = res;
+            this.calendar.reRender();
+          }
         }
       );
   }
 
   onSelectedDate(date, flag) {
+    this.selectedDate = date;
     if(this.mode === "normal"){
       this.blockedDates=[];
       this.blockedDates.push(date.toISOString().substring(0,10));
