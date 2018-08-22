@@ -1,5 +1,9 @@
 import { AdminService } from './../services/admin.service';
 import { Component, OnInit } from '@angular/core';
+import { AdminReservationsService } from '../services/admin-reservations.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { ReservationDetailsDialogComponent } from '../reservations/reservation-details-dialog/reservation-details-dialog.component';
 
 @Component({
   selector: 'app-home',
@@ -11,8 +15,22 @@ export class HomeComponent implements OnInit {
   averagePrice;
   income;
   promos;
+  dataSourceReservations;
+  reservationDetailsDialogRef;
   displayedColumns: string[] = ['party_size', 'schedule'];
-  constructor(private adminService: AdminService) {}
+  displayedColumnsReservations: string[] = [
+    'location',
+    'type',
+    'date',
+    'hour',
+    'turn',
+    'total_price',
+  ]; 
+  constructor(
+    private adminService: AdminService,
+    private reservationsService: AdminReservationsService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     this.adminService.getBusyHours().subscribe(res => {
@@ -42,6 +60,26 @@ export class HomeComponent implements OnInit {
       lastDay.toISOString().substring(0, 10)
     ).subscribe(res => {
       this.promos = res;
+    });
+
+    this.reservationsService.
+      getUpcomingReservations(
+        date.toISOString().substring(0,10),
+        date.toISOString().substring(0,10)
+      )
+      .subscribe(res=>{
+        this.dataSourceReservations = new MatTableDataSource(res);
+      })
+  }
+
+  openReservationDetail(reservation){
+    this.reservationDetailsDialogRef = this.dialog.open(ReservationDetailsDialogComponent,{
+      width:'70%',
+      maxHeight:600,
+      data:{
+        reservation: reservation,
+        parent: 'home'
+      }
     });
   }
 }

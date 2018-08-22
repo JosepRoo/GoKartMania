@@ -13,6 +13,7 @@ import 'rxjs/add/observable/throw';
 })
 export class AdminReservationsService {
   private apiReservations = environment.api + '/user/reservations';
+  private apiReservation = environment.api + '/reservation';
   private apiTurns = environment.api + '/user/turns';
   private apiTurn = environment.api + '/user/turn';
   private apiPayment = environment.api + '/user/payments';
@@ -28,9 +29,9 @@ export class AdminReservationsService {
     private location: Location
   ) {}
 
-  getUpcomingReservations(date): Observable<any> {
+  getUpcomingReservations(startDate,endDate): Observable<any> {
     return this.http
-    .get<any>(this.apiReservations + '/' + date + '/' + date.substring(0, 4) + '-12-31', {
+    .get<any>(this.apiReservations + '/' + startDate + '/' + endDate, {
       headers: this.headers
     })
     .pipe(res => {
@@ -109,7 +110,27 @@ export class AdminReservationsService {
     });
   }
 
-  payReservationAsAdmin(userID) {
+  getReservation(id){
+    return this.http
+    .get<any>(this.apiReservation +'/'+id, {
+      headers: this.headers
+    })
+    .pipe(res => {
+      return res;
+    })
+    .catch(e => {
+      if (e.status === 401) {
+        this.location.replaceState('/');
+        this.router.navigate(['/logIn']);
+        return Observable.throw(e.error.message);
+      }
+      if (e.status === 400) {
+        return Observable.throw(e.error.message);
+      }
+    });
+  }
+
+  payReservationAsAdmin(userID, phoneNumber) {
     const body = {
       'coupon_id': null,
       'cvv': null,
@@ -122,7 +143,8 @@ export class AdminReservationsService {
       'user_email': null,
       'user_id': null,
       'user_name': null,
-      'year': null
+      'year': null,
+      'phone': phoneNumber
     };
     return this.http
     .post<any>(this.apiPayment + '/' + userID , body, {

@@ -1,0 +1,65 @@
+<div class="container-fluid" >
+  <span class="h4" style="margin-bottom: 5px">Detalles del piloto</span>
+  <br>
+  <br>
+
+  <div class="row">
+    <div class="col-3" style="float: right">
+      <p class="title">Nombre(s):</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <p>{{data.name}}</p>
+    </div>
+    <div class="col-3" style="float: right">
+      <p class="title">Apellidos:</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <p>{{data?.last_name}}</p>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-3" style="float: right">
+      <p class="title">Ciudad:</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <p>{{data?.city}}</p>
+    </div>
+    <div class="col-3" style="float: right">
+      <p class="title">Código postal:</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <p>{{data?.postal_code}}</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-3" style="float: right">
+      <p class="title">Fecha de nacimiento:</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <p>{{data?.birth_date}}</p>
+    </div>
+    <div class="col-3" style="float: right">
+      <p class="title">Correo:</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <p>{{data?.email}}</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-3" style="float: right">
+      <p class="title">Locación:</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <p>{{data?.location}}</p>
+    </div>
+    <div class="col-3" style="float: right">
+      <p class="title">Apodo:</p>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <p>{{data?.nickname}}</p>
+    </div>
+  </div>
+</div>

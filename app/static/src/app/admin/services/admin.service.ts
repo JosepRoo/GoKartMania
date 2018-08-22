@@ -13,6 +13,7 @@ import 'rxjs/add/observable/throw';
 })
 export class AdminService {
   private apiAdmin: string = environment.api + '/admin';
+  private apiLogout: string = environment.api + '/logout';
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
     Accept: 'application/json'
@@ -108,6 +109,76 @@ export class AdminService {
       });
   }
 
+  getUnprintedLicenses(){
+    return this.http
+      .get<any>(
+        this.apiAdmin + '/unprinted_licenses/Carso',
+      {
+        headers: this.headers
+      }
+      )
+      .pipe(res => {
+        return res;
+      })
+      .catch(e => {
+        if (e.status === 401) {
+          this.location.replaceState('/');
+          this.router.navigate(['/logIn']);
+          return Observable.throw(e.error.message);
+        }
+        if (e.status === 400) {
+          return Observable.throw(e.error.message);
+        }
+      });
+  }
+
+  setLicenseAsPrinted(location,id,body){
+    return this.http
+      .put<any>(
+        this.apiAdmin + '/unprinted_licenses/'+ location+'/'+id,
+      {
+        headers: this.headers
+      }
+      )
+      .pipe(res => {
+        return res;
+      })
+      .catch(e => {
+        if (e.status === 401) {
+          this.location.replaceState('/');
+          this.router.navigate(['/logIn']);
+          return Observable.throw(e.error.message);
+        }
+        if (e.status === 400) {
+          return Observable.throw(e.error.message);
+        }
+      });
+  }
+
+  blockTurns(body){
+    return this.http
+      .post<any>(
+        this.apiAdmin + '/block_turns',
+        body,
+        {
+          headers: this.headers
+        }
+      )
+      .pipe(res => {
+        return res;
+      })
+      .catch(e => {
+        if (e.status === 401) {
+          this.location.replaceState('/');
+          this.router.navigate(['/logIn']);
+          return Observable.throw(e.error.message);
+        }
+        if (e.status === 400) {
+          return Observable.throw(e.error.message);
+        }
+      });
+  }
+
 
   // CHECK
   loginAdmin(body) {
@@ -135,4 +206,17 @@ export class AdminService {
     });
   }
 
+  logOutAdmin():Observable<any>{
+    return this.http.post<any>(this.apiLogout,{headers:this.headers})
+    .pipe(res=>{
+      this.location.replaceState('/');
+      this.router.navigate(['logIn']);
+      return res;
+    })
+    .catch(e=>{
+      return Observable.throw(e.error.message);
+    });
+  }
+
+  
 }

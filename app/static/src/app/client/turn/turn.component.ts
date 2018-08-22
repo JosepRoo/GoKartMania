@@ -34,6 +34,9 @@ export class TurnComponent implements OnInit {
     show: false,
     text: ''
   };
+  pilot;
+  positions;
+  mode = "normal";
 
   constructor(
     private datesService: DatesService,
@@ -80,7 +83,7 @@ export class TurnComponent implements OnInit {
     this.turn.controls.turn_number.setValue(null);
     this.availablePositions = [];
   }
-
+ 
   // calls service for available days
   getAvailableDates() {
     this.datesService
@@ -168,6 +171,8 @@ export class TurnComponent implements OnInit {
     this.availablePositions = turn.positions;
     this.turn.controls.positions.setValue({});
     this.pilotId = 0;
+    this.pilot = this.reservation.pilots[this.pilotId].nickname;
+    this.positions = Object.keys(this.turn.controls.positions.value);
     this.error.show = false;
   }
 
@@ -182,15 +187,31 @@ export class TurnComponent implements OnInit {
         positions['pos' + position.position] = this.reservation.pilots[
           this.pilotId
         ]._id;
-        this.pilotId = this.pilotId + 1;
+        this.availablePositions.find(x=> x.position==position.position).pilot = this.reservation.pilots[this.pilotId].nickname;
+        if (
+          Number(this.reservation.pilots.length) >
+          Number(Object.keys(this.turn.controls.positions.value).length)
+        ) {
+          while(Object.values(this.turn.controls.positions.value).includes(this.reservation.pilots[this.pilotId]._id)){
+            this.pilotId = this.pilotId + 1;
+          }
+        }
+        this.pilot = this.reservation.pilots[this.pilotId].nickname;
         this.turn.controls.positions.setValue(positions);
+        this.positions = Object.keys(this.turn.controls.positions.value);
       }
     } else {
       position.clicked = !position.clicked;
       const positions = this.turn.controls.positions.value;
       delete positions['pos' + position.position];
-      this.pilotId = this.pilotId - 1;
+      this.availablePositions.find(x=> x.position==position.position).pilot = null;
+      this.pilotId = 0;
+      while(Object.values(this.turn.controls.positions.value).includes(this.reservation.pilots[this.pilotId]._id)){
+        this.pilotId = this.pilotId + 1;
+      }
+      this.pilot = this.reservation.pilots[this.pilotId].nickname;
       this.turn.controls.positions.setValue(positions);
+      this.positions = Object.keys(this.turn.controls.positions.value);
     }
     this.error.show = false;
   }

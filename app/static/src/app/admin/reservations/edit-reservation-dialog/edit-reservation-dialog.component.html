@@ -115,7 +115,7 @@
         <br>
         <div class="row" style="width: 100%" formArrayName="positions" style="padding-left: 20px; padding-bottom: 10px" *ngIf="display">
           <div class="col-md-3 col-sm-6" *ngFor="let position of getTurnsData(i).controls; let j = index">
-            <mat-checkbox color="primary" [formControl]="position" [disabled]="!availablePositions[i][j].status || (pilots.length==selectedPositions[i].length&&!selectedPositions[i].includes(positions[j].value))" (change)="changePositions(i,j)">Posición {{availablePositions[i][j].position}}</mat-checkbox>
+            <mat-checkbox color="primary" [formControl]="position" [disabled]="(!availablePositions[i][j].status&&!selectedPositions[i].includes(positions[j].value)) || (pilots.length==selectedPositions[i].length&&!selectedPositions[i].includes(positions[j].value))" (change)="changePositions(i,j)">Posición {{availablePositions[i][j].position}}</mat-checkbox>
           </div>
         </div>
       </div>
