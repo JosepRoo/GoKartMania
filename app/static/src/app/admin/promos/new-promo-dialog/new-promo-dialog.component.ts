@@ -18,6 +18,7 @@ export class NewPromoDialogComponent implements OnInit {
 
 	error;
 	
+
 	constructor(
 	private _formBuilder: FormBuilder,
 	private dialogRef: MatDialogRef<NewPromoDialogComponent>,
@@ -28,14 +29,25 @@ export class NewPromoDialogComponent implements OnInit {
 			end_date: ['', [Validators.required]],
 			type: ['', [Validators.required]],
 			existence: ['', [Validators.required]],
+			copies_left:['', Validators.required],
 			description: ['', [Validators.required]],
 			value: ['',[Validators.required]],
-			password: ['',[Validators.required]]
+			password: ['',[Validators.required]],
+			setPrefix:[],
+			prefix:[]
 		});
 	}
 
 	ngOnInit() {
 		
+	}
+
+	changeSetPrefix(){
+		if(this.promoData.controls.setPrefix.value){
+			this.promoData.controls.prefix.setValidators(Validators.required);
+		}else{
+			this.promoData.controls.prefix.setValidators(null);
+		}
 	}
 
 	createPromo(){

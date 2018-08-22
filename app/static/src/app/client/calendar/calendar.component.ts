@@ -77,6 +77,7 @@ export class CalendarComponent implements OnInit {
   minDate: Date = new Date();
   maxDate: Date = addMonths(new Date(), 2);
   monthLimit;
+  dates;
   @Input() prevBtnDisabled: Boolean;
   nextBtnDisabled: Boolean = false;
   // tslint:disable-next-line:no-output-on-prefix
@@ -84,6 +85,8 @@ export class CalendarComponent implements OnInit {
   // tslint:disable-next-line:no-output-on-prefix
   @Output() onDateChange: EventEmitter<any> = new EventEmitter<any>();
   @Input() availableDates: Array<any>;
+  @Input() mode: string;
+  @Input() blockedDates: Array<any>;
 
   constructor() {
     this.dateOrViewChanged();
@@ -131,17 +134,18 @@ export class CalendarComponent implements OnInit {
   }
 
   beforeMonthViewRender({ body }: { body: CalendarMonthViewDay[] }): void {
+    this.dates = body;
     let i = 0;
     body.forEach(day => {
       if (this.availableDates) {
         const date = this.findDay(day.date);
-        if (date && date.cupo === 2) {
+        if (date && (date.cupo === 2 || date.status ===2)) {
           day.cssClass = 'cal-day-free';
         }
-        if (date && date.cupo === 1) {
+        if (date && (date.cupo === 1 || date.status === 1)) {
           day.cssClass = 'cal-day-half';
         }
-        if (date && date.cupo === 0) {
+        if (date && (date.cupo === 0 || date.status === 0)) {
           day.cssClass = 'cal-day-full';
         }
       }
@@ -159,6 +163,10 @@ export class CalendarComponent implements OnInit {
     });
   }
 
+  reRender(){
+    this.beforeMonthViewRender({body:this.dates});
+  }
+
   beforeDayViewRender(dayView: DayViewHour[]) {
     this.dayView = dayView;
     this.addSelectedDayViewClass();
@@ -167,28 +175,50 @@ export class CalendarComponent implements OnInit {
   dayClicked(day: CalendarMonthViewDay): void {
     const now = new Date();
     now.setDate(now.getDate() - 1);
-    if (day.date >= now) {
-      if (this.selectedMonthViewDay) {
-        delete this.selectedMonthViewDay.cssClass;
-        if (this.availableDates) {
-          const date = this.findDay(this.selectedMonthViewDay.date);
-          if (date && date.cupo === 2) {
-            this.selectedMonthViewDay.cssClass = 'cal-day-free';
+    if(this.mode == "normal"){
+      if (day.date >= now) {
+        this.changeCssClass();
+        const find = this.findDay(day.date);
+        if (find && find.cupo !== 0) {
+          day.cssClass = 'cal-day-selected';
+        }
+        this.selectedMonthViewDay = day;
+        this.onSelectedDate.emit(day.date);
+      }
+    }else if(this.mode == "block"){
+      const blockedDay = day.date.toISOString().substring(0,10);
+      if (day.date >= now) {
+        this.selectedMonthViewDay = day;
+        if(!this.blockedDates.includes(blockedDay)){
+          const find = this.findDay(day.date);
+          if (find && find.cupo !== 0) {
+            day.cssClass = 'cal-day-selected';
           }
-          if (date && date.cupo === 1) {
-            this.selectedMonthViewDay.cssClass = 'cal-day-half';
-          }
-          if (date && date.cupo === 0) {
-            this.selectedMonthViewDay.cssClass = 'cal-day-full';
-          }
+          this.selectedMonthViewDay = day;
+          this.onSelectedDate.emit(day.date.toISOString().substring(0,10));
+        }else{
+          this.changeCssClass();
+          this.onSelectedDate.emit(day.date.toISOString().substring(0,10));
         }
       }
-      const find = this.findDay(day.date);
-      if (find && find.cupo !== 0) {
-        day.cssClass = 'cal-day-selected';
+    }
+  }
+
+  changeCssClass(){
+    if (this.selectedMonthViewDay) {
+      delete this.selectedMonthViewDay.cssClass;
+      if (this.availableDates) {
+        const date = this.findDay(this.selectedMonthViewDay.date);
+        if (date && (date.cupo === 2 || date.status === 2)) {
+          this.selectedMonthViewDay.cssClass = 'cal-day-free';
+        }
+        if (date && (date.cupo === 1 || date.status === 1)) {
+          this.selectedMonthViewDay.cssClass = 'cal-day-half';
+        }
+        if (date && (date.cupo === 0 || date.status === 0)) {
+          this.selectedMonthViewDay.cssClass = 'cal-day-full';
+        }
       }
-      this.selectedMonthViewDay = day;
-      this.onSelectedDate.emit(day.date);
     }
   }
 

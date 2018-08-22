@@ -16,7 +16,6 @@ hr {
 }
 
 .button-background {
-  background-color: #D92F20;
   cursor: pointer;
 }
 
@@ -33,8 +32,12 @@ hr {
   background-color: #B9261A;
 }
 
-.banner-photo {
-  // max-height: 600px;
+.banner-img {
+  background: url(../../../assets/foto1.jpeg) no-repeat center center ; 
+     -webkit-background-size: cover;
+     -moz-background-size: cover;
+     -o-background-size: cover;
+     background-size: cover;
 }
 
 .icon-inst {

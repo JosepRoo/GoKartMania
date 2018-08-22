@@ -304,3 +304,27 @@ ReservationAvgPrice
 
 .. autoflask:: app:create_app('default')
     :endpoints: reservationavgprice
+
+BlockTurns
+++++++++++
+
+.. qrefflask:: app:create_app('default')
+    :endpoints: blockturns
+
+
+.. autoflask:: app:create_app('default')
+    :endpoints: blockturns
+
+
+Logout
+------
+
+Logout
+++++++
+
+.. qrefflask:: app:create_app('default')
+    :endpoints: logout
+
+
+.. autoflask:: app:create_app('default')
+    :endpoints: logout

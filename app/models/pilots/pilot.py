@@ -41,7 +41,6 @@ class Pilot(BaseModel):
         :return: A brand new pilot
         """
         pilot = cls(**new_pilot, _id=new_pilot.get('email'))
-        pilot.update_mongo(PILOTS)
         reservation.pilots.append(pilot)
         reservation.update_mongo(COLLECTION_TEMP)
         return pilot
@@ -254,6 +253,7 @@ class Pilot(BaseModel):
                                                 <img src={} alt='QR Code' />
                                                 <br>
                                                 <br>
+                                                <p>Favor de llegar al menos 20 minutos previos a la hora de tu reservación.</p>
                                                 <span style="font-weight: 700; font-size: 32px; text-align: center;">En sus marcas. Listos.
                                                   <span class="primary">¡Fuera!</span>
                                                 </span>

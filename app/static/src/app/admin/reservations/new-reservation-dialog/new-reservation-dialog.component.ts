@@ -72,6 +72,7 @@ export class NewReservationDialogComponent implements OnInit {
     this.user = this._formBuilder.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
+      phone: ['', Validators.required]
     });
    }
 
@@ -240,7 +241,7 @@ export class NewReservationDialogComponent implements OnInit {
             res=> {
               this.adminReservationService.setUserToPay(this.user.getRawValue()).subscribe(
                 res=> {
-                  this.adminReservationService.payReservationAsAdmin(res._id).subscribe(
+                  this.adminReservationService.payReservationAsAdmin(res._id, this.user.controls.phone.value).subscribe(
                     res=> {
                       this.dialogRef.close();
                     },

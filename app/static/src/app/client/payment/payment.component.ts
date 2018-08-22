@@ -55,10 +55,11 @@ export class PaymentComponent implements OnInit {
       payment_type: ['Etomin', Validators.required],
       user_name: ['', Validators.required],
       user_email: ['', [Validators.required, Validators.email]],
-      user_id: []
+      user_id: [],
+      phone: ['', [Validators.required, Validators.pattern('[0-9]{10}') ]]
     });
   }
-
+ 
   applyPromo() {
     const self = this;
     this.promo.error = false;

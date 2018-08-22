@@ -20,8 +20,43 @@ body {
   background-image: black;
 }
 
+.button-background {
+  background-color: #D92F20;
+  transition: all 0.5s;
+-webkit-transition: all .5s ease;
+-moz-transition: all .5s ease;
+-o-transition: all .5s ease;
+-ms-transition: all .5s ease;
+transition: all .5s ease;
+}
+
+.mat-icon {
+  transition: all .5s ease 0s !important;
+}
+
+.button-background:hover {
+  letter-spacing: 2px;
+-webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+-moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+box-shadow: 5px 40px -10px rgba(0,0,0,0.57);
+transition: all 0.4s ease 0s;
+box-shadow: 0 7px 7px 0 rgba(46, 46, 46, 0.24), 0 7px 7px 0 rgba(46, 46, 46, 0.19);
+-webkit-filter: brightness(110%);
+// .mat-icon {
+//     transform: translate(.5em,0);
+//   -webkit-transform: translate(.5em,0);
+//   -moz-transform: translate(.5em,0);
+//   -o-transform: translate(.5em,0);
+//   -ms-transform: translate(.5em,0);
+//   }
+}
+
 span, p, h1, h2, h3, h4, h5 {
   font-family: 'PT Sans', sans-serif !important;
+}
+
+.cal-month-view .cal-header:hover {
+  background-color: rgba(0,0,0,0) !important;
 }
 
 .cal-day-number{
@@ -44,11 +79,11 @@ span, p, h1, h2, h3, h4, h5 {
 }
 
 .cal-month-view .cal-header .cal-cell{
-  background-color: black !important;
+  background-color: inherit !important;
 }
 
 .cal-month-view .cal-days .cal-cell-row {
-  background-color: black !important;
+  background-color: inherit !important;
 }
 
 .cal-month-view .cal-header .cal-cell {

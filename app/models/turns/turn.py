@@ -1,5 +1,6 @@
 import datetime
 
+from flask import session
 from tzlocal import get_localzone
 
 from app.common.database import Database
@@ -36,8 +37,7 @@ class Turn(BaseModel):
         """
         allocation_date = new_turn.pop('date')
         turn: Turn = cls(**new_turn)
-        if allocation_date != datetime.datetime.strftime(reservation.date, "%Y-%m-%d"):
-            reservation.date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        session['reservation_date'] = allocation_date
         reservation.turns.append(turn)
         reservation.update_mongo(COLLECTION_TEMP)
         return turn
@@ -75,7 +75,7 @@ class Turn(BaseModel):
             positions_available = cls.check_positions_availability(turn_positions, user_positions)
             if positions_available:
                 allocation_date = new_turn.get('date')
-                DateModel.update_temp(allocation_date, new_turn, reservation.type)
+                DateModel.update_temp(allocation_date, new_turn, reservation.type, True)
                 if reservation.turns != [] and reservation.turns is not None and reservation.turns[0].turn_number == 0:
                     # Update the pre-existing turn by default
                     return cls.update(reservation, new_turn, reservation.turns[0]._id)
@@ -149,7 +149,7 @@ class Turn(BaseModel):
                 allocation_date = updated_turn.get('date')
                 viable_update = cls.verify_update(reservation, updated_turn, turn)
                 if viable_update:
-                    DateModel.update_temp(allocation_date, updated_turn, reservation.type)
+                    DateModel.update_temp(allocation_date, updated_turn, reservation.type, False)
                     return cls.update(reservation, updated_turn, updated_turn.get('_id'))
 
     @classmethod
@@ -214,18 +214,17 @@ class Turn(BaseModel):
         """
         first_date = reservation.date
         last_date = reservation.date + datetime.timedelta(days=1)
+
         query = {'date': {'$gte': first_date, '$lte': last_date}}
-        for date in Database.find(COLLECTION, query):
-            new_date = DateModel(**date)
-            for schedule in new_date.schedules:
-                if schedule.hour == current_turn.schedule:
-                    for turn in schedule.turns:
-                        if turn.turn_number == int(current_turn.turn_number):
-                            pilots = turn.pilots.copy()
-                            for pilot in pilots:
-                                if pilot._id in [pilot._id for pilot in reservation.pilots]:
-                                    pilot.allocation_date = None
-                            new_date.update_mongo(COLLECTION)
+        result = list(Database.find(COLLECTION, query))
+        new_date = DateModel(**result[0])
+        for schedule in filter(lambda schedule: schedule.hour == current_turn.schedule, new_date.schedules):
+            for turn in filter(lambda turn: turn.turn_number == int(current_turn.turn_number), schedule.turns):
+                pilots = turn.pilots.copy()
+                for pilot in filter(lambda pilot: pilot._id in [pilot._id for pilot in reservation.pilots],
+                                    pilots):
+                    pilot.allocation_date = None
+        new_date.update_mongo(COLLECTION)
 
     @classmethod
     def update(cls, reservation: Reservation, updated_turn, turn_id) -> dict:
@@ -240,7 +239,8 @@ class Turn(BaseModel):
             if turn._id == turn_id:
                 allocation_date = updated_turn.pop('date')
                 new_turn = cls(**updated_turn)
-                reservation.date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+                aware_datetime = get_localzone().localize(datetime.datetime.strptime(allocation_date, "%Y-%m-%d"))
+                reservation.date = aware_datetime
                 reservation.turns.remove(turn)
                 reservation.turns.append(new_turn)
                 reservation.update_mongo(REAL_RESERVATIONS)
@@ -263,12 +263,12 @@ class Turn(BaseModel):
 
 
 class AbstractTurn(BaseModel):
-    def __init__(self, turn_number, type=None, pilots=list(), _id=None):
+    def __init__(self, turn_number, type=None, pilots=None, _id=None):
         from app.models.pilots.pilot import AbstractPilot
         super().__init__(_id)
         self.turn_number = turn_number
         self.type = type
-        self.pilots = [AbstractPilot(**pilot) for pilot in pilots] if pilots else pilots
+        self.pilots = [AbstractPilot(**pilot) for pilot in pilots] if pilots is not None else list()
 
     @classmethod
     def add(cls, schedule: Schedule, new_turn):

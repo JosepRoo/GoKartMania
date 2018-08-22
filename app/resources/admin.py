@@ -1,6 +1,5 @@
 from flask import session
 from flask_restful import Resource, reqparse
-from werkzeug.exceptions import BadRequest
 
 from app import Response
 from app.common.utils import Utils
@@ -9,6 +8,7 @@ from app.models.admins.admin import Admin as AdminModel
 from app.models.emails.errors import EmailErrors
 from app.models.payments.constants import PAYMENT_PARSER, CARD_PARSER
 from app.models.payments.errors import PaymentErrors
+from app.models.pilots.errors import PilotNotFound
 from app.models.promos.errors import PromotionErrors
 from app.models.recoveries.errors import RecoveryErrors
 from app.models.reservations.constants import COLLECTION_TEMP
@@ -21,6 +21,7 @@ from app.models.qrs.qr import QR as QRModel
 from app.models.pilots.pilot import Pilot as PilotModel
 from app.models.locations.location import Location as LocationModel
 from app.models.users.constants import COLLECTION as USER_COLLECTION
+from app.models.admins.constants import PARSER
 
 
 class Admin(Resource):
@@ -890,7 +891,7 @@ class BusyHours(Resource):
 class LicensedPilots(Resource):
     @staticmethod
     @Utils.admin_login_required
-    def get():
+    def get(location):
         """
         Retrieves the pilots that have requested license
 
@@ -900,7 +901,7 @@ class LicensedPilots(Resource):
 
         .. sourcecode:: http
 
-            GET /admin/licensed_pilots HTTP/1.1
+            GET /admin/licensed_pilots/<string:location> HTTP/1.1
             Host: gokartmania.com.mx
             Accept: application/json
 
@@ -914,34 +915,52 @@ class LicensedPilots(Resource):
 
             [
                 {
-                    "_id": {
-                        "name": "Josep,
-                        "last_name": "Romagosa"
-                    }
+                    "_id": "aldo_chikai@hotmail.com",
+                    "name": "Aldo Arturo",
+                    "last_name": "Reyna Gómez",
+                    "email": "aldo_chikai@hotmail.com",
+                    "location": "Plaza Carso",
+                    "birth_date": "01-04-95",
+                    "postal_code": "07270",
+                    "nickname": "iThinkEmo",
+                    "city": "CDMX",
+                    "licensed": false
                 },
                 {
-                    "_id": {
-                        "name": "Aldo Arturo",
-                        "last_name": "Reyna Gómez"
-                    }
-                }
-                {
-                    "_id": {
-                        "name": "Michel",
-                        "last_name": "Martínez Guzmán"
-                    }
+                    "_id": "psanchez@sitsolutions.org",
+                    "name": "Pablo Alejandro",
+                    "last_name": "Sanchez Tadeo",
+                    "email": "psanchez@sitsolutions.org",
+                    "location": "Plaza Carso",
+                    "birth_date": "17-07-96",
+                    "postal_code": "50840",
+                    "nickname": "Pablito",
+                    "city": "Estado de México",
+                    "licensed": false
                 },
                 {
-                    "_id": {
-                        "name": "Leslie",
-                        "last_name": "Gallegos Salazar"
-                    }
+                    "_id": "lmgs.0610@gmail.com",
+                    "name": "Leslie",
+                    "last_name": "Gallegos Salazar",
+                    "email": "lmgs.0610@gmail.com",
+                    "location": "Plaza Carso",
+                    "birth_date": "22-08-96",
+                    "postal_code": "50840",
+                    "nickname": "Leslie",
+                    "city": "Estado de México",
+                    "licensed": true
                 },
                 {
-                    "_id": {
-                        "name": "Pablo Alejandro",
-                        "last_name": "Sánchez Tadeo"
-                    }
+                    "_id": "areyna@sitsolutions.org",
+                    "name": "Aldo Arturo",
+                    "last_name": "Reyna Gómez",
+                    "email": "areyna@sitsolutions.org",
+                    "location": "Plaza Carso",
+                    "birth_date": "01-04-95",
+                    "postal_code": "07270",
+                    "nickname": "iThinkEmo",
+                    "city": "CDMX",
+                    "licensed": true
                 }
             ]
 
@@ -963,10 +982,151 @@ class LicensedPilots(Resource):
         :status 401: malformed
         :status 500: internal error
 
-        :return: Array of pilots (name and last name)
+        :return: Array of :class:`app.models.pilots.pilot.Pilot`
         """
         try:
-            return AdminModel.get_licensed_pilots(), 200
+            if location == "Tlalne":
+                return AdminModel.get_licensed_pilots("Tla"), 200
+            elif location == "Carso":
+                return AdminModel.get_licensed_pilots("Carso"), 200
+        except Exception as e:
+            return Response.generic_response(e), 500
+
+
+class UnprintedLicenses(Resource):
+    @staticmethod
+    @Utils.admin_login_required
+    def get(location):
+        """
+        Retrieves the pilots that have requested license
+
+        .. :quickref: Imprimir-Licencia; Info de los pilotos cuyas licencias aún no han sido impresas
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            GET /admin/unprinted_licenses/<string:location> HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            [
+                {
+                    "_id": "areyna@sitsolutions.org",
+                    "name": "Aldo Arturo",
+                    "last_name": "Reyna Gómez",
+                    "email": "areyna@sitsolutions.org",
+                    "location": "Plaza Carso",
+                    "birth_date": "01-04-95",
+                    "postal_code": "07270",
+                    "nickname": "iThinkEmo",
+                    "city": "CDMX",
+                    "licensed": true
+                }
+            ]
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 401 Unauthorised
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "Uso de variable de sesión no autorizada."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: pilots info retrieved
+        :status 401: malformed
+        :status 500: internal error
+
+        :return: Array of :class:`app.models.pilots.pilot.Pilot`
+        """
+        try:
+            if location == "Tlalne":
+                return AdminModel.get_unprinted_licenses("Tla"), 200
+            elif location == "Carso":
+                return AdminModel.get_unprinted_licenses("Carso"), 200
+        except Exception as e:
+            return Response.generic_response(e), 500
+
+    @staticmethod
+    @Utils.admin_login_required
+    def put(location, pilot_id):
+        """
+        Updates the status of the license when it has been produced
+
+        .. :quickref: Imprimir-Licencia; Cambia el status de una licnecia cuando ya se imprimió
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            PUT /admin/unprinted_licenses/<string:location>/<string:pilot_id> HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            [
+                {
+                    "_id": "areyna@sitsolutions.org",
+                    "name": "Aldo Arturo",
+                    "last_name": "Reyna Gómez",
+                    "email": "areyna@sitsolutions.org",
+                    "location": "Plaza Carso",
+                    "birth_date": "01-04-95",
+                    "postal_code": "07270",
+                    "nickname": "iThinkEmo",
+                    "city": "CDMX",
+                    "licensed": false
+                }
+            ]
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 401 Unauthorised
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "Uso de variable de sesión no autorizada."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: pilots info retrieved
+        :status 401: malformed
+        :status 500: internal error
+
+        :return: Array of :class:`app.models.pilots.pilot.Pilot`
+        """
+        try:
+            if location == "Tlalne":
+                return AdminModel.change_license_status("Tla", pilot_id).json(), 200
+            elif location == "Carso":
+                return AdminModel.change_license_status("Carso", pilot_id).json(), 200
+        except PilotNotFound as e:
+            return Response(message=e.message).json(), 404
         except Exception as e:
             return Response.generic_response(e), 500
 
@@ -1399,6 +1559,8 @@ class ForgotPassword(Resource):
             return Response(message=e.message).json(), 400
         except EmailErrors as e:
             return Response(message=e.message).json(), 400
+        except Exception as e:
+            return Response.generic_response(e), 500
 
 
 class ResetPassword(Resource):
@@ -1477,3 +1639,131 @@ class ResetPassword(Resource):
             return Response(message=e.message).json(), 400
         except RecoveryErrors as e:
             return Response(message=e.message).json(), 400
+        except Exception as e:
+            return Response.generic_response(e), 500
+
+
+class Logout(Resource):
+    @staticmethod
+    @Utils.admin_login_required
+    def post():
+        """
+        Logs out the user from the current session
+
+        .. :quickref: Logout; Termina la sesión del usuario
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            POST /logout HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": true,
+                "message": "Sesión finalizada."
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 401 Unauthorised
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "Uso de variable de sesión no autorizada."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: logout completed
+        :status 401: malformed
+        :status 500: internal error
+
+        :return: Success message
+        """
+        try:
+            session.clear()
+            return Response(success=True, message="Sesión finalizada").json(), 200
+        except AdminErrors as e:
+            return Response(message=e.message).json(), 400
+        except Exception as e:
+            return Response.generic_response(e), 500
+
+
+class BlockTurns(Resource):
+    @staticmethod
+    @Utils.admin_login_required
+    def post():
+        """
+        Allows the admin to block whole days, or just partial schedules (w/ turns)
+
+        .. :quickref: Bloquear; Bloquea un día entero u horarios parciales
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            POST /admin/block_turns HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+            Content-Type: application/json
+
+            {
+                "days": ["2018-12-01", "2018-12-02", "2018-12-03", "2018-12-04", "2018-12-05"],
+                "schedules": ["11", "12", "13", "14", "15"],
+                "turns": [1, 2, 3]
+            }
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": true,
+                "message": "Días, horarios y turnos exitosamente bloqueados."
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 401 Unauthorised
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "Uso de variable de sesión no autorizada."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: block completed
+        :status 401: malformed
+        :status 500: internal error
+
+        :return: Success message
+        """
+        try:
+            data = PARSER.parse_args()
+            AdminModel.block_turns(data.get('days'), data.get('schedules'), data.get('turns'))
+            return Response(success=True, message="Días, horarios y turnos exitosamente bloqueados.").json(), 200
+        except AdminErrors as e:
+            return Response(message=e.message).json(), 400
+        except Exception as e:
+            return Response.generic_response(e), 500

@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { AdminPilotsService } from '../services/admin-pilots.service';
+import { MatDialog, MatSort } from '@angular/material';
+import { PilotDetailsDialogComponent } from './pilot-details-dialog/pilot-details-dialog.component';
 
 @Component({
   selector: 'app-admin-pilots',
@@ -12,6 +14,10 @@ export class AdminPilotsComponent implements OnInit {
   pilots;
   dataSourcePilots;
 
+  pilotDetailsDialogRef;
+
+  @ViewChild(MatSort) sort: MatSort;
+
   displayedColumns: string[] = [
     'name',
     'last_name',
@@ -20,18 +26,27 @@ export class AdminPilotsComponent implements OnInit {
   error;
 
   constructor(
-    private pilotsService: AdminPilotsService
+    private pilotsService: AdminPilotsService,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
     this.pilotsService.getPilots().subscribe(res => {
       this.pilots = res;
-      this.dataSourcePilots = new MatTableDataSource(res);
+      this.dataSourcePilots = new MatTableDataSource(this.pilots);
+      this.dataSourcePilots.sort = this.sort;
     });
   }
 
   downloadDB(){
     this.pilotsService.generateReport();
+  }
+
+  openPilotDetail(pilot){
+    this.pilotDetailsDialogRef = this.dialog.open(PilotDetailsDialogComponent,{
+      width: '80%',
+      data: pilot
+    })
   }
 
 }

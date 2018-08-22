@@ -18,7 +18,8 @@ class BaseModel:
         if date_to_string:
             if exclude:
                 return {
-                    attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element for
+                    attrib: [element.json(date_to_string=date_to_string) if not isinstance(element, str) else element
+                             for
                              element in self.__getattribute__(attrib)]
                     if type(self.__getattribute__(attrib)) is list
                     else self.__getattribute__(attrib).strftime("%Y-%m-%d %H:%M")
@@ -86,3 +87,12 @@ class BaseModel:
         if user:
             return cls(**user)
         raise UserNotFound("El usuario con el ID dado no existe.")
+
+    @classmethod
+    def update_util(cls, obj_id: str, collection: str, data: dict, exclude_data: set = None):
+        obj = cls.get_by_id(obj_id, collection)
+        if exclude_data is not None:
+            [data.pop(key, None) for key in exclude_data]
+        for key, value in data.items():
+            setattr(obj, key, value)
+        return obj

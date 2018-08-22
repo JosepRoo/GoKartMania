@@ -136,6 +136,15 @@
   </div>
 
   <div class="row justify-content-center">
+    <div class="col-9 col-sm-4 col-md-3 text-center">
+      <mat-form-field>
+        <input matInput placeholder="Número de teléfono" maxlength="10" formControlName="phone" required>
+        <mat-error *ngIf="payment.controls.phone.hasError('required')">El número de teléfono es necesario</mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
     <div class="col-11 col-sm-8">
       <mat-radio-group formControlName="payment_method">
         <div class="row justify-content-center">
@@ -146,7 +155,7 @@
           </div>
           <div class="col-5 col-md-3 col-lg-2 pay-method">
             <mat-radio-button color="primary" value="VISA" class="tittle-banner">
-              <img style="margin: 0 auto; padding:5px;" src="../assets/visa.png" class="img-fluid" alt="Visa Logo">
+              <img style="margin: 0 auto; padding:5px; border-radius: 10px" src="../assets/visa.png" class="img-fluid" alt="Visa Logo">
             </mat-radio-button>
           </div>
           <div class="col-5 col-md-3 col-lg-2 pay-method">
@@ -176,11 +185,11 @@
             </mat-form-field>
           </div>
           <div class="col-11 col-sm-6 text-center">
-            <mat-form-field>          
+            <!-- <mat-form-field>          
               <input matInput placeholder="Número de tarjeta" [attr.maxlength]="16" formControlName="number" type="tel" required>
               <mat-error *ngIf="payment.controls.number.hasError('required')">El número es necesario</mat-error>
               <mat-error *ngIf="payment.controls.number.hasError('error') && !payment.controls.number.hasError('required')">El número es inválido</mat-error>
-            </mat-form-field>
+            </mat-form-field> -->
           </div>
           <div class="col-5 col-sm-4 text-center">
             <mat-form-field>
