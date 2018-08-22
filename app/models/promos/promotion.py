@@ -117,10 +117,11 @@ class Promotion(BaseModel):
             raise PromotionNotFound("La promo con el ID dado no existe.")
         updated_promo.pop('password')
         copies_left: int = updated_promo.pop('copies_left')
+        prefix: str = updated_promo.pop('prefix')
         promo_obj: Promotion = cls(**updated_promo, _id=promo_id, coupons=promo.get('coupons'),
                                    creator=promo.get('creator'))
-        for coupon in promo_obj.coupons:
-            coupon.copies_left = copies_left
+        #for coupon in promo_obj.coupons:
+        #    coupon.copies_left = copies_left
         promo_obj.authoriser = "Admnistrador"
         promo_obj.update_mongo(COLLECTION)
         return promo_obj

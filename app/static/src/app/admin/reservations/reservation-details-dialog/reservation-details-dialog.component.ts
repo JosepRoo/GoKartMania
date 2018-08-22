@@ -28,6 +28,7 @@ export class ReservationDetailsDialogComponent implements OnInit {
 
   editReservationDialogRef;
   editAvailable;
+  date;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -35,6 +36,7 @@ export class ReservationDetailsDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.date = this.data.reservation.date.substring(0,10);
     this.pilots = this.data.reservation.pilots;
     this.dataSourcePilots = new MatTableDataSource(this.pilots);
     this.turns = this.data.reservation.turns;
@@ -61,6 +63,7 @@ export class ReservationDetailsDialogComponent implements OnInit {
       res=> {
         if (res!== ""){
           this.turns = res.turns;
+          this.date = res.turns[0].date;
           this.getPositions();
         }
       }

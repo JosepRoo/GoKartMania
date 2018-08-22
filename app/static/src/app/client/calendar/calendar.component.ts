@@ -164,7 +164,6 @@ export class CalendarComponent implements OnInit {
   }
 
   reRender(){
-    this.selectedMonthViewDay
     this.beforeMonthViewRender({body:this.dates});
   }
 
