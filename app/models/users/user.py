@@ -15,10 +15,11 @@ In this user model the email will be used to identify each user although an _id 
 class User(BaseModel):
     from app.models.reservations.reservation import Reservation
 
-    def __init__(self, email, name, reservations=None, _id=None):
+    def __init__(self, email, name, reservations=None, phone=None, _id=None):
         super().__init__(_id)
         self.email = email
         self.name = name
+        self.phone = phone
         self.reservations = reservations if reservations is not None else list()
 
     @classmethod
