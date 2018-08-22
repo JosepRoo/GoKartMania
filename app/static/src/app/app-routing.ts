@@ -11,6 +11,8 @@ import { HomeComponent } from './admin/home/home.component';
 import { PromosComponent } from './admin/promos/promos.component';
 import { ReservationsComponent } from './admin/reservations/reservations.component';
 import { AdminPilotsComponent } from './admin/admin-pilots/admin-pilots.component';
+import { ReservationDetailsComponent } from './admin/reservations/reservation-details/reservation-details.component';
+import { PilotsLicensesComponent } from './admin/pilots-licenses/pilots-licenses.component';
 
 export const routes: Routes = [
   {
@@ -30,12 +32,20 @@ export const routes: Routes = [
         component: PromosComponent
       },
       {
+        path: 'pilots_licenses',
+        component: PilotsLicensesComponent
+      },
+      {
         path: 'pilots',
         component: AdminPilotsComponent
       },
       {
         path: 'reservations',
         component: ReservationsComponent
+      },
+      {
+        path: 'reservations/:id',
+        component: ReservationDetailsComponent
       },
       {
         path: '',

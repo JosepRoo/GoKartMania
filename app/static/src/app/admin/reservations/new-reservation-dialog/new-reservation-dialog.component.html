@@ -127,7 +127,7 @@
 
       <mat-grid-list cols="4" rowHeight="2:1">
         <mat-grid-tile *ngFor="let position of availablePositions">
-          <mat-checkbox [disabled]="!position.status || (selectedPositions.length == pilots.length && !selectedPositions.includes(position.position))" (change)="selectPosition(position.position)">Posición {{position.position}}</mat-checkbox>
+          <mat-checkbox color="primary" [disabled]="!position.status || (selectedPositions.length == pilots.length && !selectedPositions.includes(position.position))" (change)="selectPosition(position.position)">Posición {{position.position}}</mat-checkbox>
         </mat-grid-tile>
       </mat-grid-list>
 
@@ -144,6 +144,10 @@
           <input matInput formControlName="email" placeholder="email">
           <mat-error *ngIf="user.controls.email.hasError('required')">Campo requerido</mat-error>
           <mat-error *ngIf="user.controls.email.hasError('email')">Formato incorrecto</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput formControlName="phone" placeholder="Teléfono" type="number">
+          <mat-error *ngIf="user.controls.phone.hasError('required')">Campo requerido</mat-error>
         </mat-form-field>
       </form>
 

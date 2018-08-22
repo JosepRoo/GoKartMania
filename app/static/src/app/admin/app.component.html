@@ -19,12 +19,21 @@
         <a class="nav-link waves-light" routerLink="./promos" mdbWavesEffect>Promociones</a>
       </li>
       <li routerLinkActive="active" class="nav-item">
+        <a class="nav-link waves-light" routerLink="./pilots_licenses" mdbWavesEffect>Licencias</a>
+      </li>
+      <li routerLinkActive="active" class="nav-item">
         <a class="nav-link waves-light" routerLink="./pilots" mdbWavesEffect>Pilotos</a>
       </li>
       <li routerLinkActive="active" class="nav-item">
         <a class="nav-link waves-light" routerLink="./reservations" mdbWavesEffect>Reservaciones</a>
       </li>
 
+    </ul>
+
+    <ul class="navbar-nav float-md-right float-sm-left">
+      <li class="nav-item">
+        <a class="nav-link waves-light" (click)="openLogoutDialog()" mdbWavesEffect>Cerrar sesión</a>
+      </li>
     </ul>
     <!-- Links -->
   </links>
@@ -35,7 +44,7 @@
 <mat-divider></mat-divider>
 <!--/.Navbar-->
 
-<div style="height: 100vh !important; background-color: rgba(94, 93, 93, 0.479)">
+<div style="min-height: 100vh !important; background-color: rgba(94, 93, 93, 0.479)">
   <br>
   <router-outlet></router-outlet>
 </div>

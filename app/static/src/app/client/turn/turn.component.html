@@ -33,7 +33,7 @@
       </div>    
 
       <app-calendar [prevBtnDisabled]="preventBack" [date]="startDate" *ngIf="availableDates && !alreadyDate" [availableDates]="availableDates"
-        (onSelectedDate)="onSelectedDate($event, 0)" (onDateChange)="onDateChange($event)"></app-calendar>
+        (onSelectedDate)="onSelectedDate($event, 0)" (onDateChange)="onDateChange($event)" [mode]="mode"></app-calendar>
 
       <mat-divider *ngIf="availableDates"></mat-divider>
       <br>
@@ -72,6 +72,11 @@
 
   <div *ngIf="turn.controls.turn_number.value && availableDates" class="row justify-content-center">
     <div class="col-11 col-sm-10 col-md-8">
+      <div class="row" >
+        <div class="col-11 col-sm-10 col-md-8">
+          <span class="h4" style="color:white" *ngIf="reservation.pilots.length >positions.length">Selecciona el gokart de {{pilot}}:</span>
+        </div>
+      </div>
       <div class="row" style="margin-top:20px; margin-bottom:20px;">
         <div *ngFor="let position of availablePositions" class="col-6 col-sm-4 col-md-3 text-center" style="padding:10px;">
           <a (click)="selectPosition(position)">
@@ -82,6 +87,9 @@
               <label style="margin-top:25px;" class="tittle-banner">{{position.position}}</label>
             </div>
           </a>
+          <div class="row" style="display: block">
+            <label class="h5" *ngIf="position.pilot" style="color: white">{{position.pilot}}</label>
+          </div>
         </div>
       </div>
     </div>

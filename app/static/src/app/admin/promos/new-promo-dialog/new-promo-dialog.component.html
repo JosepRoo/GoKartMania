@@ -27,10 +27,16 @@
 					<mat-error *ngIf="promoData.controls.type.hasError('required')">Campo requerido</mat-error>
 				</mat-form-field>
 			</div>
-			<div class="col-4">
+			<div class="col-3">
 				<mat-form-field style="padding-top:10px">
 					<input matInput formControlName="existence" type="number" min=1 placeholder="No. de cupones">
 					<mat-error *ngIf="promoData.controls.existence.hasError('required')">Campo requerido</mat-error>
+				</mat-form-field>
+			</div>
+			<div class="col-3">
+				<mat-form-field style="padding-top:10px">
+					<input matInput formControlName="copies_left" type="number" min=1 placeholder="Veces">
+					<mat-error *ngIf="promoData.controls.copies_left.hasError('required')">Campo requerido</mat-error>
 				</mat-form-field>
 			</div>
 		</div>
@@ -48,6 +54,14 @@
 			<input matInput type="password" placeholder="Contraseña" formControlName = "password">
 			<mat-error *ngIf="promoData.controls.password.hasError('required')">Campo requerido</mat-error>
 		</mat-form-field>
+
+		<mat-checkbox formControlName="setPrefix" (change)="changeSetPrefix()">Personalizar el nombre de los cupones</mat-checkbox>
+
+		<mat-form-field style="padding-top:10px" *ngIf="promoData.controls.setPrefix.value">
+			<input matInput placeholder="Prefijo" formControlName = "prefix">
+			<mat-error *ngIf="promoData.controls.prefix.hasError('required')">Campo requerido</mat-error>
+		</mat-form-field>
+
 		<div class="row justify-content-md-end justify-content-sm-center">
 			<div class="col-md-4 col-sm-10" style="padding-top:5px;">
 				<button mat-raised-button class="btn-block" color="primary" type="submit"> Guardar promo </button>

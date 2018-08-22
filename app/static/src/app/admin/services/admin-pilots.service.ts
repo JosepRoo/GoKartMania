@@ -12,7 +12,7 @@ import 'rxjs/add/observable/throw';
   providedIn: 'root'
 })
 export class AdminPilotsService {
-  private apiPilots: string = environment.api + '/admin/licensed_pilots';
+  private apiPilots: string = environment.api + '/admin/licensed_pilots/Carso';
   private apiRegisterPilots: string = environment.api + '/user/pilots';
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',

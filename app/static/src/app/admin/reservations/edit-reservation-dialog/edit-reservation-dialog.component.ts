@@ -42,7 +42,7 @@ export class EditReservationDialogComponent implements OnInit {
   availableTurns = [];
   availablePositions = [];
 
-  selectedPositions = [];
+  selectedPositions =[];
 
   myFilter = (d: Date): boolean => {
     return this.availableDates.includes(d.toISOString().substring(0,10));
@@ -72,7 +72,7 @@ export class EditReservationDialogComponent implements OnInit {
     for (let turn of this.reservationTurns){
       this.availableTurns.push([]);
       this.availablePositions.push([]);
-      this.selectedPositions.push([]);
+      this.selectedPositions.push([]);      
     }
 
     for(let i = 0; i < this.reservationTurns.length; i++){
@@ -226,7 +226,7 @@ export class EditReservationDialogComponent implements OnInit {
 
       this.adminReservationsService.updateTurns(this.data._id,body).subscribe(
         res=>{
-          this.dialogRef.close("La reservación se ha actualizado");
+          this.dialogRef.close(body);
         },
         err=>{
           this.error= err;
