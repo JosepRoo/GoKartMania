@@ -320,5 +320,5 @@ class Promos(Resource):
             return Response(message=e.message).json(), 404
         except AdminErrors as e:
             return Response(message=e.message).json(), 401
-        except Exception as e:
-            return Response.generic_response(e), 500
+        # except Exception as e:
+        #     return Response.generic_response(e), 500

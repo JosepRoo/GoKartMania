@@ -10,8 +10,7 @@ PARSER.add_argument('existence',
                     )
 PARSER.add_argument('copies_left',
                     type=int,
-                    required=True,
-                    help="Este campo no puede ser dejado en blanco."
+                    required=False
                     )
 PARSER.add_argument('start_date',
                     type=str,
