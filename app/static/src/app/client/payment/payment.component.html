@@ -138,7 +138,7 @@
   <div class="row justify-content-center">
     <div class="col-9 col-sm-4 col-md-3 text-center">
       <mat-form-field>
-        <input matInput placeholder="Número de teléfono" formControlName="phone" required>
+        <input matInput placeholder="Número de teléfono" maxlength="10" formControlName="phone" required>
         <mat-error *ngIf="payment.controls.phone.hasError('required')">El número de teléfono es necesario</mat-error>
       </mat-form-field>
     </div>

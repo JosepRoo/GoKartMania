@@ -56,7 +56,7 @@ export class PaymentComponent implements OnInit {
       user_name: ['', Validators.required],
       user_email: ['', [Validators.required, Validators.email]],
       user_id: [],
-      phone:['', Validators.required]
+      phone: ['', [Validators.required, Validators.pattern('[0-9]{10}') ]]
     });
   }
  
