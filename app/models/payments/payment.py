@@ -77,7 +77,7 @@ class Card(BaseModel):
 
 
 class Payment(BaseModel):
-    def __init__(self, status, payment_method, payment_type, phone,
+    def __init__(self, status, payment_method, payment_type,
                  promo=None, date=None, etomin_number=None, id_reference=None, _id=None):
         self.status = status
         self.payment_method = payment_method
@@ -85,7 +85,6 @@ class Payment(BaseModel):
         self.etomin_number = etomin_number
         self.date = date
         self.promo = PromoModel(**promo) if promo else promo
-        self.phone = phone
         self.id_reference = id_reference
         super().__init__(_id)
 
@@ -112,6 +111,8 @@ class Payment(BaseModel):
 
         promo_id = new_payment.pop('promo_id')
         coupon_id = new_payment.pop('coupon_id')
+        phone = new_payment.pop('phone')
+        user.phone = phone
         promo = None
         coupon = None
         if promo_id:
