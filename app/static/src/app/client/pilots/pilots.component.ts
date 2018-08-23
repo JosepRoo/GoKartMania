@@ -129,7 +129,9 @@ export class PilotsComponent implements OnInit {
   // calls the service to add the reservation
   sendPilots() {
     const self = this;
-    if (self.reservation.valid) {
+    const ar = this.reservation.get('pilots') as FormArray;
+    const len = ar.length;
+    if (self.reservation.valid && len) {
       this.loading = true;
       this.error = { show: false, text: '' };
       this.reservation.setValue(this.reservation.getRawValue());
