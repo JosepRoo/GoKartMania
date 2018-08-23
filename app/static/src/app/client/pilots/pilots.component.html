@@ -131,7 +131,7 @@
                   
                   <!-- start empty pilot info -->
                   <a (click)="addPilot()">
-                    <div class="item-list" *ngFor="let pilot of numbers;">
+                    <div class="item-list" *ngIf="numbers.length">
                       <div class="row justify-content-center">
                         <div class="col-3 text-right" style="white-space: nowrap !important;">
                           <span class="helmet-helper">
@@ -167,15 +167,12 @@
     <!-- end pilot list -->
 
     <!-- start continue button -->
-    <a (click)="submitPilotsForm()" *ngIf="!loading">
-      <div class="row justify-content-center button-background" style="background-color: #B9261A;">
-        <div class="col-11 col-sm-8 col-md-5 text-center">
+      <div class="row justify-content-center" *ngIf="!loading">
+        <div class="col-11 col-sm-8 col-md-4 text-center">      
           <button #pilotFormButton style="visibility: hidden;" type="submit"></button>
-          <span class="tittle-banner">Continuar</span>
-          <mat-icon style="padding-left:10px; color: white !important;">arrow_forward</mat-icon>
+          <button (click)="submitPilotsForm()" class="client" style="width: 90%;" mat-raised-button color="primary">Continuar <mat-icon style="padding-left:10px; color: white !important;">arrow_forward</mat-icon></button>
         </div>
-      </div>
-    </a>
+      </div>            
     <!-- end continue button -->
 
     <div *ngIf="loading" class="text-center">
