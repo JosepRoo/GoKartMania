@@ -96,12 +96,14 @@
 <br>
 
 <a *ngIf="!loading" (click)="goBack.emit({pilots: reservation.pilots, date: reservation.date})">
-  <div class="row justify-content-center button-background">
-    <div class="col-11 col-sm-8 col-md-6 text-center">
-      <span class="tittle-button">Agregar otra reservación</span>
+  <div class="row justify-content-center justify-content-md-end">
+    <div class="col-8 col-sm-4 col-md-3 text-center">
+      <button style="width: 90%;" mat-raised-button color="primary">Agregar otra reservación</button>      
     </div>
   </div>
 </a>
+
+<br>
 
 <div *ngIf="loading" class="text-center">
   <mat-spinner style="margin:0 auto; margin-top: 150px;"></mat-spinner>
@@ -185,11 +187,11 @@
             </mat-form-field>
           </div>
           <div class="col-11 col-sm-6 text-center">
-            <!-- <mat-form-field>          
+            <mat-form-field>          
               <input matInput placeholder="Número de tarjeta" [attr.maxlength]="16" formControlName="number" type="tel" required>
               <mat-error *ngIf="payment.controls.number.hasError('required')">El número es necesario</mat-error>
               <mat-error *ngIf="payment.controls.number.hasError('error') && !payment.controls.number.hasError('required')">El número es inválido</mat-error>
-            </mat-form-field> -->
+            </mat-form-field>
           </div>
           <div class="col-5 col-sm-4 text-center">
             <mat-form-field>
@@ -245,19 +247,17 @@
     </div>
   </div>
 
-  <br>
-
   <button #pilotFormButton style="visibility: hidden;" type="submit"></button>
 
 </form>
 
-<a *ngIf="!loading" (click)="submitPayment()">
-  <div class="row justify-content-center button-background" style="background-color:  #d50000">
-    <div class="col-11 col-sm-8 col-md-5 text-center">
-      <span class="tittle-button">Pagar {{reservation?.amount | currency: 'MX'}}</span>
+  <div *ngIf="!loading" class="row justify-content-center">
+    <div class="col-11 col-sm-8 col-md-4 text-center">
+      <button (click)="submitPayment()" style="width: 90%;" class="client" mat-raised-button color="primary">Pagar {{reservation?.amount | currency: 'MX'}}</button>
     </div>
   </div>
-</a>
+
+<br>
 
 
 
