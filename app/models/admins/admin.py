@@ -675,21 +675,14 @@ class Admin(BaseModel):
 
     @staticmethod
     def block_turns(days: list, schedules: list, turns: list) -> None:
-        print("kwargs", days, schedules, turns)
         days = [datetime.datetime.strptime(aware_datetime, "%Y-%m-%d").astimezone(get_localzone())
                 for aware_datetime in days]
-        print("dia uno: ", days[0])
-        print("fecha uno: ", Database.find_one(DATES, {})).get('date')
         dates = list(Database.find(DATES, {'date': {"$in": days}}))
-        print(f"len de dates: {len(dates)}")
         for date in dates:
             updated_date = Date(**date)
-            print(f"len de schedules {len(updated_date.schedules)}")
             for schedule in updated_date.schedules:
                 if schedule.hour in schedules:
-                    print("entro! en schedules")
                     for turn in schedule.turns:
                         if turn.turn_number in turns:
                             turn.type = "BLOQUEADO"
-                            print(turn.type)
             updated_date.update_mongo(DATES)

@@ -231,6 +231,7 @@ class Payment(BaseModel):
         if session.get('reservation_date') != datetime.datetime.strftime(reservation.date, "%Y-%m-%d"):
             aware_datetime = get_localzone().localize(datetime.datetime.strptime(session.get('reservation_date'), "%Y-%m-%d"))
             reservation.date = aware_datetime
+        # print(reservation.date)
         for pilot in reservation.pilots:
             pilot.update_mongo(PILOTS)
         # Guardar en la coleccion de reservaciones reales
