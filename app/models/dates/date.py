@@ -44,8 +44,8 @@ class Date(BaseModel):
         :param last_date: The end date in range
         :return: JSON object with dates in range
         """
-        first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
-        last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        first_date = get_localzone().localize(datetime.datetime.strptime(first_date, "%Y-%m-%d"))
+        last_date = get_localzone().localize(datetime.datetime.strptime(last_date, "%Y-%m-%d"))
         dates = []
         query = {'date': {'$gte': first_date, '$lte': last_date}}
         for date in Database.find(COLLECTION, query):
