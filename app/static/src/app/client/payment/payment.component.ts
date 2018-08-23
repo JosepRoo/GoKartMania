@@ -39,6 +39,9 @@ export class PaymentComponent implements OnInit {
   ngOnInit() {
     this.reservationService.getReservation().subscribe(res => {
       this.reservation = res;
+      this.reservation.turns.map( turn => {
+        turn.date = new Date(turn.date.replace(/-/g, '/'));
+      });
     });
     this.payment = this.formBuilder.group({
       payment_method: ['', Validators.required],

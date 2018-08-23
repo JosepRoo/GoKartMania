@@ -26,7 +26,7 @@ class QR(BaseModel):
         :return: Path pointing to the location of the qr code image
         """
         qr = cls(**{})
-        qr.url = f'reservas.gokartmania.com.mx/#/reservation/{reservation._id}'
+        qr.url = f'reservas.gokartmania.com.mx/#/admin/reservations/{reservation._id}'
         img = qrcode.make(qr.url)
         date_str = reservation.date.strftime("%Y-%m-%d")
         img_path = f'{basedir}/app/reservation_qrs/{qr._id}{date_str}.png'
