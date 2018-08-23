@@ -80,10 +80,11 @@ class Admin(BaseModel):
         recovery.save_to_mongo()
         # email = Email(to=self.email, subject='Recuperación de contraseña', qr_code=None)
         email: Email = Email(to='areyna@sitsolutions.org', subject='Recuperación de contraseña', qr_code=None)
-        email.text(f"Hola, {self.name}:\nHas recibido este correo electrónico porque recientemente solicitaste restablecer "
-                   "la contraseña asociada a tu cuenta de GoKartMania. Si no solicitaste este cambio, puedes hacer caso "
-                   "omiso de este correo.\n\nCopia y pega el siguiente enlace en tu navegador de internet para restablecer tu contraseña:\n"
-                   f"reservas.gokartmania.com.mx/#/admin/reset_password/{recovery._id}\n\nSaludos,\nEl equipo de GoKartMania.")
+        email.text(
+            f"Hola, {self.name}:\nHas recibido este correo electrónico porque recientemente solicitaste restablecer "
+            "la contraseña asociada a tu cuenta de GoKartMania. Si no solicitaste este cambio, puedes hacer caso "
+            "omiso de este correo.\n\nCopia y pega el siguiente enlace en tu navegador de internet para restablecer tu contraseña:\n"
+            f"reservas.gokartmania.com.mx/#/admin/reset_password/{recovery._id}\n\nSaludos,\nEl equipo de GoKartMania.")
 
         email_html = """
         <html>
@@ -635,12 +636,12 @@ class Admin(BaseModel):
         expressions.append({"$project": {"turns": {"$size": "$turns"},
                                          "total_spent": {"$divide": ["$amount", "$pilots_size"]}, "pilots": "$pilots"}})
         expressions.append({"$group": {
-                "_id": {"Nombre": "$pilots.name", "Apellido": "$pilots.last_name", "Email": "$pilots.email",
-                        "Ubicación": "$pilots.location", "Fecha_Nacimiento": "$pilots.birth_date",
-                        "Código_Postal": "$pilots.postal_code", "Nickname": "$pilots.nickname", "Ciudad": "$pilots.city"},
-                "Número_Reservaciones": {"$sum": 1}, "Número_Carreras": {"$sum": "$turns"},
-                "Total_Gastado": {"$sum": "$total_spent"}
-            }})
+            "_id": {"Nombre": "$pilots.name", "Apellido": "$pilots.last_name", "Email": "$pilots.email",
+                    "Ubicación": "$pilots.location", "Fecha_Nacimiento": "$pilots.birth_date",
+                    "Código_Postal": "$pilots.postal_code", "Nickname": "$pilots.nickname", "Ciudad": "$pilots.city"},
+            "Número_Reservaciones": {"$sum": 1}, "Número_Carreras": {"$sum": "$turns"},
+            "Total_Gastado": {"$sum": "$total_spent"}
+        }})
         expressions.append({"$addFields": {"_id.Número_Reservaciones": "$Número_Reservaciones",
                                            "_id.Número_Carreras": "$Número_Carreras",
                                            "_id.Total_Gastado": "$Total_Gastado"}})
@@ -674,14 +675,21 @@ class Admin(BaseModel):
 
     @staticmethod
     def block_turns(days: list, schedules: list, turns: list) -> None:
+        print("kwargs", days, schedules, turns)
         days = [datetime.datetime.strptime(aware_datetime, "%Y-%m-%d").astimezone(get_localzone())
                 for aware_datetime in days]
+        print("dia uno: ", days[0])
+        print("fecha uno: ", Database.find_one(DATES, {})).get('date')
         dates = list(Database.find(DATES, {'date': {"$in": days}}))
+        print(f"len de dates: {len(dates)}")
         for date in dates:
             updated_date = Date(**date)
+            print(f"len de schedules {len(updated_date.schedules)}")
             for schedule in updated_date.schedules:
                 if schedule.hour in schedules:
+                    print("entro! en schedules")
                     for turn in schedule.turns:
                         if turn.turn_number in turns:
                             turn.type = "BLOQUEADO"
+                            print(turn.type)
             updated_date.update_mongo(DATES)

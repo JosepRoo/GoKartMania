@@ -1761,7 +1761,7 @@ class BlockTurns(Resource):
         """
         try:
             data = PARSER.parse_args()
-            AdminModel.block_turns(data.get('days'), data.get('schedules'), data.get('turns'))
+            AdminModel.block_turns(**data)
             return Response(success=True, message="Días, horarios y turnos exitosamente bloqueados.").json(), 200
         except AdminErrors as e:
             return Response(message=e.message).json(), 400
