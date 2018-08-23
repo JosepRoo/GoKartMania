@@ -3,14 +3,14 @@
     <div class="col-12 col-sm-4">
       <h3 style="color:white;">Promociones</h3>
     </div>
-    <div class="col-12 col-sm-4">
+    <div class="col-12 col-sm-5 col-md-4">
       <button class="btn btn-block" mat-raised-button color="primary" (click)="openNewPromoDialog()">+ Nueva Promoción</button>
     </div>
   </div>
   <br>
 
   <div class="row justify-content-center">
-    <div class="col-12">
+    <div class="col-11 col-sm-12">
         <table style="width: 100%;" mat-table matSort [dataSource]="dataSource" class="mat-elevation-z4">
 
           <ng-container matColumnDef="authorised">

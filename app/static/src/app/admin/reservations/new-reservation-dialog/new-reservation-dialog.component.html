@@ -86,10 +86,10 @@
           </div>
         </div>
         <div class="row justify-content-end">
-          <div class="col-md-4 col-sm-12" style="padding-top: 5px">
+          <div class="col-lg-4 col-sm-12" style="padding-top: 5px">
             <button mat-raised-button class="btn-block" color="primary" mat-dialog-close>Cancelar</button>
           </div>
-          <div class="col-md-4 col-sm-12" style="padding-top: 5px">
+          <div class="col-lg-4 col-sm-12" style="padding-top: 5px">
             <button mat-raised-button class="btn-block" color="primary" (click)="registerPilots()" [disabled]="formArray().length === 0">Registrar pilotos</button>
           </div>
         </div>
@@ -152,10 +152,10 @@
       </form>
 
       <div class="row justify-content-end">
-        <div class="col-md-4 col-sm-12" style="padding-top: 5px">
+        <div class="col-lg-4 col-sm-12" style="padding-top: 5px">
           <button mat-raised-button #backBtn matStepperPrevious class="btn-block" color="primary" (click)="datesAndTurns.reset()">Atrás</button>
         </div>
-        <div class="col-md-4 col-sm-12" style="padding-top: 5px">
+        <div class="col-lg-4 col-sm-12" style="padding-top: 5px">
           <button mat-raised-button class="btn-block"  color="primary" [disabled]="!datesAndTurns.valid" (click)="createTurn()">Crear reservación</button>
         </div>
       </div>
