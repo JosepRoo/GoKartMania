@@ -59,7 +59,7 @@ export class PaymentComponent implements OnInit {
       phone: ['', [Validators.required, Validators.pattern('[0-9]{10}') ]]
     });
   }
- 
+
   applyPromo() {
     const self = this;
     this.promo.error = false;
