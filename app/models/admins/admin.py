@@ -678,6 +678,7 @@ class Admin(BaseModel):
         print("kwargs", days, schedules, turns)
         days = [datetime.datetime.strptime(aware_datetime, "%Y-%m-%d").astimezone(get_localzone())
                 for aware_datetime in days]
+        print(days)
         dates = list(Database.find(DATES, {'date': {"$in": days}}))
         print(f"len de dates: {len(dates)}")
         for date in dates:
