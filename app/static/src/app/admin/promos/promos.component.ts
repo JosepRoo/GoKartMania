@@ -97,7 +97,6 @@ export class PromosComponent implements OnInit, OnDestroy {
       }
       this.dataSource = new MatTableDataSource(this.promos);
       this.dataSource.sort = this.sort;
-      console.log(this.dataSource);
     });
   }
   
