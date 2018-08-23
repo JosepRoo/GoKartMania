@@ -684,4 +684,5 @@ class Admin(BaseModel):
                     for turn in schedule.turns:
                         if turn.turn_number in turns:
                             turn.type = "BLOQUEADO"
+                            print(turn.type)
             updated_date.update_mongo(DATES)
