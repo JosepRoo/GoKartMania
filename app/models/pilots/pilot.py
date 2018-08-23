@@ -322,4 +322,5 @@ class AbstractPilot(BaseModel):
 
         Database.DATABASE[COLLECTION].update_many({},
                                                   {'$set': {'schedules.$[].turns.$[tu].type': None}},
-                                                  array_filters=[{'tu.pilots': []}])
+                                                  array_filters=[{'$and': [{'tu.pilots': []},
+                                                                           {'tu.type': {'$ne': "BLOQUEADO"}}]}])
