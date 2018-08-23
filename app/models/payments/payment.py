@@ -60,8 +60,8 @@ class Card(BaseModel):
         """
         card_info = cls.parse_card(new_card)
 
-        if len(str(new_card.get("number"))) != 16:
-            raise TokenisationFailed("El numero de la tarjeta es invalido.")
+        if 15 <= len(str(new_card.get("number"))) <= 16:
+            raise TokenisationFailed("El número de la tarjeta es inválido.")
         auth = requests.get(URL)
         if auth.status_code == 200:
             token = requests.post(URL_TOKEN, params={}, data=json.dumps(card_info), headers=HEADERS)
