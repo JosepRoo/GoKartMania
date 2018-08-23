@@ -1473,7 +1473,7 @@ class AdminPayments(Resource):
                 qr_code = QRModel.create(reservation)
                 UserModel.send_confirmation_message(user, reservation, qr_code)
                 PilotModel.send_confirmation_message(reservation, qr_code)
-                LocationModel.send_confirmation_message(user, reservation, qr_code)
+                LocationModel.admins_send_reservation_info(user, reservation, qr_code)
             return Response(success=True, message="Correos de confirmacion exitosamente enviados.").json(), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
