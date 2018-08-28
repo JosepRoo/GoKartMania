@@ -156,10 +156,11 @@ class Payment(BaseModel):
         :param prices: The actual array containing the prices of a certain location
         :return: Price to be paid in terms of the turns
         """
-        if turns_size != 3:
-            return prices[prices_size - 1] * (turns_size // prices_size) + prices[turns_size % prices_size - 1]
+        subtotal = prices[prices_size - 1] * (turns_size // prices_size)
+        if turns_size % prices_size == 0:
+            return subtotal
         else:
-            return prices[prices_size - 1]
+            return subtotal + prices[turns_size % prices_size - 1]
 
     @staticmethod
     def build_etomin_params(user, payment, new_payment, amount, etomin_number) -> dict:
