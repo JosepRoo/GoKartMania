@@ -674,7 +674,7 @@ class Admin(BaseModel):
             raise AdminNotFound("El administrador con el ID dado no existe.")
 
     @staticmethod
-    def block_turns(days: list, schedules: list, turns: list) -> None:
+    def block_turns(days: list, schedules: list, turns: list, block: str) -> None:
         days = [datetime.datetime.strptime(aware_datetime, "%Y-%m-%d").astimezone(get_localzone())
                 for aware_datetime in days]
         dates = list(Database.find(DATES, {'date': {"$in": days}}))
@@ -684,5 +684,8 @@ class Admin(BaseModel):
                 if schedule.hour in schedules:
                     for turn in schedule.turns:
                         if turn.turn_number in turns:
-                            turn.type = "BLOQUEADO"
+                            if block == "True":
+                                turn.type = "BLOQUEADO"
+                            elif block == "False":
+                                turn.type = None
             updated_date.update_mongo(DATES)

@@ -1705,7 +1705,7 @@ class Logout(Resource):
 class BlockTurns(Resource):
     @staticmethod
     @Utils.admin_login_required
-    def post():
+    def post(block: str):
         """
         Allows the admin to block whole days, or just partial schedules (w/ turns)
 
@@ -1761,8 +1761,11 @@ class BlockTurns(Resource):
         """
         try:
             data = PARSER.parse_args()
-            AdminModel.block_turns(**data)
-            return Response(success=True, message="Días, horarios y turnos exitosamente bloqueados.").json(), 200
+            AdminModel.block_turns(**data, block=block)
+            if block == "True":
+                return Response(success=True, message="Días, horarios y turnos exitosamente bloqueados.").json(), 200
+            elif block == "False":
+                return Response(success=True, message="Días, horarios y turnos exitosamente desbloqueados.").json(), 200
         except AdminErrors as e:
             return Response(message=e.message).json(), 400
         except Exception as e:
