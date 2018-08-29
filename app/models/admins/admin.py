@@ -52,6 +52,16 @@ class Admin(BaseModel):
                 admin: Admin = cls(**data)
                 return admin
 
+    @staticmethod
+    def get_all_admins():
+        """
+        Retrieves all administrators, including super admins.
+        :return: Admin objects
+        """
+        data = list(Database.find(COLLECTION, {}))
+        data.extend(list(Database.find(SUPERADMINS, {})))
+        return data
+
     @classmethod
     def admin_login(cls, data):
         """

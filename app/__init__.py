@@ -8,7 +8,7 @@ from app.common.response import Response
 from app.models.reservations.constants import TIMEOUT
 from app.resources.admin import Admin, WhoReserved, PartyAvgSize, BusyHours, LicensedPilots, ReservationIncomeQty, \
     PromosDiscountQty, ReservationAvgPrice, AdminPayments, BuildReservationsReport, BuildPilotsReport, ForgotPassword, \
-    ResetPassword, Logout, UnprintedLicenses, BlockTurns
+    ResetPassword, Logout, UnprintedLicenses, BlockTurns, RetrieveAdmins
 from app.resources.date import Dates, AvailableDatesUser, AvailableSchedulesUser, AvailableDatesAdmin, \
     AvailableSchedulesAdmin
 from app.resources.location import Locations
@@ -72,6 +72,7 @@ def create_app(config_name):
 
     api.add_resource(Payments, '/user/payments/<string:user_id>')
     api.add_resource(AdminPayments, '/admin/payments', '/admin/payments/<string:user_id>')
+    api.add_resource(RetrieveAdmins, '/admin/admins')
 
     api.add_resource(Locations, '/locations', '/locations/<string:location_id>')
 
