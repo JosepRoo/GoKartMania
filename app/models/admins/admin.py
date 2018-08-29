@@ -541,7 +541,7 @@ class Admin(BaseModel):
         if pilot is None or pilot == []:
             raise PilotNotFound("El piloto con el ID dado no existe")
         updated_pilot: Pilot = Pilot(**pilot[0])
-        updated_pilot.licensed = False
+        updated_pilot.licensed = not updated_pilot.licensed
         updated_pilot.update_mongo(PILOTS)
         return updated_pilot
 
