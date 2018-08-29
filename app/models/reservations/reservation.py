@@ -19,7 +19,8 @@ when they complete the process of reservation and the payment is processed.
 
 class Reservation(BaseModel):
     def __init__(self, type, date, location=None, payment=None, turns=None, pilots=None,
-                 amount=None, license_price=None, turns_price=None, price_before_promo=None,
+                 amount=None, license_price=None, turns_price=None, price_per_race=None,
+                 total_pilots=None, total_races=None, price_before_promo=None,
                  promo_id=None, coupon_id=None, discount=None, _id=None):
         from app.models.turns.turn import Turn
         from app.models.pilots.pilot import Pilot
@@ -38,6 +39,9 @@ class Reservation(BaseModel):
         self.amount = amount
         self.license_price = license_price
         self.turns_price = turns_price
+        self.price_per_race = price_per_race
+        self.total_pilots = total_pilots
+        self.total_races = total_races
         self.price_before_promo = price_before_promo
         self.promo_id = promo_id
         self.coupon_id = coupon_id
@@ -153,11 +157,16 @@ class Reservation(BaseModel):
         else:
             prices = location.type.get('CADET')
         prices_size = len(prices)
-        turns_size = len(self.turns)
-        turns_price = Payment.calculate_turns_price(turns_size, prices_size, prices)
+
+        self.total_races = len(self.turns)
+        turns_price = Payment.calculate_turns_price(self.total_races, prices_size, prices)
+
+        self.total_pilots = len(self.pilots)
 
         self.license_price = license_price
-        self.turns_price = turns_price * len(self.pilots)
+        self.turns_price = turns_price * self.total_pilots
+        self.price_per_race = self.turns_price / self.total_races
+
         self.amount = self.license_price + self.turns_price
         self.update_mongo(COLLECTION_TEMP)
 
