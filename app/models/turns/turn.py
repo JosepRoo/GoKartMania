@@ -179,6 +179,32 @@ class Turn(BaseModel):
         raise TurnNotFound("El turno con el ID dado no existe")
 
     @classmethod
+    def get_blocked_turns(cls, date: str) -> dict:
+        """
+        Retrieves all those turns that were blocked in the given date
+        :param date: The date to look for blocked turns
+        :return: JSON with blocked schedules and turns
+        """
+        date = get_localzone().localize(datetime.datetime.strptime(date, "%Y-%m-%d"))
+        query = {'date': date}
+        result: dict = Database.find_one(COLLECTION, query)
+        if result:
+            date = DateModel(**result)
+            blocked_turns = {"schedules": list(),
+                             "turns": list()}
+            for schedule in date.schedules:
+                for turn in schedule.turns:
+                    if turn.type is not None:
+                        if "BLOQUEADO" in turn.type:
+                            if turn.turn_number not in blocked_turns.get('turns'):
+                                blocked_turns.get('turns').append(turn.turn_number)
+                            if schedule.hour not in blocked_turns.get('schedules'):
+                                blocked_turns.get('schedules').append(schedule.hour)
+            return blocked_turns
+        else:
+            raise ScheduleNotAvailable("El día que seleccionaste no se encuentra disponible.")
+
+    @classmethod
     def verify_update(cls, reservation: Reservation, updated_turn: dict, former_turn: 'Turn'):
         """
         Checks that updating the reservation is doable, given any possible changes in the collection

@@ -14,7 +14,7 @@ from app.resources.date import Dates, AvailableDatesUser, AvailableSchedulesUser
 from app.resources.location import Locations
 from app.resources.promo import Promos
 from app.resources.payment import Payments
-from app.resources.turn import Turns, RetrieveTurn, AdminChangeTurn, UserChangeTurn
+from app.resources.turn import Turns, RetrieveTurn, AdminChangeTurn, UserChangeTurn, RetrieveBlockedTurns
 from app.resources.user import User
 from app.resources.pilot import Pilots, Pilot
 from app.resources.reservation import Reservations, ReservationWithPromo, ReservationsDates, RetrieveReservation
@@ -70,6 +70,7 @@ def create_app(config_name):
                      '/user/alter_turn/<string:turn_id>/<string:date>')
     api.add_resource(AdminChangeTurn, '/user/turn/<string:reservation_id>')
     api.add_resource(BlockTurns, '/admin/block_turns/<string:block>')
+    api.add_resource(RetrieveBlockedTurns, '/admin/blocked_turns/<string:date>')
 
     api.add_resource(Payments, '/user/payments/<string:user_id>')
     api.add_resource(AdminPayments, '/admin/payments', '/admin/payments/<string:user_id>')

@@ -455,3 +455,65 @@ class UserChangeTurn(Resource):
             return Response(message=e.message).json(), 401
         except Exception as e:
             return Response.generic_response(e), 500
+
+
+class RetrieveBlockedTurns(Resource):
+    @staticmethod
+    @Utils.admin_login_required
+    def get(date):
+        """
+        Retrieves those turns that were blocked in the given date
+
+        :param date: The date to look for blocked turns
+
+        .. :quickref: Turno-Bloqueado; Turnos que han sido bloqueados en un día
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            GET /admin/blocked_turns/<string:date> HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "schedules": ["11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21"],
+                "turns": [1, 2, 3, 4, 5]
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 401 Unauthorised
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "Uso de variable de sesión no autorizada."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: blocked turns retrieved
+        :status 401: malformed
+        :status 500: internal error
+
+        :return: JSON containing those schedules with blocked turns
+        """
+        try:
+            return TurnModel.get_blocked_turns(date), 200
+        except TurnErrors as e:
+            return Response(message=e.message).json(), 404
+        except ScheduleErrors as e:
+            return Response(message=e.message).json(), 404
+        except Exception as e:
+            return Response.generic_response(e), 500
