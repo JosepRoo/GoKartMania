@@ -6,7 +6,7 @@ from app import Response
 from app.common.utils import Utils
 from app.models.dates.errors import DateErrors
 from app.models.reservations.constants import COLLECTION_TEMP, COLLECTION
-from app.models.reservations.errors import ReservationErrors
+from app.models.reservations.errors import ReservationErrors, ReservationNotFound
 from app.models.schedules.errors import ScheduleErrors
 from app.models.users.errors import UserErrors
 from app.models.turns.constants import PARSER
@@ -278,7 +278,7 @@ class AdminChangeTurn(Resource):
                         msg = {argument: "Este campo no puede ser dejado en blanco."}
                         flask_restful.abort(400, message=msg)
             reservation = ReservationModel.get_by_id(reservation_id, COLLECTION)
-            reservation_turns = [TurnModel.check_and_update(reservation, turns.get('turns')[i]).json()
+            reservation_turns = [TurnModel.check_and_update(reservation, turns.get('turns')[i], False).json()
                                  for i in range(len(turns.get('turns')))]
             return reservation_turns, 200
         except TurnNotFound as e:
@@ -289,5 +289,175 @@ class AdminChangeTurn(Resource):
             return Response(message=e.message).json(), 409
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
-        # except Exception as e:
-        #     return Response.generic_response(e), 500
+        except Exception as e:
+            return Response.generic_response(e), 500
+
+
+class UserChangeTurn(Resource):
+    @staticmethod
+    @Utils.login_required
+    def put(turn_id):
+        """
+        Updates the information of the turn with the given parameters
+
+        :param turn_id: The id of the turn to be updates
+
+        .. :quickref: Turno; Cambia el turno a otro horario, turno o posiciones
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            PUT /user/alter_turn/<string:turn_id> HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+            Content-Type: application/json
+
+            {
+                "date": "2018-08-30",
+                "schedule": "11",
+                "turn_number": "2",
+                "positions": {
+                    "pos1": "areyna@sitsolutions.org",
+                    "pos2": "lmgs.0610@gmail.com"
+                }
+            }
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "_id": "cffcb6231d5441c0ab689c0dc91f463c",
+                "schedule": "11",
+                "turn_number": "2",
+                "positions": {
+                    "pos1": "areyna@sitsolutions.org",
+                    "pos2": "lmgs.0610@gmail.com"
+                }
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 404 Not found
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "El turno con el ID dado no existe"
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: turn schedule changed
+        :status 401: malformed
+        :status 404: turn was not found
+        :status 409: turn was occupied by someone else
+        :status 500: internal error
+
+        :return: :class:`app.models.turns.turn.Turn`
+        """
+        try:
+            data = PARSER.parse_args()
+            data['_id'] = turn_id
+            try:
+                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+            except ReservationNotFound:
+                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION)
+            return TurnModel.check_and_update(reservation, data, True).json(), 200
+        except TurnErrors as e:
+            return Response(message=e.message).json(), 409
+        except ScheduleErrors as e:
+            return Response(message=e.message).json(), 409
+        except UserErrors as e:
+            return Response(message=e.message).json(), 401
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response.generic_response(e), 500
+
+    @staticmethod
+    @Utils.login_required
+    def delete(turn_id):
+        """
+        Deletes one specific turn from the current reservation
+
+        :param turn_id: The id of the turn to be updates
+
+        .. :quickref: Turno; Cambia el turno a otro horario, turno o posiciones
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            DELETE /user/alter_turn/<string:turn_id> HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": true,
+                "message": "Turno exitosamente eliminado."
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 404 Not found
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "El turno con el ID dado no existe"
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: turn schedule changed
+        :status 401: malformed
+        :status 404: turn was not found
+        :status 409: turn was occupied by someone else
+        :status 500: internal error
+
+        :return: Success message
+        """
+        try:
+            parser = reqparse.RequestParser(bundle_errors=True)
+            parser.add_argument('date',
+                                type=str,
+                                required=True,
+                                help="Este campo no puede ser dejado en blanco."
+                                )
+            data = parser.parse_args()
+            try:
+                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+                is_user = True
+            except ReservationNotFound:
+                reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION)
+                is_user = False
+            TurnModel.delete(reservation, turn_id, data, is_user)
+            return Response(success=True, message="Turno exitosamente eliminado.").json(), 200
+        except TurnErrors as e:
+            return Response(message=e.message).json(), 409
+        except ScheduleErrors as e:
+            return Response(message=e.message).json(), 409
+        except UserErrors as e:
+            return Response(message=e.message).json(), 401
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response.generic_response(e), 500

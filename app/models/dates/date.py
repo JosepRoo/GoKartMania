@@ -308,6 +308,7 @@ class Date(BaseModel):
         """
         Updates the indicated date with the schedule, turn, type, pilots, and allocation date
         Only the admin has access to this resource.
+        :param is_user: Indicates whether the operation is being held by the user or the administrator
         :param reservation_type: The type of reservation (Kids or Adults)
         :param allocation_date: The momentary date when the reservation will be occupied
         :param new_turn: The information of the turn

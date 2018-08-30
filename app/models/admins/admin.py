@@ -52,6 +52,16 @@ class Admin(BaseModel):
                 admin: Admin = cls(**data)
                 return admin
 
+    @staticmethod
+    def get_all_admins():
+        """
+        Retrieves all administrators, including super admins.
+        :return: Admin objects
+        """
+        data = list(Database.find(COLLECTION, {}))
+        data.extend(list(Database.find(SUPERADMINS, {})))
+        return data
+
     @classmethod
     def admin_login(cls, data):
         """
@@ -541,7 +551,7 @@ class Admin(BaseModel):
         if pilot is None or pilot == []:
             raise PilotNotFound("El piloto con el ID dado no existe")
         updated_pilot: Pilot = Pilot(**pilot[0])
-        updated_pilot.licensed = False
+        updated_pilot.licensed = not updated_pilot.licensed
         updated_pilot.update_mongo(PILOTS)
         return updated_pilot
 
@@ -674,7 +684,7 @@ class Admin(BaseModel):
             raise AdminNotFound("El administrador con el ID dado no existe.")
 
     @staticmethod
-    def block_turns(days: list, schedules: list, turns: list) -> None:
+    def block_turns(days: list, schedules: list, turns: list, block: str) -> None:
         days = [datetime.datetime.strptime(aware_datetime, "%Y-%m-%d").astimezone(get_localzone())
                 for aware_datetime in days]
         dates = list(Database.find(DATES, {'date': {"$in": days}}))
@@ -684,5 +694,8 @@ class Admin(BaseModel):
                 if schedule.hour in schedules:
                     for turn in schedule.turns:
                         if turn.turn_number in turns:
-                            turn.type = "BLOQUEADO"
+                            if block == "True":
+                                turn.type = "BLOQUEADO"
+                            elif block == "False":
+                                turn.type = None
             updated_date.update_mongo(DATES)

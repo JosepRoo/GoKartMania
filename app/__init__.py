@@ -8,13 +8,13 @@ from app.common.response import Response
 from app.models.reservations.constants import TIMEOUT
 from app.resources.admin import Admin, WhoReserved, PartyAvgSize, BusyHours, LicensedPilots, ReservationIncomeQty, \
     PromosDiscountQty, ReservationAvgPrice, AdminPayments, BuildReservationsReport, BuildPilotsReport, ForgotPassword, \
-    ResetPassword, Logout, UnprintedLicenses, BlockTurns
+    ResetPassword, Logout, UnprintedLicenses, BlockTurns, RetrieveAdmins
 from app.resources.date import Dates, AvailableDatesUser, AvailableSchedulesUser, AvailableDatesAdmin, \
     AvailableSchedulesAdmin
 from app.resources.location import Locations
 from app.resources.promo import Promos
 from app.resources.payment import Payments
-from app.resources.turn import Turns, RetrieveTurn, AdminChangeTurn
+from app.resources.turn import Turns, RetrieveTurn, AdminChangeTurn, UserChangeTurn
 from app.resources.user import User
 from app.resources.pilot import Pilots, Pilot
 from app.resources.reservation import Reservations, ReservationWithPromo, ReservationsDates, RetrieveReservation
@@ -66,11 +66,13 @@ def create_app(config_name):
 
     api.add_resource(Turns, '/user/turns')
     api.add_resource(RetrieveTurn, '/user/turn/<string:turn_id>')
+    api.add_resource(UserChangeTurn, '/user/alter_turn/<string:turn_id>')
     api.add_resource(AdminChangeTurn, '/user/turn/<string:reservation_id>')
-    api.add_resource(BlockTurns, '/admin/block_turns')
+    api.add_resource(BlockTurns, '/admin/block_turns/<string:block>')
 
     api.add_resource(Payments, '/user/payments/<string:user_id>')
     api.add_resource(AdminPayments, '/admin/payments', '/admin/payments/<string:user_id>')
+    api.add_resource(RetrieveAdmins, '/admin/admins')
 
     api.add_resource(Locations, '/locations', '/locations/<string:location_id>')
 

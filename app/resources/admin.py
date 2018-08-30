@@ -1705,7 +1705,7 @@ class Logout(Resource):
 class BlockTurns(Resource):
     @staticmethod
     @Utils.admin_login_required
-    def post():
+    def post(block: str):
         """
         Allows the admin to block whole days, or just partial schedules (w/ turns)
 
@@ -1761,9 +1761,78 @@ class BlockTurns(Resource):
         """
         try:
             data = PARSER.parse_args()
-            AdminModel.block_turns(**data)
-            return Response(success=True, message="Días, horarios y turnos exitosamente bloqueados.").json(), 200
+            AdminModel.block_turns(**data, block=block)
+            if block == "True":
+                return Response(success=True, message="Días, horarios y turnos exitosamente bloqueados.").json(), 200
+            elif block == "False":
+                return Response(success=True, message="Días, horarios y turnos exitosamente desbloqueados.").json(), 200
         except AdminErrors as e:
             return Response(message=e.message).json(), 400
+        except Exception as e:
+            return Response.generic_response(e), 500
+
+
+class RetrieveAdmins(Resource):
+    @staticmethod
+    @Utils.admin_login_required
+    def get():
+        """
+        Gets all the information of all the administrators
+
+        .. :quickref: Administradores; Info de los admin
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            GET /admin/admins HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            [
+                {
+                    "_id": "psanchez@sitsolutions.org",
+                    "position": 1,
+                    "allocation_date": "2018-08-01 00:26"
+                },
+                {
+                    "_id": "lmgs.0610@gmail.com",
+                    "position": 2,
+                    "allocation_date": "2018-08-01 00:26"
+                }
+            ]
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 401 Unauthorised
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "Uso de variable de sesión no autorizada."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: admins info retrieved
+        :status 401: malformed
+        :status 500: internal error
+
+        :return: Admins array
+        """
+        try:
+            return AdminModel.get_all_admins(), 200
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 401
         except Exception as e:
             return Response.generic_response(e), 500
