@@ -187,7 +187,7 @@ class Date(BaseModel):
                             busy_turns += 1
                         else:
                             availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 2
-                    elif turn.type == "BLOQUEADO":
+                    elif "BLOQUEADO" in turn.type:
                         availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 0
                         busy_turns += 1
                     # Ensures that the type of the reservation matches the turn selected
@@ -233,7 +233,7 @@ class Date(BaseModel):
                     if turn['type'] is None:
                         turn_status = 2
                     else:
-                        if turn['type'] == 'BLOQUEADO' or len(turn['pilots']) == 8:
+                        if 'BLOQUEADO' in turn['type'] or len(turn['pilots']) == 8:
                             turn_status = 0
                         else:
                             turn_status = 1

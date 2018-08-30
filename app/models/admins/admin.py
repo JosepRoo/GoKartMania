@@ -695,7 +695,13 @@ class Admin(BaseModel):
                     for turn in schedule.turns:
                         if turn.turn_number in turns:
                             if block == "True":
-                                turn.type = "BLOQUEADO"
+                                if turn.type is None:
+                                    turn.type = "BLOQUEADO"
+                                else:
+                                    turn.type = turn.type + "-BLOQUEADO"
                             elif block == "False":
-                                turn.type = None
+                                if turn.type == "-BLOQUEADO":
+                                    turn.type = None
+                                else:
+                                    turn.type = turn.type[:-len("-BLOQUEADO")]
             updated_date.update_mongo(DATES)
