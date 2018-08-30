@@ -66,7 +66,8 @@ def create_app(config_name):
 
     api.add_resource(Turns, '/user/turns')
     api.add_resource(RetrieveTurn, '/user/turn/<string:turn_id>')
-    api.add_resource(UserChangeTurn, '/user/alter_turn/<string:turn_id>')
+    api.add_resource(UserChangeTurn, '/user/alter_turn/<string:turn_id>',
+                     '/user/alter_turn/<string:turn_id>/<string:date>')
     api.add_resource(AdminChangeTurn, '/user/turn/<string:reservation_id>')
     api.add_resource(BlockTurns, '/admin/block_turns/<string:block>')
 
