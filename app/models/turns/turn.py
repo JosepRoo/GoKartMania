@@ -156,7 +156,7 @@ class Turn(BaseModel):
         raise TurnNotFound("El turno con el ID dado no existe")
 
     @classmethod
-    def delete(cls, reservation: Reservation, turn_id: str, date: dict, is_user: bool) -> None:
+    def delete(cls, reservation: Reservation, turn_id: str, date: str, is_user: bool) -> None:
         """
         Removes from the current reservation the given turn
         :param is_user: Indicates whether the operation is being held by the user or the administrator
@@ -167,7 +167,7 @@ class Turn(BaseModel):
         """
         for turn in reservation.turns:
             if turn._id == turn_id:
-                first_date = get_localzone().localize(datetime.datetime.strptime(date.get('date'), "%Y-%m-%d"))
+                first_date = get_localzone().localize(datetime.datetime.strptime(date, "%Y-%m-%d"))
                 last_date = first_date
                 query = {'date': {'$gte': first_date, '$lte': last_date}}
                 cls.remove_turn_pilots(reservation, turn, query)

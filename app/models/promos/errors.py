@@ -29,3 +29,5 @@ class PromotionExpired(PromotionErrors):
     pass
 
 
+class InvalidPromotion(PromotionErrors):
+    pass

@@ -384,10 +384,11 @@ class UserChangeTurn(Resource):
 
     @staticmethod
     @Utils.login_required
-    def delete(turn_id):
+    def delete(turn_id, date):
         """
         Deletes one specific turn from the current reservation
 
+        :param date: Date from the current reservation for the turns to be deleted
         :param turn_id: The id of the turn to be updates
 
         .. :quickref: Turno; Cambia el turno a otro horario, turno o posiciones
@@ -396,7 +397,7 @@ class UserChangeTurn(Resource):
 
         .. sourcecode:: http
 
-            DELETE /user/alter_turn/<string:turn_id> HTTP/1.1
+            DELETE /user/alter_turn/<string:turn_id>/<string:date> HTTP/1.1
             Host: gokartmania.com.mx
             Accept: application/json
 
@@ -436,20 +437,13 @@ class UserChangeTurn(Resource):
         :return: Success message
         """
         try:
-            parser = reqparse.RequestParser(bundle_errors=True)
-            parser.add_argument('date',
-                                type=str,
-                                required=True,
-                                help="Este campo no puede ser dejado en blanco."
-                                )
-            data = parser.parse_args()
             try:
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
                 is_user = True
             except ReservationNotFound:
                 reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION)
                 is_user = False
-            TurnModel.delete(reservation, turn_id, data, is_user)
+            TurnModel.delete(reservation, turn_id, date, is_user)
             return Response(success=True, message="Turno exitosamente eliminado.").json(), 200
         except TurnErrors as e:
             return Response(message=e.message).json(), 409
