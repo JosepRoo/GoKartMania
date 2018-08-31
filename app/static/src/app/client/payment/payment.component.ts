@@ -7,7 +7,8 @@ import {
   Output,
   EventEmitter,
   ElementRef,
-  ViewChild
+  ViewChild,
+  OnDestroy
 } from '@angular/core';
 import { CreditCardValidator } from 'ngx-credit-cards';
 import { DeleteTurnDialogComponent } from './delete-turn-dialog/delete-turn-dialog.component';
@@ -17,7 +18,7 @@ import { DeleteTurnDialogComponent } from './delete-turn-dialog/delete-turn-dial
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.scss']
 })
-export class PaymentComponent implements OnInit {
+export class PaymentComponent implements OnInit, OnDestroy {
   loading: Boolean = false;
   payment: FormGroup;
   promo = {
@@ -61,6 +62,12 @@ export class PaymentComponent implements OnInit {
       user_id: [],
       phone: ['', [Validators.required, Validators.pattern('[0-9]{10}') ]]
     });
+  }
+
+  ngOnDestroy(){
+    if(this.deleteTurnDialogRef){
+      this.deleteTurnDialogRef.close();
+    }
   }
 
   applyPromo() {

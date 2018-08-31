@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { AdminPilotsService } from '../services/admin-pilots.service';
 import { MatDialog, MatSort } from '@angular/material';
@@ -9,7 +9,7 @@ import { PilotDetailsDialogComponent } from './pilot-details-dialog/pilot-detail
   templateUrl: './admin-pilots.component.html',
   styleUrls: ['./admin-pilots.component.scss']
 })
-export class AdminPilotsComponent implements OnInit {
+export class AdminPilotsComponent implements OnInit, OnDestroy {
 
   pilots;
   dataSourcePilots;
@@ -36,6 +36,12 @@ export class AdminPilotsComponent implements OnInit {
       this.dataSourcePilots = new MatTableDataSource(this.pilots);
       this.dataSourcePilots.sort = this.sort;
     });
+  }
+
+  ngOnDestroy(){
+    if(this.pilotDetailsDialogRef){
+      this.pilotDetailsDialogRef.close();
+    }
   }
 
   downloadDB(){

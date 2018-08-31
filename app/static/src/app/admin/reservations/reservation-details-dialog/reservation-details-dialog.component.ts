@@ -1,5 +1,5 @@
 import { EditReservationDialogComponent } from './../edit-reservation-dialog/edit-reservation-dialog.component';
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatTableDataSource, MatDialog } from '@angular/material';
 
 @Component({
@@ -7,7 +7,7 @@ import { MAT_DIALOG_DATA, MatTableDataSource, MatDialog } from '@angular/materia
   templateUrl: './reservation-details-dialog.component.html',
   styleUrls: ['./reservation-details-dialog.component.scss']
 })
-export class ReservationDetailsDialogComponent implements OnInit {
+export class ReservationDetailsDialogComponent implements OnInit, OnDestroy {
 
   pilots;
   dataSourcePilots;
@@ -42,6 +42,12 @@ export class ReservationDetailsDialogComponent implements OnInit {
     this.turns = this.data.reservation.turns;
     this.editAvailable = this.data.parent == 'home'? 0 : 1;
     this.getPositions();
+  }
+
+  ngOnDestroy(){
+    if(this.editReservationDialogRef){
+      this.editReservationDialogRef.close();
+    }
   }
 
   getPositions(){

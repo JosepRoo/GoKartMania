@@ -31,7 +31,6 @@ export class EditAdminDialogComponent implements OnInit {
 
 
   ngOnInit() {
-    console.log(this.data);
   }
 
   changePassword(){
