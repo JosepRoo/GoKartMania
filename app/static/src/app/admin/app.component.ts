@@ -15,6 +15,7 @@ export class AdminComponent implements OnDestroy {
   private _mobileQueryListener: () => void;
 
   logOutDialogRef;
+  user;
 
   constructor(
     changeDetectorRef: ChangeDetectorRef,
@@ -26,6 +27,7 @@ export class AdminComponent implements OnDestroy {
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
     this.matIconRegistry.registerFontClassAlias('fontawesome', 'fa');
+    this.user = localStorage.getItem('user');
   }
 
   ngOnDestroy(): void {

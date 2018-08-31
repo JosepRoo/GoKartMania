@@ -13,6 +13,7 @@ import { ReservationsComponent } from './admin/reservations/reservations.compone
 import { AdminPilotsComponent } from './admin/admin-pilots/admin-pilots.component';
 import { ReservationDetailsComponent } from './admin/reservations/reservation-details/reservation-details.component';
 import { PilotsLicensesComponent } from './admin/pilots-licenses/pilots-licenses.component';
+import { AdminsComponent } from './admin/admins/admins.component';
 
 export const routes: Routes = [
   {
@@ -46,6 +47,10 @@ export const routes: Routes = [
       {
         path: 'reservations/:id',
         component: ReservationDetailsComponent
+      },
+      {
+        path: 'admins',
+        component: AdminsComponent
       },
       {
         path: '',

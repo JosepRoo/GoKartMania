@@ -6,6 +6,14 @@
 
 <br>
 
+<div *ngIf="!loading" class="row row-data justify-content-center">
+  <div class="col-8 col-sm-6">
+    <span class="tittle-banner text-left">Fecha:
+      <span class="pull-right" style="color:#B9261A;">{{reservation?.date | date: 'mediumDate'}}</span>
+    </span>
+  </div>
+</div>
+
 <div *ngIf="!loading && reservation?.license_price" class="row row-data justify-content-center">
   <div class="col-8 col-sm-6">
     <span class="tittle-banner text-left">Licencias:
@@ -28,12 +36,13 @@
   </div>
 </div>
 
-<div *ngFor="let turn of reservation?.turns">
-  <div *ngIf="!loading" class="row row-data justify-content-center">
-    <div class="col-8 col-sm-6">
-      <span class="tittle-banner text-left">Fecha:
-        <span class="pull-right" style="color:#B9261A;">{{reservation?.date | date: 'mediumDate'}}</span>
-      </span>
+<div *ngFor="let turn of reservation?.turns; let i = index">
+
+  <div *ngIf="!loading && reservation?.turns.length > 1" class="row row-data justify-content-center">
+    <div class="col-8 col-sm-6"  style="text-align: end">
+      <a (click)="deleteTurn(turn, reservation?.date)">
+        <mat-icon color="primary">delete</mat-icon>
+      </a>
     </div>
   </div>
 
@@ -43,6 +52,7 @@
         <span class="pull-right" style="color:#B9261A;">{{turn?.schedule}}:00 hrs</span>
       </span>
     </div>
+
   </div>
 
   <div *ngIf="!loading" class="row row-data justify-content-center">
@@ -53,6 +63,21 @@
     </div>
   </div>
 
+  <div *ngIf="!loading" class="row row-data justify-content-center">
+    <div class="col-8 col-sm-6">
+      <span class="tittle-banner text-left">Número de carreras:
+        <span class="pull-right" style="color:#B9261A;">{{reservation?.pilots.length}}</span>
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading" class="row row-data justify-content-center">
+    <div class="col-8 col-sm-6">
+      <span class="tittle-banner text-left">Costo por carrera:
+        <span class="pull-right" style="color:#B9261A;">{{(reservation?.turns_price/reservation?.turns.length)/reservation?.pilots.length | currency: 'MX'}}</span>
+      </span>
+    </div>
+  </div>
   <!-- <div *ngIf="!loading" class="row row-data justify-content-center">
     <div class="col-8 col-sm-6 text-center">
       <span class="tittle-banner">GOKARTS
@@ -96,12 +121,18 @@
 <br>
 
 <a *ngIf="!loading" (click)="goBack.emit({pilots: reservation.pilots, date: reservation.date})">
-  <div class="row justify-content-center justify-content-md-end">
-    <div class="col-8 col-sm-4 col-md-3 text-center">
-      <button style="width: 90%;" mat-raised-button color="primary">Agregar otra reservación</button>      
+  <div class="row justify-content-center">
+    <div class="col-8 col-sm-6 text-center">
+      <button mat-raised-button color="primary" class="btn btn-block">Agregar otra reservación</button>      
     </div>
   </div>
 </a>
+
+<div class="row justify-content-center" *ngIf="reservation?.turns.length < 3">
+  <div class="col-8 col-sm-6 text-center">
+    <span class="attention-banner"> Sabías que si reservas otra carrera el precio total sería de solamente {{reservation?.location.type.GOKART[reservation?.turns.length] | currency: 'MX'}}</span>
+  </div>
+</div>
 
 <br>
 

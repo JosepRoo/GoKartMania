@@ -1841,6 +1841,87 @@ class RetrieveAdmins(Resource):
 class AlterAdmin(Resource):
     @staticmethod
     @Utils.sudo_login_required
+    def post():
+        """
+        Allows the superadministrator to create a new admin
+
+        .. :quickref: Administrador; Crea un nuevo administrador
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            POST /admin/alter_admin HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+            Content-Type: application/json
+
+            {
+                "name": "majduarte@yahoo.com.mx",
+                "email": "Mario Alberto Jiménez",
+                "password": "gokartmania2020"
+            }
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "_id": "8a0f72ac16334dbda52908beddb0cf08",
+                "name": "majduarte@yahoo.com.mx",
+                "email": "Mario Alberto Jiménez",
+                "password": "gokartmania2020"
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 400 Bad request
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "Uso de variable de sesión no autorizada."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: admin created
+        :status 400: malformed request
+
+        :return: :class:`app.models.admins.admin.Admin`
+        """
+        parser = reqparse.RequestParser()
+        parser.add_argument('name',
+                            type=str,
+                            required=True,
+                            help="Este campo no puede ser dejado en blanco."
+                            )
+        parser.add_argument('email',
+                            type=str,
+                            required=True,
+                            help="Este campo no puede ser dejado en blanco."
+                            )
+        parser.add_argument('password',
+                            type=str,
+                            required=True,
+                            help="Este campo no puede ser dejado en blanco."
+                            )
+        data = parser.parse_args()
+        try:
+            return AdminModel.add(data).json(), 200
+        except AdminErrors as e:
+            return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response.generic_response(e), 500
+
+    @staticmethod
+    @Utils.sudo_login_required
     def put():
         """
         Allows the superadministrator to make changes to other admins

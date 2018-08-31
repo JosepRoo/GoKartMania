@@ -31,6 +31,7 @@ export class LogInComponent implements OnInit {
     if(this.logIn.valid){
       this.adminService.loginAdmin(this.logIn.getRawValue()).subscribe(
         res=>{
+          localStorage.setItem('user', res.email);
           this.location.replaceState('/');
           this.router.navigate(['admin/home']);
         },

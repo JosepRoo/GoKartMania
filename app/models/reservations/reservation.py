@@ -1,8 +1,8 @@
 from flask import session
 import datetime
-from tzlocal import get_localzone
 from bson import CodecOptions
 from app.models.baseModel import BaseModel
+from app.models.dates.constants import MEXICO_TZ
 from app.models.locations.errors import LocationNotFound
 from app.models.promos.errors import InvalidPromotion
 from app.models.promos.promotion import Promotion as PromoModel, Coupons
@@ -65,7 +65,7 @@ class Reservation(BaseModel):
         if location is None:
             raise LocationNotFound("La sucursal con este ID no fue encontrada.")
         now = datetime.datetime.now()
-        aware_datetime = get_localzone().localize(now)
+        aware_datetime = MEXICO_TZ.localize(now)
         reservation: Reservation = cls(**new_reservation, date=now)
         # print(reservation.date)
         reservation.location = LocationModel(**location)
@@ -138,7 +138,7 @@ class Reservation(BaseModel):
         """
         for temp_reservation in Database.find(COLLECTION_TEMP, {}):
             reservation = cls(**temp_reservation)
-            now = datetime.datetime.now().astimezone(get_localzone())
+            now = datetime.datetime.now().astimezone(MEXICO_TZ)
             delta = now - reservation.date
             if delta > TIMEOUT:
                 reservation.delete_from_mongo(COLLECTION_TEMP)
@@ -246,11 +246,11 @@ class Reservation(BaseModel):
         :param last_date: The end date to be accounted
         :return: Array of reservation objects
         """
-        first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
-        last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        first_date = MEXICO_TZ.localize(datetime.datetime.strptime(first_date, "%Y-%m-%d"))
+        last_date = MEXICO_TZ.localize(datetime.datetime.strptime(last_date, "%Y-%m-%d"))
         expressions = list()
         expressions.append({'$match': {'date': {'$gte': first_date, '$lte': last_date}}})
         result = list(Database.DATABASE[REAL_RESERVATIONS].with_options(
             codec_options=CodecOptions(
-                tz_aware=True, tzinfo=get_localzone())).aggregate(expressions))
+                tz_aware=True, tzinfo=MEXICO_TZ)).aggregate(expressions))
         return [cls(**reservation) for reservation in result]

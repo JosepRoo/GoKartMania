@@ -1,0 +1,29 @@
+<div class="container-fluid ">
+	<div class="alert alert-danger error" role="alert" *ngIf="error">
+		{{error}}
+	</div>
+			
+  <form [formGroup]="adminData" (ngSubmit)="editAdmin()">
+		<mat-form-field>
+		  <input matInput placeholder="Nombre completo" formControlName = "name">
+			<mat-error *ngIf="adminData.controls.name.hasError('required')">Campo requerido</mat-error>
+		</mat-form-field>
+		<mat-form-field style="padding-top:10px">
+			<input matInput placeholder="Correo" formControlName = "email">
+			<mat-error *ngIf="adminData.controls.email.hasError('required')">Campo requerido</mat-error>
+    </mat-form-field>
+    <mat-checkbox formControlName="changePassword" (change)="changePassword()">Cambiar contraseña</mat-checkbox>
+    <mat-form-field style="padding-top:10px" *ngIf="adminData.controls.changePassword.value">
+			<input matInput placeholder="Nueva contraseña" formControlName = "password" type="password">
+			<mat-error *ngIf="adminData.controls.email.hasError('required')">Campo requerido</mat-error>
+    </mat-form-field>
+    <div class="row justify-content-md-end justify-content-sm-center">
+			<div class="col-md-4 col-sm-10" style="padding-top:5px;">
+				<button mat-raised-button class="btn-block" color="primary" type="submit"> Guardar cambios </button>
+			</div>
+			<div class="col-md-4 col-sm-10" style="padding-top:5px;">
+				<button mat-raised-button class="btn-block" color="primary" mat-dialog-close> Cancelar</button>
+			</div>
+		</div>
+  </form>
+</div>

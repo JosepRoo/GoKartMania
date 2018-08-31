@@ -52,7 +52,7 @@
         <div class="row justify-content-center" style="padding-bottom: 15px">
           <div class="col-12">
             <table style="width: 100%;" mat-table matSort [dataSource]="dataSourceReservations" class="mat-elevation-z4">
-        
+
               <ng-container matColumnDef="location">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Sucursal </th>
                 <td mat-cell *matCellDef="let element" (click)="openReservationDetail(element)">
@@ -77,14 +77,14 @@
               <ng-container matColumnDef="hour">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Hora </th>
                 <td mat-cell *matCellDef="let element" (click)="openReservationDetail(element)">
-                  {{element?.turns[0].schedule}}:00 hrs
+                  {{element?.turns[0]?.schedule}}:00 hrs
                 </td>
               </ng-container>
         
               <ng-container matColumnDef="turn">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Turno </th>
                 <td mat-cell *matCellDef="let element" (click)="openReservationDetail(element)">
-                  {{element?.turns[0].turn_number}}
+                  {{element?.turns[0]?.turn_number}}
                 </td>
               </ng-container>
         
@@ -103,13 +103,68 @@
                   </button>
                 </td>
               </ng-container>
-        
+
+              <ng-container matColumnDef="delete">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element">
+                  <button mat-icon-button (click)="openDeleteReservationDialog(element)">
+                    <mat-icon color="primary">delete</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
         
               <tr mat-header-row *matHeaderRowDef="displayedColumnsReservations"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumnsReservations;"></tr>
             </table>
           </div>
         </div>
+        <br>
+        <br>
+
+        <!-- <br>
+
+
+        <div class="row justify-content-end" style="padding-bottom: 15px" *ngIf="dataSourceBlockedTurns">
+          <div class="col-12 col-sm-6 col-md-4">
+            <button class="btn btn-block" mat-raised-button color="primary" (click)="unblockTurns()">Desbloquear turnos</button>
+          </div>
+        </div>
+        <div class="row justify-content-center" style="padding-bottom: 15px" *ngIf="dataSourceBlockedTurns">
+          <div class="col-12">
+            <table style="width: 100%;" mat-table matSort [dataSource]="dataSourceBlockedTurns" class="mat-elevation-z4">
+        
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>
+                </th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-checkbox (click)="$event.stopPropagation()"
+                                (change)="$event ? selection.toggle(row) : null"
+                                [checked]="selection.isSelected(row)">
+                  </mat-checkbox>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="schedule">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Horario </th>
+                <td mat-cell *matCellDef="let element">
+                  {{element?.schedule}}
+                </td>
+              </ng-container>
+        
+
+              <ng-container matColumnDef="turn">
+                <th mat-header-cell *matHeaderCellDef> Turno </th>
+                <td mat-cell *matCellDef="let element">
+                  {{element?.turn}}
+                </td>
+              </ng-container>
+        
+        
+              <tr mat-header-row *matHeaderRowDef="displayedColumnsBlockedTurns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumnsBlockedTurns;"></tr>
+            </table>
+          </div>
+        </div> -->
     </div>
   </div>
 </div>

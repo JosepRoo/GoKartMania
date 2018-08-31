@@ -24,22 +24,12 @@
                         <mat-option [value]="'Niños'">Niño (6 - 11 años)</mat-option>
                         <mat-option [value]="'Adultos'">Adulto (mayor a 12 años)</mat-option>
                       </mat-select>
-                      <mat-error *ngIf="reservation.controls.type.hasError('required')">La categoría es necesario</mat-error>
+                      <mat-error *ngIf="reservation.controls.type.hasError('required')">La categoría es necesaria</mat-error>
                     </mat-form-field>
                   </div>
                 </div>
 
-                <!-- start add pilot button -->
-                <div *ngIf="reservation.controls.type.value" class="row justify-content-center item-list">
-                  <div class="col-11 col-sm-10 text-center" *ngIf="numbers.length > 0">
-                    <a (click)="addPilot()">
-                      <img class="img-fluid img-res" src="../assets/button-plus.png" />
-                      <span class="tittle-banner">Agregar piloto</span>
-                    </a>
-                  </div>
-                </div>
-                <!-- end add pilot button -->
-
+                    
                   <br *ngIf="error.show">
 
                   <div class="alert alert-danger error" role="alert" *ngIf="error.show">
@@ -60,7 +50,7 @@
                           <span style="color:#D92F20">0{{i+1}}</span>
                         </span>
                         <mat-form-field>
-                          <input matInput placeholder="Nombre del piloto" formControlName="name" required>
+                          <input matInput placeholder="Nombre completo del piloto" formControlName="name" required>
                           <mat-error *ngIf="pilot.controls.name.hasError('required')">El nombre es necesario</mat-error>
                         </mat-form-field>
                         <div class="row">
@@ -82,20 +72,14 @@
                       <div class="col-12">
                         <span class="tittle-data">Datos de licencia</span>
                       </div>
-                      <div class="col-12 col-sm-6 col-md-4">
-                        <mat-form-field>
-                          <input matInput placeholder="Apellido del piloto" formControlName="last_name" required>
-                          <mat-error *ngIf="pilot.controls.last_name.hasError('required')">El apellido es necesario</mat-error>
-                        </mat-form-field>
-                      </div>
-                      <div class="col-12 col-sm-6 col-md-4">
+                      <div class="col-12 col-sm-6 col-md-6">
                         <mat-form-field>
                           <input matInput placeholder="Correo electrónico del piloto" formControlName="email" required>
                           <mat-error *ngIf="pilot.controls.email.hasError('required')">El correo es necesario</mat-error>
                           <mat-error *ngIf="pilot.controls.email.errors?.email">El correo no es válido</mat-error>
                         </mat-form-field>
                       </div>
-                      <div class="col-12 col-sm-6 col-md-4">
+                      <div class="col-12 col-sm-6 col-md-6">
                         <mat-form-field>
                           <input matInput placeholder="Nickname del piloto" formControlName="nickname" required>
                           <mat-error *ngIf="pilot.controls.nickname.hasError('required')">El Nickname es necesario</mat-error>
@@ -108,6 +92,7 @@
                           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                           <mat-datepicker #picker></mat-datepicker>
                           <mat-error *ngIf="pilot.controls.birth_date.hasError('required')">La fecha de nacimiento es necesaria</mat-error>
+                          <mat-error *ngIf="pilot.controls.birth_date.hasError('AgeValidator')">No cumple con la edad necesaria para este grupo</mat-error>
                         </mat-form-field>
                       </div>
                       <div class="col-12 col-sm-6 col-md-4">
@@ -144,6 +129,10 @@
                             <div class="col-12">
                               <span class="empty-data">Nombre del piloto</span>
                             </div>
+                          </div>
+                          <div class="row" *ngIf="reservation.controls.type.value">
+                            <img class="img-fluid img-res" src="../assets/button-plus.png" />
+                            <span class="tittle-banner" style="align-self: center">Agregar piloto</span>
                           </div>
                         </div>
                       </div>
