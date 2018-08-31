@@ -701,11 +701,8 @@ class Admin(BaseModel):
 
     @staticmethod
     def block_turns(days: list, schedules: list, turns: list, block: str) -> None:
-        print("díaUno: ", Database.find_one(DATES, {}))
         days = [MEXICO_TZ.localize(datetime.datetime.strptime(aware_datetime, "%Y-%m-%d")) for aware_datetime in days]
-        print("días a bloquear: ", days)
         dates = list(Database.find(DATES, {'date': {"$in": days}}))
-        print("resultado: ", dates)
         for date in dates:
             updated_date = Date(**date)
             for schedule in updated_date.schedules:
@@ -733,7 +730,9 @@ class Admin(BaseModel):
         :return: Admin object
         """
         collection = self.get_collection(self._id)
-        self.update_util(self._id, collection, new_data)
+        self.name = new_data.get('name')
+        self.email = new_data.get('email')
+        # self.update_util(self._id, collection, new_data)
         self.set_password(new_data.get('password'))
         self.update_mongo(collection)
         return self
