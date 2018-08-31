@@ -63,7 +63,7 @@ export class AdminReservationsService {
           this.router.navigate(['/logIn']);
           return Observable.throw(e.error.message);
         }
-        if (e.status === 400) {
+        if (e.status === 400 || e.status === 409) {
           return Observable.throw(e.error.message);
         }
       });
@@ -208,5 +208,25 @@ export class AdminReservationsService {
   generateReport(startDate: string, endDate: string) {
     const url = environment.api + '/admin/build_reservations_report/' + startDate + '/' + endDate;
     window.open(url);
+  }
+
+  deleteReservation(id){
+    return this.http
+    .delete<any>(this.apiReservations + '/' + id, {
+      headers: this.headers
+    })
+    .pipe(res => {
+      return res;
+    })
+    .catch(e => {
+      if (e.status === 401) {
+        this.location.replaceState('/');
+        this.router.navigate(['/logIn']);
+        return Observable.throw(e.error.message);
+      }
+      if (e.status === 400 || e.status === 409) {
+        return Observable.throw(e.error.message);
+      }
+    });
   }
 }

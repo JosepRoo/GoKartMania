@@ -74,7 +74,7 @@
     <div class="col-11 col-sm-10 col-md-8">
       <div class="row" >
         <div class="col-11 col-sm-10 col-md-8">
-          <span class="h4" style="color:white" *ngIf="reservation.pilots.length >positions.length">Selecciona el gokart de {{pilot}}:</span>
+          <span class="h4" style="color:white" *ngIf="reservation.pilots.length >positions.length">Selecciona el Kart de {{pilot}}:</span>
         </div>
       </div>
       <div class="row" style="margin-top:20px; margin-bottom:20px;">
@@ -98,8 +98,8 @@
     <!-- start continue button -->
       <div *ngIf="availableDates && turn.controls.turn_number.value" class="row justify-content-center">
         <div class="col-11 col-sm-8 col-md-4 text-center">
-          <button #formButton style="visibility: hidden;" type="submit"></button>
-          <button (click)="submitSendTurn()" class="client" style="width: 90%;" mat-raised-button color="primary">Continuar <mat-icon style="padding-left:10px; color: white !important;">arrow_forward</mat-icon></button>
+          <!-- <button #formButton style="visibility: hidden;" type="submit"></button> -->
+          <button  class="client" style="width: 90%;" mat-raised-button color="primary" type="submit">Continuar <mat-icon style="padding-left:10px; color: white !important;">arrow_forward</mat-icon></button>
         </div>
       </div>
 

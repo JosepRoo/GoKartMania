@@ -216,9 +216,9 @@ export class TurnComponent implements OnInit {
     this.error.show = false;
   }
 
-  submitSendTurn() {
-    this.formButton.nativeElement.click();
-  }
+  // submitSendTurn() {
+  //   this.formButton.nativeElement.click();
+  // }
 
   sendTurn() {
     this.error.show = false;

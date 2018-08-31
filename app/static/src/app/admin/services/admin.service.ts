@@ -132,13 +132,14 @@ export class AdminService {
       });
   }
 
-  setLicenseAsPrinted(location,id,body){
+  blockTurns(body){
     return this.http
-      .put<any>(
-        this.apiAdmin + '/unprinted_licenses/'+ location+'/'+id,
-      {
-        headers: this.headers
-      }
+      .post<any>(
+        this.apiAdmin + '/block_turns/True',
+        body,
+        {
+          headers: this.headers
+        }
       )
       .pipe(res => {
         return res;
@@ -155,10 +156,10 @@ export class AdminService {
       });
   }
 
-  blockTurns(body){
+  unblockTurns(body){
     return this.http
       .post<any>(
-        this.apiAdmin + '/block_turns',
+        this.apiAdmin + '/block_turns/False',
         body,
         {
           headers: this.headers
@@ -192,6 +193,7 @@ export class AdminService {
       }
     )
     .pipe( res => {
+      
       return res;
     })
     .catch(e => {
@@ -218,5 +220,105 @@ export class AdminService {
     });
   }
 
-  
+  changePrintStatus(id){
+    return this.http.put<any>(this.apiAdmin+"/unprinted_licenses/Carso/"+id,null,{headers:this.headers})
+    .pipe( res => {
+      return res;
+    })
+    .catch(e => {
+      if (e.status === 401) {
+        this.location.replaceState('/');
+        this.router.navigate(['/logIn']);
+        return Observable.throw(e.error.message);
+      }
+      if (e.status === 400) {
+        return Observable.throw(e.error.message);
+      }
+    });
+  }
+
+  getAdmins(){
+    return this.http.get<any>(this.apiAdmin+"/admins",{headers:this.headers})
+    .pipe( res => {
+      return res;
+    })
+    .catch(e => {
+      if (e.status === 401) {
+        this.location.replaceState('/');
+        this.router.navigate(['/logIn']);
+        return Observable.throw(e.error.message);
+      }
+      if (e.status === 400) {
+        return Observable.throw(e.error.message);
+      }
+    });
+  }
+
+  editAdmin(body){
+    return this.http.put<any>(this.apiAdmin+"/alter_admin",body,{headers:this.headers})
+    .pipe( res => {
+      return res;
+    })
+    .catch(e => {
+      if (e.status === 401) {
+        this.location.replaceState('/');
+        this.router.navigate(['/logIn']);
+        return Observable.throw(e.error.message);
+      }
+      if (e.status === 400) {
+        return Observable.throw(e.error.message);
+      }
+    });
+  }
+
+  deleteAdmin(id){
+    return this.http.delete<any>(this.apiAdmin+"/alter_admin/"+id,{headers:this.headers})
+    .pipe( res => {
+      return res;
+    })
+    .catch(e => {
+      if (e.status === 401) {
+        this.location.replaceState('/');
+        this.router.navigate(['/logIn']);
+        return Observable.throw(e.error.message);
+      }
+      if (e.status === 400) {
+        return Observable.throw(e.error.message);
+      }
+    });
+  }
+
+  createAdmin(body){
+    return this.http.post<any>(this.apiAdmin+"/alter_admin",body,{headers:this.headers})
+    .pipe( res => {
+      return res;
+    })
+    .catch(e => {
+      if (e.status === 401) {
+        this.location.replaceState('/');
+        this.router.navigate(['/logIn']);
+        return Observable.throw(e.error.message);
+      }
+      if (e.status === 400) {
+        return Observable.throw(e.error.message);
+      }
+    }); 
+  }
+
+  getBlockedTurns(date){
+    return this.http.get<any>(this.apiAdmin+"/blocked_turns/"+date,{headers:this.headers})
+    .pipe( res => {
+      return res;
+    })
+    .catch(e => {
+      if (e.status === 401) {
+        this.location.replaceState('/');
+        this.router.navigate(['/logIn']);
+        return Observable.throw(e.error.message);
+      }
+      if (e.status === 400) {
+        return Observable.throw(e.error.message);
+      }
+    });
+  }
 }

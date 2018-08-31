@@ -17,6 +17,7 @@ export class ReservationService {
   private promosApi: string = environment.api + '/user/reservations_promo';
   private userApi: string = environment.api + '/user';
   private paymentsApi: string = environment.api + '/user/payments';
+  private turnsApi: string = environment.api + '/user/alter_turn';
   private headers = new HttpHeaders({
     'Content-Type': 'application/json',
     Accept: 'application/json'
@@ -104,6 +105,24 @@ export class ReservationService {
     return this.http
       .post<any>(this.paymentsApi + '/' + payment.user_id, payment, {
         headers: this.headers
+      })
+      .pipe(res => {
+        return res;
+      })
+      .catch(e => {
+        if (e.status === 401) {
+          return Observable.throw(e.error.message);
+        }
+        if (e.status === 400) {
+          return Observable.throw(e.error.message);
+        }
+      });
+  }
+
+  deleteTurn(id,date){
+    return this.http
+      .delete<any>(this.turnsApi + '/' + id +'/'+date,{
+        headers: this.headers,
       })
       .pipe(res => {
         return res;

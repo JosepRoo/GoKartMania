@@ -46,7 +46,7 @@
 		</mat-form-field>
 
 		<mat-form-field style="padding-top:10px" *ngIf ="promoData.controls.type.value != 'Reservación' && promoData.controls.type.value">
-			<input matInput type="number" formControlName = "value" placeholder="{{placeholder}}">
+			<input matInput type="number" formControlName = "value" placeholder="{{placeholderValue}}">
 			<mat-error *ngIf="promoData.controls.value.hasError('required')">Campo requerido</mat-error>
 		</mat-form-field>
 
@@ -55,11 +55,26 @@
 			<mat-error *ngIf="promoData.controls.password.hasError('required')">Campo requerido</mat-error>
 		</mat-form-field>
 
-		<mat-checkbox formControlName="setPrefix" (change)="changeSetPrefix()">Personalizar el nombre de los cupones</mat-checkbox>
+		<div class="row">
+			<div class="col-12">
+				<mat-checkbox formControlName="setPrefix" (change)="changeSetPrefix()">Personalizar el nombre de los cupones</mat-checkbox>
+			</div>
+		</div>
 
 		<mat-form-field style="padding-top:10px" *ngIf="promoData.controls.setPrefix.value">
 			<input matInput placeholder="Prefijo" formControlName = "prefix">
 			<mat-error *ngIf="promoData.controls.prefix.hasError('required')">Campo requerido</mat-error>
+		</mat-form-field>
+
+		<div class="row">
+			<div class="col-12">
+				<mat-checkbox formControlName="at_least" (change)="changeAtLeast()">Establecer número mínimo de carreras</mat-checkbox>
+			</div>
+		</div>
+		
+		<mat-form-field style="padding-top:10px">
+			<input matInput placeholder="{{placeholderRequiredRaces}}" formControlName = "required_races" type="number" step="1">
+			<mat-error *ngIf="promoData.controls.required_races.hasError('required')">Campo requerido</mat-error>
 		</mat-form-field>
 
 		<div class="row justify-content-md-end justify-content-sm-center">

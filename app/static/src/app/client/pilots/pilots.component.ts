@@ -12,6 +12,7 @@ import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@ang
 // Services
 import { ReservationService } from '../services/reservation.service';
 import { PilotService } from '../services/pilot.service';
+import { AgeValidator } from './age-validator';
 
 @Component({
   selector: 'app-pilots',
@@ -49,6 +50,9 @@ export class PilotsComponent implements OnInit {
       type: ['', Validators.required],
       pilots: this.formBuilder.array([]),
       _id: []
+    },
+    {
+      validator: AgeValidator.ValidateAge
     });
   }
 
@@ -82,7 +86,7 @@ export class PilotsComponent implements OnInit {
     if (isLicense) {
       return this.formBuilder.group({
         name: [null, Validators.required],
-        last_name: [null, Validators.required],
+        last_name: [],
         email: [null, [Validators.required, Validators.email]],
         birth_date: [null, [Validators.required]],
         postal_code: [
@@ -96,17 +100,17 @@ export class PilotsComponent implements OnInit {
         location: ['Carso']
       });
     }
-    return this.formBuilder.group({
-      name: [null, Validators.required],
-      last_name: [null],
-      birth_date: [null],
-      email: [null],
-      postal_code: [null],
-      nickname: [null],
-      city: [null],
-      licensed: [false],
-      buy_license: [true],
-      location: ['Carso']
+      return this.formBuilder.group({
+        name: [null, Validators.required],
+        last_name: [],
+        birth_date: [null],
+        email: [null],
+        postal_code: [null],
+        nickname: [null],
+        city: [null],
+        licensed: [false],
+        buy_license: [true],
+        location: ['Carso']
     });
   }
 
@@ -132,63 +136,62 @@ export class PilotsComponent implements OnInit {
     const ar = this.reservation.get('pilots') as FormArray;
     const len = ar.length;
     if (self.reservation.valid && len) {
+      let full_name, last_name, name;
+      for(let i=0; i<len;i++){
+        full_name = ar.value[i].name.split(" ");
+        last_name = (full_name.splice(full_name.length-1,1))[0];
+        name = full_name.join(" ");
+        ar.value[i].name=(name);
+        ar.value[i].last_name=(last_name);
+      }
       this.loading = true;
       this.error = { show: false, text: '' };
       this.reservation.setValue(this.reservation.getRawValue());
-      if (this.validateAge()) {
-        const reservationData = self.reservation.getRawValue();
-        self.reservationService.addReservation(reservationData).subscribe(
-          res => {
-            self.pilotService
-              .addPilots(self.reservation.getRawValue().pilots)
-              .subscribe(
-                // tslint:disable-next-line:no-shadowed-variable
-                res => {
-                  const data = self.reservation.getRawValue();
-                  data.pilots = res;
-                  self.pilotsSelected.emit(data);
-                },
-                error => {
-                  this.error = { show: true, text: error };
-                  this.loading = false;
-                }
-              );
-          },
-          error => {
-            this.error = { show: true, text: error };
-            this.loading = false;
-          }
-        );
-      } else {
-        this.error = {
-          show: true,
-          text:
-            'Alguno de tus pilotos no cumple con la edad necesaria para este grupo.'
-        };
-        this.loading = false;
-      }
+      const reservationData = self.reservation.getRawValue();
+      self.reservationService.addReservation(reservationData).subscribe(
+        res => {
+          self.pilotService
+            .addPilots(self.reservation.getRawValue().pilots)
+            .subscribe(
+              // tslint:disable-next-line:no-shadowed-variable
+              res => {
+                const data = self.reservation.getRawValue();
+                data.pilots = res;
+                self.pilotsSelected.emit(data);
+              },
+              error => {
+                this.error = { show: true, text: error };
+                this.loading = false;
+              }
+            );
+        },
+        error => {
+          this.error = { show: true, text: error };
+          this.loading = false;
+        }
+      );
     }
   }
 
-  validateAge() {
-    const pilots = this.reservation.get('pilots') as FormArray;
-    const res = true;
-    for (let i = 0; i < pilots.controls.length; i++) {
-      const pilot = pilots.controls[i] as FormGroup;
-      if (pilot.controls.buy_license.value || pilot.controls.licensed.value) {
-        const timeDiff = Math.abs(Date.now() - pilot.controls.birth_date.value);
-        const age = Math.floor(timeDiff / (1000 * 3600 * 24) / 365);
-        if (
-          (this.reservation.controls.type.value === 'Niños' &&
-            (age < 5 || age > 12)) ||
-          (this.reservation.controls.type.value === 'Adultos' && age < 12)
-        ) {
-          return false;
-        }
-      }
-    }
-    return res;
-  }
+  // validateAge() {
+  //   const pilots = this.reservation.get('pilots') as FormArray;
+  //   const res = true;
+  //   for (let i = 0; i < pilots.controls.length; i++) {
+  //     const pilot = pilots.controls[i] as FormGroup;
+  //     if (pilot.controls.buy_license.value || pilot.controls.licensed.value) {
+  //       const timeDiff = Math.abs(Date.now() - pilot.controls.birth_date.value);
+  //       const age = Math.floor(timeDiff / (1000 * 3600 * 24) / 365);
+  //       if (
+  //         (this.reservation.controls.type.value === 'Niños' &&
+  //           (age < 5 || age > 12)) ||
+  //         (this.reservation.controls.type.value === 'Adultos' && age < 12)
+  //       ) {
+  //         return false;
+  //       }
+  //     }
+  //   }
+  //   return res;
+  // }
 
   //  submit reservation form
   submitPilotsForm() {

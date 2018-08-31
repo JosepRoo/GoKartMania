@@ -12,30 +12,36 @@
 
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-          <td mat-cell *matCellDef="let element">{{element._id}}</td>
+          <td mat-cell *matCellDef="let element">{{element?._id}}</td>
         </ng-container>
 
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre(s) </th>
-          <td mat-cell *matCellDef="let element">{{element.name}}</td>
+          <td mat-cell *matCellDef="let element">{{element?.name}}</td>
         </ng-container>
 
         <ng-container matColumnDef="last_name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellidos</th>
-          <td mat-cell *matCellDef="let element">{{element.last_name}}</td>
+          <td mat-cell *matCellDef="let element">{{element?.last_name}}</td>
         </ng-container>
 
         <ng-container matColumnDef="printed">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Impreso </th>
           <td mat-cell *matCellDef="let element">
-             <mat-icon *ngIf="!element.licensed">check</mat-icon>
-             <mat-icon *ngIf="element.licensed">clear</mat-icon></td>
+              <button mat-icon-button *ngIf="!element?.licensed"  (click)="changePrinted(element?._id)">
+                <mat-icon matIcon svgIcon ="icn_authorize"> </mat-icon>
+              </button>
+              <button mat-icon-button *ngIf="element?.licensed"  (click)="changePrinted(element?._id)">
+                <mat-icon matIcon svgIcon ="icn_cancel"> </mat-icon>
+              </button>
+             <!-- <mat-icon *ngIf="!element.licensed">check</mat-icon>
+             <mat-icon *ngIf="element.licensed">clear</mat-icon></td> -->
         </ng-container>
 
         <ng-container matColumnDef="print_license">
           <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
           <td mat-cell *matCellDef="let element">
-            <button mat-raised-button (click)="printLicense(element)" [disabled]="!element.licensed">
+            <button mat-raised-button (click)="printLicense(element)" [disabled]="!element?.licensed">
               Imprimir licencia 
             </button>
           </td>
