@@ -138,7 +138,7 @@ class Reservation(BaseModel):
         """
         for temp_reservation in Database.find(COLLECTION_TEMP, {}):
             reservation = cls(**temp_reservation)
-            now = datetime.datetime.now().astimezone(MEXICO_TZ)
+            now = MEXICO_TZ.localize(datetime.datetime.now())
             delta = now - reservation.date
             if delta > TIMEOUT:
                 reservation.delete_from_mongo(COLLECTION_TEMP)
