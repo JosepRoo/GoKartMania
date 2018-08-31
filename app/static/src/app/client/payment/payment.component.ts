@@ -1,3 +1,4 @@
+import { MatDialog } from '@angular/material';
 import { ReservationService } from '../services/reservation.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
@@ -9,6 +10,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { CreditCardValidator } from 'ngx-credit-cards';
+import { DeleteTurnDialogComponent } from './delete-turn-dialog/delete-turn-dialog.component';
 
 @Component({
   selector: 'app-payment',
@@ -31,16 +33,16 @@ export class PaymentComponent implements OnInit {
   @ViewChild('pilotFormButton') pilotFormButton: ElementRef;
   @Output() paymentDone: EventEmitter<any> = new EventEmitter<any>();
 
+  deleteTurnDialogRef;
+
   constructor(
     private formBuilder: FormBuilder,
-    private reservationService: ReservationService
+    private reservationService: ReservationService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
-    this.reservationService.getReservation().subscribe(res => {
-      this.reservation = res;
-      this.reservation.date = new Date(this.reservation.date.replace(/-/g, '/'));
-    });
+    this.getReservation();
     this.payment = this.formBuilder.group({
       payment_method: ['', Validators.required],
       name: ['', Validators.required],
@@ -119,5 +121,28 @@ export class PaymentComponent implements OnInit {
 
   submitPayment() {
     this.pilotFormButton.nativeElement.click();
+  }
+
+  getReservation(){
+    this.reservationService.getReservation().subscribe(res => {
+      this.reservation = res;
+      this.reservation.date = new Date(this.reservation.date.replace(/-/g, '/'));
+    });
+  }
+
+  deleteTurn(turn, date){
+    this.deleteTurnDialogRef = this.dialog.open(DeleteTurnDialogComponent,{
+      width: '70%',
+      data:{
+        turn:turn,
+        date: date
+      }
+    });
+
+    this.deleteTurnDialogRef.afterClosed().subscribe(
+			()=>{
+        this.getReservation();
+      }
+		);
   }
 }

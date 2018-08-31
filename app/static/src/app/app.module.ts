@@ -76,6 +76,12 @@ import { ReservationDetailsComponent } from './admin/reservations/reservation-de
 import { ReservationDetailsDialogComponent } from './admin/reservations/reservation-details-dialog/reservation-details-dialog.component';
 import { PilotsLicensesComponent } from './admin/pilots-licenses/pilots-licenses.component';
 import { BlockTurnsDialogComponent } from './admin/reservations/block-turns-dialog/block-turns-dialog.component';
+import { DeleteTurnDialogComponent } from './client/payment/delete-turn-dialog/delete-turn-dialog.component';
+import { AdminsComponent } from './admin/admins/admins.component';
+import { EditAdminDialogComponent } from './admin/admins/edit-admin-dialog/edit-admin-dialog.component';
+import { DeleteAdminDialogComponent } from './admin/admins/delete-admindialog/delete-admindialog.component';
+import { NewAdminDialogComponent } from './admin/admins/new-admin-dialog/new-admin-dialog.component';
+import { DeleteReservationDialogComponent } from './admin/reservations/delete-reservation-dialog/delete-reservation-dialog.component';
 
 registerLocaleData(localeEs, 'es');
 
@@ -109,7 +115,13 @@ registerLocaleData(localeEs, 'es');
     ReservationDetailsComponent,
     ReservationDetailsDialogComponent,
     PilotsLicensesComponent,
-    BlockTurnsDialogComponent
+    BlockTurnsDialogComponent,
+    DeleteTurnDialogComponent,
+    AdminsComponent,
+    EditAdminDialogComponent,
+    DeleteAdminDialogComponent,
+    NewAdminDialogComponent,
+    DeleteReservationDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -162,7 +174,12 @@ registerLocaleData(localeEs, 'es');
     PromoDetailsDialogComponent,
     PilotDetailsDialogComponent,
     ReservationDetailsDialogComponent,
-    BlockTurnsDialogComponent
+    BlockTurnsDialogComponent,
+    DeleteTurnDialogComponent,
+    EditAdminDialogComponent,
+    DeleteAdminDialogComponent,
+    NewAdminDialogComponent,
+    DeleteReservationDialogComponent
   ]
 })
 export class AppModule {}

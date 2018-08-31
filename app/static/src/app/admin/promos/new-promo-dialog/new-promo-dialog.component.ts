@@ -14,7 +14,8 @@ export class NewPromoDialogComponent implements OnInit {
 	defaultDate = new Date();
 	endDateMin;
 	
-	placeholder = "";
+	placeholderValue = "";
+	placeholderRequiredRaces = "Número exacto de carreras necesarias";
 
 	error;
 	
@@ -34,7 +35,9 @@ export class NewPromoDialogComponent implements OnInit {
 			value: ['',[Validators.required]],
 			password: ['',[Validators.required]],
 			setPrefix:[],
-			prefix:[]
+			prefix:[],
+			at_least:[],
+			required_races:[Validators.required]
 		});
 	}
 
@@ -47,6 +50,14 @@ export class NewPromoDialogComponent implements OnInit {
 			this.promoData.controls.prefix.setValidators(Validators.required);
 		}else{
 			this.promoData.controls.prefix.setValidators(null);
+		}
+	}
+
+	changeAtLeast(){
+		if (this.promoData.controls.at_least.value){
+			this.placeholderRequiredRaces = "Número mínimo de carreras necesarias";
+		}else{
+			this.placeholderRequiredRaces = "Número exacto de carreras necesarias";
 		}
 	}
 
@@ -77,9 +88,9 @@ export class NewPromoDialogComponent implements OnInit {
 
 	changePlaceholder(){
 		if (this.promoData.controls.type.value == "Descuento"){
-			this.placeholder = "% de descuento";
+			this.placeholderValue = "% de descuento";
 		}else{
-			this.placeholder = "No. de carreras";
+			this.placeholderValue = "No. de carreras";
 		}
 	}
 }
