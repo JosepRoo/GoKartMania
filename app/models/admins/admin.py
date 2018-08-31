@@ -717,8 +717,10 @@ class Admin(BaseModel):
                                 else:
                                     turn.type = turn.type + "-BLOQUEADO"
                             elif block == "False":
-                                if turn.type == "BLOQUEADO":
+                                if turn.type is None or turn.type == "BLOQUEADO":
                                     turn.type = None
+                                elif turn.type == "Adultos" or turn.type == "Niños":
+                                    pass
                                 else:
                                     turn.type = turn.type[:-len("-BLOQUEADO")]
             updated_date.update_mongo(DATES)
