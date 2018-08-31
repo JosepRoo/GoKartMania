@@ -12,6 +12,16 @@ PARSER.add_argument('copies_left',
                     type=int,
                     required=False
                     )
+PARSER.add_argument('required_races',
+                    type=int,
+                    required=True,
+                    help="Este campo no puede ser dejado en blanco."
+                    )
+PARSER.add_argument('at_least',
+                    type=bool,
+                    required=True,
+                    help="Este campo no puede ser dejado en blanco."
+                    )
 PARSER.add_argument('start_date',
                     type=str,
                     required=True,

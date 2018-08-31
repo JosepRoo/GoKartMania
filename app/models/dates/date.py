@@ -187,7 +187,7 @@ class Date(BaseModel):
                             busy_turns += 1
                         else:
                             availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 2
-                    elif turn.type == "BLOQUEADO":
+                    elif "BLOQUEADO" in turn.type:
                         availability_dict[date_str][schedule.hour][turn.turn_number]['cupo'] = 0
                         busy_turns += 1
                     # Ensures that the type of the reservation matches the turn selected
@@ -233,7 +233,7 @@ class Date(BaseModel):
                     if turn['type'] is None:
                         turn_status = 2
                     else:
-                        if turn['type'] == 'BLOQUEADO' or len(turn['pilots']) == 8:
+                        if 'BLOQUEADO' in turn['type'] or len(turn['pilots']) == 8:
                             turn_status = 0
                         else:
                             turn_status = 1
@@ -308,6 +308,7 @@ class Date(BaseModel):
         """
         Updates the indicated date with the schedule, turn, type, pilots, and allocation date
         Only the admin has access to this resource.
+        :param is_user: Indicates whether the operation is being held by the user or the administrator
         :param reservation_type: The type of reservation (Kids or Adults)
         :param allocation_date: The momentary date when the reservation will be occupied
         :param new_turn: The information of the turn

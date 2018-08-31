@@ -1705,7 +1705,7 @@ class Logout(Resource):
 class BlockTurns(Resource):
     @staticmethod
     @Utils.admin_login_required
-    def post():
+    def post(block: str):
         """
         Allows the admin to block whole days, or just partial schedules (w/ turns)
 
@@ -1761,9 +1761,234 @@ class BlockTurns(Resource):
         """
         try:
             data = PARSER.parse_args()
-            AdminModel.block_turns(**data)
-            return Response(success=True, message="Días, horarios y turnos exitosamente bloqueados.").json(), 200
+            AdminModel.block_turns(**data, block=block)
+            if block == "True":
+                return Response(success=True, message="Días, horarios y turnos exitosamente bloqueados.").json(), 200
+            elif block == "False":
+                return Response(success=True, message="Días, horarios y turnos exitosamente desbloqueados.").json(), 200
         except AdminErrors as e:
             return Response(message=e.message).json(), 400
+        except Exception as e:
+            return Response.generic_response(e), 500
+
+
+class RetrieveAdmins(Resource):
+    @staticmethod
+    @Utils.admin_login_required
+    def get():
+        """
+        Gets all the information of all the administrators
+
+        .. :quickref: Administradores; Info de los admin
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            GET /admin/admins HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            [
+                {
+                    "_id": "psanchez@sitsolutions.org",
+                    "position": 1,
+                    "allocation_date": "2018-08-01 00:26"
+                },
+                {
+                    "_id": "lmgs.0610@gmail.com",
+                    "position": 2,
+                    "allocation_date": "2018-08-01 00:26"
+                }
+            ]
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 401 Unauthorised
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "Uso de variable de sesión no autorizada."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: admins info retrieved
+        :status 401: malformed
+        :status 500: internal error
+
+        :return: Admins array
+        """
+        try:
+            return AdminModel.get_all_admins(), 200
+        except ReservationErrors as e:
+            return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response.generic_response(e), 500
+
+
+class AlterAdmin(Resource):
+    @staticmethod
+    @Utils.sudo_login_required
+    def put():
+        """
+        Allows the superadministrator to make changes to other admins
+
+        .. :quickref: Administrador; Cambia la información de un admin
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            PUT /admin/alter_admin HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+            Content-Type: application/json
+
+            {
+                "_id": "8a0f72ac16334dbda52908beddb0cf08",
+                "name": "majduarte@yahoo.com.mx",
+                "email": "Mario Alberto Jiménez",
+                "password": "gokartmania2020"
+            }
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "_id": "8a0f72ac16334dbda52908beddb0cf08",
+                "name": "majduarte@yahoo.com.mx",
+                "email": "Mario Alberto Jiménez",
+                "password": "gokartmania2020"
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 400 Bad request
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "Uso de variable de sesión no autorizada."
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: admin info changes
+        :status 400: malformed request
+
+        :return: :class:`app.models.admins.admin.Admin`
+        """
+        parser = reqparse.RequestParser()
+        parser.add_argument('_id',
+                            type=str,
+                            required=True,
+                            help="Este campo no puede ser dejado en blanco."
+                            )
+        parser.add_argument('name',
+                            type=str,
+                            required=True,
+                            help="Este campo no puede ser dejado en blanco."
+                            )
+        parser.add_argument('email',
+                            type=str,
+                            required=True,
+                            help="Este campo no puede ser dejado en blanco."
+                            )
+        parser.add_argument('password',
+                            type=str,
+                            required=True,
+                            help="Este campo no puede ser dejado en blanco."
+                            )
+        data = parser.parse_args()
+        try:
+            admin: AdminModel = AdminModel.get_by_email(data['email'])
+            if admin is None:
+                return Response(success=False, message="El administrador con el correo dado no existe.").json(), 400
+            return admin.alter_data(data).json(), 200
+        except AdminErrors as e:
+            return Response(message=e.message).json(), 401
+        except Exception as e:
+            return Response.generic_response(e), 500
+
+    @staticmethod
+    @Utils.sudo_login_required
+    def delete(admin_id):
+        """
+        Deletes one specific admin from the Admin collection
+
+        :param admin_id: The id of the admin to be deleted
+
+        .. :quickref: Borrar; Elimina el administrador con el id especificado
+
+        **Example request**:
+
+        .. sourcecode:: http
+
+            DELETE /admin/alter_admin/<string:admin_id> HTTP/1.1
+            Host: gokartmania.com.mx
+            Accept: application/json
+
+        **Example response**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": true,
+                "message": "Admin exitosamente eliminado."
+            }
+
+        **Example response error**:
+
+        .. sourcecode:: http
+
+            HTTP/1.1 404 Not found
+            Vary: Accept
+            Content-Type: application/json
+
+            {
+                "success": false,
+                "message": "El admin con el ID dado no existe"
+            }
+
+        :resheader Content-Type: application/json
+        :status 200: admin deleted successfully
+        :status 401: malformed
+        :status 404: admin was not found
+        :status 500: internal error
+
+        :return: Success message
+        """
+        try:
+            collection = AdminModel.get_collection(admin_id)
+            admin: AdminModel = AdminModel.get_by_id(admin_id, collection)
+            if admin is None:
+                return Response(success=False, message="El administrador con el correo dado no existe.").json(), 400
+            admin.delete_from_mongo(collection)
+            return Response(success=True, message="Administrador exitosamente eliminado.").json(), 200
+        except AdminErrors as e:
+            return Response(message=e.message).json(), 401
         except Exception as e:
             return Response.generic_response(e), 500

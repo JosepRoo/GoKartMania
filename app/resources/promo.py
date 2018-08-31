@@ -30,6 +30,7 @@ class Promos(Resource):
 
             {
                 "existence" : 5,
+	            "copies_left": 10,
                 "start_date": "2018-08-01",
                 "end_date": "2018-08-31",
                 "type": "Descuento",

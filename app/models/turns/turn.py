@@ -78,7 +78,8 @@ class Turn(BaseModel):
                 DateModel.update_temp(allocation_date, new_turn, reservation.type, True)
                 if reservation.turns != [] and reservation.turns is not None and reservation.turns[0].turn_number == 0:
                     # Update the pre-existing turn by default
-                    return cls.update(reservation, new_turn, reservation.turns[0]._id)
+                    print("Aqui nunca deberia entrar.")
+                    return cls.update(reservation, new_turn, reservation.turns[0]._id, True)
                 else:
                     return cls.add(reservation, new_turn)
             else:
@@ -137,9 +138,10 @@ class Turn(BaseModel):
                             for position in user_positions.keys()]
 
     @classmethod
-    def check_and_update(cls, reservation: Reservation, updated_turn):
+    def check_and_update(cls, reservation: Reservation, updated_turn: dict, is_user: bool):
         """
         Updates the information from the turn with the given id.
+        :param is_user: Indicates whether the operation is being held by the user or the administrator
         :param reservation: Reservation object containing the array of turns
         :param updated_turn: The turn data to be updated to the previous one
         :return: All the turns of the current reservation, with updated data
@@ -149,11 +151,63 @@ class Turn(BaseModel):
                 allocation_date = updated_turn.get('date')
                 viable_update = cls.verify_update(reservation, updated_turn, turn)
                 if viable_update:
-                    DateModel.update_temp(allocation_date, updated_turn, reservation.type, False)
-                    return cls.update(reservation, updated_turn, updated_turn.get('_id'))
+                    DateModel.update_temp(allocation_date, updated_turn, reservation.type, is_user)
+                    return cls.update(reservation, updated_turn, updated_turn.get('_id'), is_user)
+        raise TurnNotFound("El turno con el ID dado no existe")
 
     @classmethod
-    def verify_update(cls, reservation: Reservation, updated_turn, former_turn):
+    def delete(cls, reservation: Reservation, turn_id: str, date: str, is_user: bool) -> None:
+        """
+        Removes from the current reservation the given turn
+        :param is_user: Indicates whether the operation is being held by the user or the administrator
+        :param date: Date of the turn-reservation to be deleted
+        :param reservation: Reservation object containing the array of turns
+        :param turn_id: ID of the turn to be removed
+        :return: None
+        """
+        for turn in reservation.turns:
+            if turn._id == turn_id:
+                first_date = get_localzone().localize(datetime.datetime.strptime(date, "%Y-%m-%d"))
+                last_date = first_date
+                query = {'date': {'$gte': first_date, '$lte': last_date}}
+                cls.remove_turn_pilots(reservation, turn, query)
+                reservation.turns.remove(turn)
+                if is_user:
+                    return reservation.update_mongo(COLLECTION_TEMP)
+                else:
+                    return reservation.update_mongo(REAL_RESERVATIONS)
+        raise TurnNotFound("El turno con el ID dado no existe")
+
+    @classmethod
+    def get_blocked_turns(cls, date: str) -> dict:
+        """
+        Retrieves all those turns that were blocked in the given date
+        :param date: The date to look for blocked turns
+        :return: JSON with blocked schedules and turns
+        """
+        date = get_localzone().localize(datetime.datetime.strptime(date, "%Y-%m-%d"))
+        print(date)
+        query = {'date': date}
+        result: dict = Database.find_one(COLLECTION, query)
+        print(result)
+        if result:
+            date = DateModel(**result)
+            blocked_turns = {"schedules": list(),
+                             "turns": list()}
+            for schedule in date.schedules:
+                for turn in schedule.turns:
+                    if turn.type is not None:
+                        if "BLOQUEADO" in turn.type:
+                            if turn.turn_number not in blocked_turns.get('turns'):
+                                blocked_turns.get('turns').append(turn.turn_number)
+                            if schedule.hour not in blocked_turns.get('schedules'):
+                                blocked_turns.get('schedules').append(schedule.hour)
+            return blocked_turns
+        else:
+            raise ScheduleNotAvailable("El día que seleccionaste no se encuentra disponible.")
+
+    @classmethod
+    def verify_update(cls, reservation: Reservation, updated_turn: dict, former_turn: 'Turn'):
         """
         Checks that updating the reservation is doable, given any possible changes in the collection
         :param reservation: Reservation object
@@ -161,25 +215,10 @@ class Turn(BaseModel):
         :param former_turn: Previous turn object
         :return: True if the update was successful; error message otherwise
         """
-
-        first_date = datetime.datetime.strptime(reservation.date.strftime("%Y-%m-%d"), "%Y-%m-%d")
-        last_date = first_date + datetime.timedelta(days=1)
+        first_date = get_localzone().localize(datetime.datetime.strptime(updated_turn.get('date'), "%Y-%m-%d"))
+        last_date = first_date
         query = {'date': {'$gte': first_date, '$lte': last_date}}
-        pilots = []
-        # Remove the pilots from the turn in the corresponding date-schedule
-        for date in Database.find(COLLECTION, query):
-            new_date = DateModel(**date)
-            for schedule in new_date.schedules:
-                if schedule.hour == former_turn.schedule:
-                    for turn in schedule.turns:
-                        if turn.turn_number == int(former_turn.turn_number):
-                            pilots = turn.pilots.copy()
-                            for pilot in pilots:
-                                if pilot._id in [pilot._id for pilot in reservation.pilots]:
-                                    turn.pilots.remove(pilot)
-                            if turn.pilots is None or turn.pilots == []:
-                                turn.type = None
-                            new_date.update_mongo(COLLECTION)
+        pilots = cls.remove_turn_pilots(reservation, former_turn, query)
         available_dates = DateModel.get_available_dates_user(reservation, updated_turn.get('date'), updated_turn.get('date'))
         if cls.check_date_availability(available_dates[0], updated_turn):
             available_schedules = DateModel.get_available_schedules_user(reservation, updated_turn.get('date'))
@@ -204,6 +243,30 @@ class Turn(BaseModel):
             cls.rollback_update(reservation, query, former_turn, pilots)
             raise DateNotAvailable("La fecha que seleccionaste no se encuentra disponible por el momento.")
 
+    @staticmethod
+    def remove_turn_pilots(reservation: Reservation, former_turn: 'Turn', query: dict):
+        """
+        Removes the pilots from the turn in the corresponding date-schedule
+        :param reservation: Reservation object
+        :param former_turn: Previous turn object
+        :param query: The query that pymongo will process
+        :return: Pilots of a turn
+        """
+        for date in Database.find(COLLECTION, query):
+            new_date = DateModel(**date)
+            for schedule in new_date.schedules:
+                if schedule.hour == former_turn.schedule:
+                    for turn in schedule.turns:
+                        if turn.turn_number == int(former_turn.turn_number):
+                            pilots = turn.pilots.copy()
+                            for pilot in pilots:
+                                if pilot._id in [pilot._id for pilot in reservation.pilots]:
+                                    turn.pilots.remove(pilot)
+                            if turn.pilots is None or turn.pilots == []:
+                                turn.type = None
+                            new_date.update_mongo(COLLECTION)
+                            return pilots
+
     @classmethod
     def remove_allocation_dates(cls, reservation: Reservation, current_turn) -> None:
         """
@@ -227,13 +290,14 @@ class Turn(BaseModel):
         new_date.update_mongo(COLLECTION)
 
     @classmethod
-    def update(cls, reservation: Reservation, updated_turn, turn_id) -> dict:
+    def update(cls, reservation: Reservation, updated_turn, turn_id, is_user: bool) -> 'Turn':
         """
-        Updates the information from the turn with the given id.
+        Updates the information from the turn with the given id..
+        :param is_user: Indicates whether the operation is being held by the user or the administrator
         :param reservation: Reservation object containing the array of turns
         :param updated_turn: The turn data to be updated to the previous one
         :param turn_id: the ID of the turn to be updated
-        :return: All the turns of the current reservation, with updated data
+        :return: The object turn with updated data
         """
         for turn in reservation.turns:
             if turn._id == turn_id:
@@ -243,8 +307,11 @@ class Turn(BaseModel):
                 reservation.date = aware_datetime
                 reservation.turns.remove(turn)
                 reservation.turns.append(new_turn)
-                reservation.update_mongo(REAL_RESERVATIONS)
-                return turn
+                if is_user:
+                    reservation.update_mongo(COLLECTION_TEMP)
+                else:
+                    reservation.update_mongo(REAL_RESERVATIONS)
+                return new_turn
         raise TurnNotFound("El piloto con el ID dado no existe")
 
     @staticmethod
@@ -257,7 +324,7 @@ class Turn(BaseModel):
                         if turn.turn_number == int(former_turn.turn_number):
                             for pilot in pilots:
                                 turn.pilots.append(pilot)
-                            if turn.pilots is None or turn.pilots == []:
+                            if turn.type is None or turn.pilots is None or turn.pilots == []:
                                 turn.type = reservation.type
                             new_date.update_mongo(COLLECTION)
 

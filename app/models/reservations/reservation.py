@@ -4,6 +4,7 @@ from tzlocal import get_localzone
 from bson import CodecOptions
 from app.models.baseModel import BaseModel
 from app.models.locations.errors import LocationNotFound
+from app.models.promos.errors import InvalidPromotion
 from app.models.promos.promotion import Promotion as PromoModel, Coupons
 from app.common.database import Database
 from app.models.reservations.constants import COLLECTION_TEMP, TIMEOUT, COLLECTION as REAL_RESERVATIONS
@@ -19,7 +20,8 @@ when they complete the process of reservation and the payment is processed.
 
 class Reservation(BaseModel):
     def __init__(self, type, date, location=None, payment=None, turns=None, pilots=None,
-                 amount=None, license_price=None, turns_price=None, price_before_promo=None,
+                 amount=None, license_price=None, turns_price=None, price_per_race=None,
+                 total_pilots=None, total_races=None, price_before_promo=None,
                  promo_id=None, coupon_id=None, discount=None, _id=None):
         from app.models.turns.turn import Turn
         from app.models.pilots.pilot import Pilot
@@ -38,6 +40,9 @@ class Reservation(BaseModel):
         self.amount = amount
         self.license_price = license_price
         self.turns_price = turns_price
+        self.price_per_race = price_per_race
+        self.total_pilots = total_pilots
+        self.total_races = total_races
         self.price_before_promo = price_before_promo
         self.promo_id = promo_id
         self.coupon_id = coupon_id
@@ -153,11 +158,16 @@ class Reservation(BaseModel):
         else:
             prices = location.type.get('CADET')
         prices_size = len(prices)
-        turns_size = len(self.turns)
-        turns_price = Payment.calculate_turns_price(turns_size, prices_size, prices)
+
+        self.total_races = len(self.turns)
+        self.total_pilots = len(self.pilots)
+
+        turns_price = Payment.calculate_turns_price(self.total_races, self.total_pilots, prices_size, prices)
 
         self.license_price = license_price
-        self.turns_price = turns_price * len(self.pilots)
+        self.turns_price = turns_price
+        self.price_per_race = self.turns_price / self.total_races / self.total_pilots
+
         self.amount = self.license_price + self.turns_price
         self.update_mongo(COLLECTION_TEMP)
 
@@ -187,32 +197,45 @@ class Reservation(BaseModel):
             prices = location.type.get('CADET')
         prices_size = len(prices)
         turns_size = len(self.turns)
-        turns_price = Payment.calculate_turns_price(turns_size, prices_size, prices)
-        self.price_before_promo = license_price + turns_price
+        pilots_size = len(self.pilots)
+        turns_price = Payment.calculate_turns_price(turns_size, pilots_size, prices_size, prices)
+        self.price_before_promo = self.amount
+
+        # Ensure that the current reservation meets the promotion requirements
+        if promo.at_least:
+            if turns_size < promo.required_races:
+                raise InvalidPromotion("Esta promoción solo es válida para reservaciones con al menos "
+                                       f"{promo.required_races} turnos.")
+        else:
+            if turns_size != promo.required_races:
+                raise InvalidPromotion("Esta promoción solo es válida para reservaciones con exactamente "
+                                       f"{promo.required_races} turnos.")
+
         # Decreases the number of races to be paid
         if promotion.get('promo').get('type') == 'Carreras':
             turns_size -= promotion.get('promo').get('value')
-            former_turns_price = turns_price
+            former_turns_price = self.amount
             if turns_size > 0:
-                turns_price = Payment.calculate_turns_price(turns_size, prices_size, prices)
+                turns_price = Payment.calculate_turns_price(turns_size, pilots_size, prices_size, prices)
                 self.discount = former_turns_price - turns_price
             else:
                 turns_price = 0
                 self.discount = former_turns_price - turns_price
-        amount = license_price + turns_price
+        amount = self.price_before_promo
         # Decreases from the total amount the discount value
         if promotion.get('promo').get('type') == 'Descuento':
             self.discount = amount * (promotion.get('promo').get('value') / 100)
-            amount -= self.discount
+            turns_price -= self.discount
         # Sets the total amount to be paid to 0
         elif promotion.get('promo').get('type') == 'Reservación':
-            self.discount = amount
-            amount = 0
+            self.discount = self.turns_price
+            turns_price = 0
         promo.update_mongo(PROMO_COLLECTION)
         self.license_price = license_price
         self.turns_price = turns_price
-        self.amount = amount
+        self.price_per_race = self.turns_price / self.total_races / self.total_pilots
         self.update_mongo(COLLECTION_TEMP)
+        self.amount = self.license_price + self.turns_price
         return self
 
     @classmethod

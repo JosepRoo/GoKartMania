@@ -148,18 +148,20 @@ class Payment(BaseModel):
                                                       reservation, promo, coupon, user)
 
     @staticmethod
-    def calculate_turns_price(turns_size, prices_size, prices) -> int:
+    def calculate_turns_price(turns_size, pilots_size, prices_size, prices) -> int:
         """
         Calculates the total price of the turns depending on how many turns were selected, and the location
+        :param pilots_size: Total of pilots in the reservation
         :param turns_size: Total turns selected
         :param prices_size: The length of the array of prices of a certain location
         :param prices: The actual array containing the prices of a certain location
         :return: Price to be paid in terms of the turns
         """
-        if turns_size != 3:
-            return prices[prices_size - 1] * (turns_size // prices_size) + prices[turns_size % prices_size - 1]
+        subtotal = prices[prices_size - 1] * (turns_size // prices_size)
+        if turns_size % prices_size == 0:
+            return subtotal * pilots_size
         else:
-            return prices[prices_size - 1]
+            return (subtotal + prices[turns_size % prices_size - 1]) * pilots_size
 
     @staticmethod
     def build_etomin_params(user, payment, new_payment, amount, etomin_number) -> dict:

@@ -21,6 +21,7 @@ from app.models.emails.email import Email
 from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.promos.promotion import Promotion
 from app.models.reservations.errors import ReservationNotFound
+from app.models.users.errors import UserNotFound
 from config import basedir
 
 """
@@ -51,6 +52,16 @@ class Admin(BaseModel):
             if data is not None:
                 admin: Admin = cls(**data)
                 return admin
+
+    @staticmethod
+    def get_all_admins():
+        """
+        Retrieves all administrators, including super admins.
+        :return: Admin objects
+        """
+        data = list(Database.find(COLLECTION, {}))
+        data.extend(list(Database.find(SUPERADMINS, {})))
+        return data
 
     @classmethod
     def admin_login(cls, data):
@@ -541,7 +552,7 @@ class Admin(BaseModel):
         if pilot is None or pilot == []:
             raise PilotNotFound("El piloto con el ID dado no existe")
         updated_pilot: Pilot = Pilot(**pilot[0])
-        updated_pilot.licensed = False
+        updated_pilot.licensed = not updated_pilot.licensed
         updated_pilot.update_mongo(PILOTS)
         return updated_pilot
 
@@ -673,8 +684,25 @@ class Admin(BaseModel):
                 return admin_obj
             raise AdminNotFound("El administrador con el ID dado no existe.")
 
+    @classmethod
+    def get_collection(cls, _id):
+        """
+        Retrieves the admin object with the given id, or raises an exception if that admin was not found
+        :param _id: ID of the admin to find
+        :param collection: Contains all the admins or super_admins
+        :return: Admin object
+        """
+        admin = Database.find_one(COLLECTION, {'_id': _id})
+        if admin:
+            return COLLECTION
+        else:
+            admin = Database.find_one(SUPERADMINS, {'_id': _id})
+            if admin:
+                return SUPERADMINS
+            raise AdminNotFound("El administrador con el ID dado no existe.")
+
     @staticmethod
-    def block_turns(days: list, schedules: list, turns: list) -> None:
+    def block_turns(days: list, schedules: list, turns: list, block: str) -> None:
         days = [datetime.datetime.strptime(aware_datetime, "%Y-%m-%d").astimezone(get_localzone())
                 for aware_datetime in days]
         dates = list(Database.find(DATES, {'date': {"$in": days}}))
@@ -684,5 +712,26 @@ class Admin(BaseModel):
                 if schedule.hour in schedules:
                     for turn in schedule.turns:
                         if turn.turn_number in turns:
-                            turn.type = "BLOQUEADO"
+                            if block == "True":
+                                if turn.type is None:
+                                    turn.type = "BLOQUEADO"
+                                else:
+                                    turn.type = turn.type + "-BLOQUEADO"
+                            elif block == "False":
+                                if turn.type == "-BLOQUEADO":
+                                    turn.type = None
+                                else:
+                                    turn.type = turn.type[:-len("-BLOQUEADO")]
             updated_date.update_mongo(DATES)
+
+    def alter_data(self, new_data):
+        """
+        Modifies the information of an Admin object
+        :param new_data: the information to modify
+        :return: Admin object
+        """
+        collection = self.get_collection(self._id)
+        self.update_util(self._id, collection, new_data)
+        self.set_password(new_data.get('password'))
+        self.update_mongo(collection)
+        return self

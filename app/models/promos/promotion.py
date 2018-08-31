@@ -60,12 +60,14 @@ class Coupons(BaseModel):
 
 
 class Promotion(BaseModel):
-    def __init__(self, existence, start_date, end_date, type, value, creator=None, authoriser=None, authorised=False,
-                 description=None, created_date=None, coupons=None, _id=None):
+    def __init__(self, existence, start_date, end_date, required_races, at_least, type, value, creator=None,
+                 authoriser=None, authorised=False, description=None, created_date=None, coupons=None, _id=None):
         super().__init__(_id)
         self.existence = existence
         self.start_date = start_date
         self.end_date = end_date
+        self.required_races = required_races
+        self.at_least = at_least
         self.type = type
         self.authoriser = authoriser
         self.creator = creator
@@ -76,14 +78,13 @@ class Promotion(BaseModel):
         self.coupons = [Coupons(**coupon) for coupon in coupons] if coupons is not None else list()
 
     @classmethod
-    def add(cls, new_promo):
+    def add(cls, new_promo: dict):
         """
         Adds a new promotion to the Promos Collection with the given specifications
         :param new_promo: JSON object with the promo information
         :return: Promotion object
         """
         from app.models.admins.admin import Admin as AdminModel
-
         if new_promo.get('type') != "Descuento" and new_promo.get('type') != "Carreras" \
                 and new_promo.get('type') != "Reservación":
             raise WrongPromotionType(
@@ -148,7 +149,7 @@ class Promotion(BaseModel):
         :param promo_id: The ID of the coupon to be found
         :return: Dictionary with the promo object and the coupon document, or Promo error
         """
-        for promo in Database.DATABASE['promos'].find({'type': {'$regex': promo_id[:4].title()}}):
+        for promo in Database.DATABASE['promos'].find({'type': {'$regex': promo_id[-10:-6].title()}}):
             coupon = list(filter(lambda c: c['_id'] == promo_id, promo.get('coupons')))
             if coupon:
                 authorised = promo.get('authorised')
