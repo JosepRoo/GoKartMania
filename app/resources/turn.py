@@ -85,6 +85,7 @@ class Turns(Resource):
         try:
             data = PARSER.parse_args()
             reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+            ReservationModel.remove_temporal_reservations()
             return TurnModel.check_and_add(reservation, data).json(), 200
         except TurnErrors as e:
             return Response(message=e.message).json(), 409
