@@ -2,7 +2,8 @@ import os
 
 import pymongo
 from bson import CodecOptions
-from tzlocal import get_localzone
+
+from app.models.dates.constants import MEXICO_TZ
 
 __author__ = 'richogtz'
 
@@ -32,13 +33,13 @@ class Database(object):
     def find(collection, query):
         return Database.DATABASE[collection].with_options(
                     codec_options=CodecOptions(
-                        tz_aware=True, tzinfo=get_localzone())).find(query)
+                        tz_aware=True, tzinfo=MEXICO_TZ)).find(query)
 
     @staticmethod
     def find_one(collection, query):
         return Database.DATABASE[collection].with_options(
                     codec_options=CodecOptions(
-                        tz_aware=True, tzinfo=get_localzone())).find_one(query)
+                        tz_aware=True, tzinfo=MEXICO_TZ)).find_one(query)
 
     @staticmethod
     def update(collection, query, data):
