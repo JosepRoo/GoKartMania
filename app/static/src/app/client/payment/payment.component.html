@@ -38,7 +38,7 @@
 
 <div *ngFor="let turn of reservation?.turns; let i = index">
 
-  <div *ngIf="!loading" class="row row-data justify-content-center">
+  <div *ngIf="!loading && reservation?.turns.length > 1" class="row row-data justify-content-center">
     <div class="col-8 col-sm-6"  style="text-align: end">
       <a (click)="deleteTurn(turn, reservation?.date)">
         <mat-icon color="primary">delete</mat-icon>
@@ -130,7 +130,7 @@
 
 <div class="row justify-content-center" *ngIf="reservation?.turns.length < 3">
   <div class="col-8 col-sm-6 text-center">
-    <span class="attention-banner"> Sabías que si reservas otra carrera el precio es de {{reservation?.location.type.GOKART[reservation?.turns.length]}}</span>
+    <span class="attention-banner"> Sabías que si reservas otra carrera el precio total sería de solamente {{reservation?.location.type.GOKART[reservation?.turns.length] | currency}}</span>
   </div>
 </div>
 
