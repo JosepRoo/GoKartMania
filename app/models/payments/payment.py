@@ -4,8 +4,7 @@ import json
 import datetime
 
 from flask import session
-from tzlocal import get_localzone
-
+from app.models.dates.constants import MEXICO_TZ
 from app.models.promos.errors import PromotionUsed
 from app.models.promos.promotion import Promotion as PromoModel
 from app.models.promos.promotion import Coupons as CouponsModel
@@ -213,7 +212,7 @@ class Payment(BaseModel):
         payment.status = "APROBADO"
         payment.amount = amount
         payment.license_price = license_price
-        payment.date = datetime.datetime.now().astimezone(get_localzone())
+        payment.date = datetime.datetime.now().astimezone(MEXICO_TZ)
         if promo:
             # Cambiar el status de la promoción utilizada
             for c in promo.coupons:
@@ -231,7 +230,7 @@ class Payment(BaseModel):
             payment.promo = promo
         reservation.payment = payment
         if session.get('reservation_date') != datetime.datetime.strftime(reservation.date, "%Y-%m-%d"):
-            aware_datetime = get_localzone().localize(datetime.datetime.strptime(session.get('reservation_date'), "%Y-%m-%d"))
+            aware_datetime = MEXICO_TZ.localize(datetime.datetime.strptime(session.get('reservation_date'), "%Y-%m-%d"))
             reservation.date = aware_datetime
         # print(reservation.date)
         for pilot in reservation.pilots:
