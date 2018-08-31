@@ -21,6 +21,7 @@ from app.models.emails.email import Email
 from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.promos.promotion import Promotion
 from app.models.reservations.errors import ReservationNotFound
+from app.models.users.errors import UserNotFound
 from config import basedir
 
 """
@@ -683,6 +684,23 @@ class Admin(BaseModel):
                 return admin_obj
             raise AdminNotFound("El administrador con el ID dado no existe.")
 
+    @classmethod
+    def get_collection(cls, _id):
+        """
+        Retrieves the admin object with the given id, or raises an exception if that admin was not found
+        :param _id: ID of the admin to find
+        :param collection: Contains all the admins or super_admins
+        :return: Admin object
+        """
+        admin = Database.find_one(COLLECTION, {'_id': _id})
+        if admin:
+            return COLLECTION
+        else:
+            admin = Database.find_one(SUPERADMINS, {'_id': _id})
+            if admin:
+                return SUPERADMINS
+            raise AdminNotFound("El administrador con el ID dado no existe.")
+
     @staticmethod
     def block_turns(days: list, schedules: list, turns: list, block: str) -> None:
         days = [datetime.datetime.strptime(aware_datetime, "%Y-%m-%d").astimezone(get_localzone())
@@ -705,3 +723,15 @@ class Admin(BaseModel):
                                 else:
                                     turn.type = turn.type[:-len("-BLOQUEADO")]
             updated_date.update_mongo(DATES)
+
+    def alter_data(self, new_data):
+        """
+        Modifies the information of an Admin object
+        :param new_data: the information to modify
+        :return: Admin object
+        """
+        collection = self.get_collection(self._id)
+        self.update_util(self._id, collection, new_data)
+        self.set_password(new_data.get('password'))
+        self.update_mongo(collection)
+        return self
