@@ -184,10 +184,8 @@ class Turn(BaseModel):
         :return: JSON with blocked schedules and turns
         """
         date = MEXICO_TZ.localize(datetime.datetime.strptime(date, "%Y-%m-%d"))
-        print(date)
         query = {'date': date}
         result: dict = Database.find_one(COLLECTION, query)
-        print(result)
         if result:
             date = DateModel(**result)
             blocked_turns = {"schedules": list(),
