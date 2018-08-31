@@ -702,8 +702,7 @@ class Admin(BaseModel):
     @staticmethod
     def block_turns(days: list, schedules: list, turns: list, block: str) -> None:
         print("díaUno: ", Database.find_one(DATES, {}))
-        days = [datetime.datetime.strptime(aware_datetime, "%Y-%m-%d").astimezone(MEXICO_TZ)
-                for aware_datetime in days]
+        days = [MEXICO_TZ.localize(datetime.datetime.strptime(aware_datetime, "%Y-%m-%d")) for aware_datetime in days]
         print("días a bloquear: ", days)
         dates = list(Database.find(DATES, {'date': {"$in": days}}))
         print("resultado: ", dates)
