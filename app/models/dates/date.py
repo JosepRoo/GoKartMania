@@ -1,11 +1,10 @@
 from app.common.database import Database
 from app.models.baseModel import BaseModel
-from app.models.dates.constants import COLLECTION
+from app.models.dates.constants import COLLECTION, MEXICO_TZ
 import datetime
 from random import randint, choice
 from app.models.reservations.reservation import Reservation
 import calendar
-from tzlocal import get_localzone
 
 """
 This is the date model object which will be used to insert new available dates into the database, 
@@ -29,7 +28,7 @@ class Date(BaseModel):
         :return: A brand new datetime
         """
         from app.models.schedules.schedule import Schedule as ScheduleModel
-        aware_datetime = get_localzone().localize(datetime.datetime(new_date.get('year'), new_date.get('month'), day))
+        aware_datetime = MEXICO_TZ.localize(datetime.datetime(new_date.get('year'), new_date.get('month'), day))
         new_day: Date = cls(date=aware_datetime, schedules=[])
         for i in range(11, 22):
             ScheduleModel.add(new_day, {'hour': f'{i}', 'turns': []})
@@ -44,8 +43,8 @@ class Date(BaseModel):
         :param last_date: The end date in range
         :return: JSON object with dates in range
         """
-        first_date = get_localzone().localize(datetime.datetime.strptime(first_date, "%Y-%m-%d"))
-        last_date = get_localzone().localize(datetime.datetime.strptime(last_date, "%Y-%m-%d"))
+        first_date = MEXICO_TZ.localize(datetime.datetime.strptime(first_date, "%Y-%m-%d"))
+        last_date = MEXICO_TZ.localize(datetime.datetime.strptime(last_date, "%Y-%m-%d"))
         dates = []
         query = {'date': {'$gte': first_date, '$lte': last_date}}
         for date in Database.find(COLLECTION, query):
@@ -92,7 +91,7 @@ class Date(BaseModel):
         availability_arr = []
         for date in availability:
             availability[date].pop('cupo')
-            today = datetime.datetime.now().astimezone(get_localzone())
+            today = datetime.datetime.now().astimezone(MEXICO_TZ)
             reservation_date = datetime.datetime.strptime(date, "%Y-%m-%d")
             for schedule in availability[date]:
                 if today.strftime("%Y-%m-%d") == reservation_date.strftime("%Y-%m-%d"):
@@ -141,8 +140,8 @@ class Date(BaseModel):
         :param last_date: The end date in range
         :return: JSON object with dates, schedules, turns, and positions in the specified range, with their status
         """
-        first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
-        last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        first_date = MEXICO_TZ.localize(datetime.datetime.strptime(first_date, "%Y-%m-%d"))
+        last_date = MEXICO_TZ.localize(datetime.datetime.strptime(last_date, "%Y-%m-%d"))
         query = {'date': {'$gte': first_date, '$lte': last_date}}
         total_pilots = len(reservation.pilots)
         availability_dict = {}
@@ -275,8 +274,8 @@ class Date(BaseModel):
         :param last_date: The end date in range
         :return: None
         """
-        first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
-        last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        first_date = MEXICO_TZ.localize(datetime.datetime.strptime(first_date, "%Y-%m-%d"))
+        last_date = MEXICO_TZ.localize(datetime.datetime.strptime(last_date, "%Y-%m-%d"))
         query = {'date': {'$gte': first_date, '$lte': last_date}}
         from app.models.pilots.pilot import AbstractPilot
         for date in Database.find(COLLECTION, query):
@@ -315,8 +314,8 @@ class Date(BaseModel):
         :return: None
         """
         from app.models.pilots.pilot import AbstractPilot
-        first_date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d")
-        last_date = datetime.datetime.strptime(allocation_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        first_date = MEXICO_TZ.localize(datetime.datetime.strptime(allocation_date, "%Y-%m-%d"))
+        last_date = MEXICO_TZ.localize(datetime.datetime.strptime(allocation_date, "%Y-%m-%d"))
         query = {'date': {'$gte': first_date, '$lte': last_date}}
         updated_date = cls(**Database.find(COLLECTION, query)[0])
         for schedule in updated_date.schedules:
@@ -324,7 +323,7 @@ class Date(BaseModel):
                 turn_number = int(new_turn.get('turn_number'))
                 for position in new_turn.get('positions'):
                     position_num = (int(position[-1]))
-                    now = datetime.datetime.now().astimezone(get_localzone())  # + datetime.timedelta(days=3)
+                    now = datetime.datetime.now().astimezone(MEXICO_TZ)
                     if is_user:
                         AbstractPilot.add(schedule.turns[turn_number - 1],
                                           {'_id': new_turn.get('positions').get(position),

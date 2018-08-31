@@ -2,14 +2,12 @@ import datetime
 import os
 
 from flask import session
-from tzlocal import get_localzone
-
 from app import Database
 from app.common.utils import Utils
 from app.models.admins.errors import InvalidEmail, InvalidLogin, AdminNotFound, ReportFailed
 from app.models.baseModel import BaseModel
 from app.models.admins.constants import COLLECTION, SUPERADMINS
-from app.models.dates.constants import COLLECTION as DATES
+from app.models.dates.constants import COLLECTION as DATES, MEXICO_TZ
 from app.models.pilots.errors import PilotNotFound
 from app.models.pilots.pilot import Pilot
 from app.models.recoveries.errors import UnableToRecoverPassword
@@ -564,8 +562,8 @@ class Admin(BaseModel):
         :param last_date: The end date to be accounted
         :return: The total income and quantity of all reservations
         """
-        first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
-        last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        first_date = MEXICO_TZ.localize(datetime.datetime.strptime(first_date, "%Y-%m-%d"))
+        last_date = MEXICO_TZ.localize(datetime.datetime.strptime(last_date, "%Y-%m-%d"))
         expressions = list()
         expressions.append({'$match': {'date': {'$gte': first_date, '$lte': last_date}}})
         expressions.append({"$project": {"payment_total": "$payment.amount"}})
@@ -595,8 +593,8 @@ class Admin(BaseModel):
         :param last_date: The end date to be accounted
         :return: The total amount and quantity of all promos
         """
-        first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
-        last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        first_date = MEXICO_TZ.localize(datetime.datetime.strptime(first_date, "%Y-%m-%d"))
+        last_date = MEXICO_TZ.localize(datetime.datetime.strptime(last_date, "%Y-%m-%d"))
         expressions = list()
         expressions.append({'$match': {'date': {'$gte': first_date, '$lte': last_date}}})
         expressions.append({"$match": {"discount": {"$ne": None}}})
@@ -612,8 +610,8 @@ class Admin(BaseModel):
         :param last_date: The end date to be accounted
         :return: A report with the reservations summary
         """
-        first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
-        last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+        first_date = MEXICO_TZ.localize(datetime.datetime.strptime(first_date, "%Y-%m-%d"))
+        last_date = MEXICO_TZ.localize(datetime.datetime.strptime(last_date, "%Y-%m-%d"))
         expressions = list()
         expressions.append({'$match': {'date': {'$gte': first_date, '$lte': last_date}}})
         expressions.append({"$sort": {"date": 1}})
@@ -703,7 +701,7 @@ class Admin(BaseModel):
 
     @staticmethod
     def block_turns(days: list, schedules: list, turns: list, block: str) -> None:
-        days = [datetime.datetime.strptime(aware_datetime, "%Y-%m-%d").astimezone(get_localzone())
+        days = [datetime.datetime.strptime(aware_datetime, "%Y-%m-%d").astimezone(MEXICO_TZ)
                 for aware_datetime in days]
         dates = list(Database.find(DATES, {'date': {"$in": days}}))
         for date in dates:
@@ -713,12 +711,14 @@ class Admin(BaseModel):
                     for turn in schedule.turns:
                         if turn.turn_number in turns:
                             if block == "True":
-                                if turn.type is None:
+                                if turn.type is None or turn.type == "BLOQUEADO":
                                     turn.type = "BLOQUEADO"
+                                elif "-BLOQUEADO" in turn.type:
+                                    pass
                                 else:
                                     turn.type = turn.type + "-BLOQUEADO"
                             elif block == "False":
-                                if turn.type == "-BLOQUEADO":
+                                if turn.type == "BLOQUEADO":
                                     turn.type = None
                                 else:
                                     turn.type = turn.type[:-len("-BLOQUEADO")]

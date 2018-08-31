@@ -1,11 +1,9 @@
 import datetime
 
 from flask import session
-from tzlocal import get_localzone
-
 from app.common.database import Database
 from app.models.baseModel import BaseModel
-from app.models.dates.constants import COLLECTION
+from app.models.dates.constants import COLLECTION, MEXICO_TZ
 from app.models.dates.errors import DateNotAvailable
 from app.models.reservations.constants import COLLECTION_TEMP, COLLECTION as REAL_RESERVATIONS
 from app.models.reservations.reservation import Reservation
@@ -105,7 +103,7 @@ class Turn(BaseModel):
         :param new_turn: Turn information, such as the schedule
         :return: 0 or 1, depending the status of the schedule
         """
-        today = datetime.datetime.now().astimezone(get_localzone())
+        today = datetime.datetime.now().astimezone(MEXICO_TZ)
         if today.strftime("%Y-%m-%d") == new_turn.get('date'):
             if today.hour > int(new_turn.get('schedule')):
                 raise ScheduleNotAvailable("El horario que seleccionaste no se encuentra disponible por el momento.")
@@ -167,7 +165,7 @@ class Turn(BaseModel):
         """
         for turn in reservation.turns:
             if turn._id == turn_id:
-                first_date = get_localzone().localize(datetime.datetime.strptime(date, "%Y-%m-%d"))
+                first_date = MEXICO_TZ.localize(datetime.datetime.strptime(date, "%Y-%m-%d"))
                 last_date = first_date
                 query = {'date': {'$gte': first_date, '$lte': last_date}}
                 cls.remove_turn_pilots(reservation, turn, query)
@@ -185,7 +183,7 @@ class Turn(BaseModel):
         :param date: The date to look for blocked turns
         :return: JSON with blocked schedules and turns
         """
-        date = get_localzone().localize(datetime.datetime.strptime(date, "%Y-%m-%d"))
+        date = MEXICO_TZ.localize(datetime.datetime.strptime(date, "%Y-%m-%d"))
         print(date)
         query = {'date': date}
         result: dict = Database.find_one(COLLECTION, query)
@@ -215,7 +213,7 @@ class Turn(BaseModel):
         :param former_turn: Previous turn object
         :return: True if the update was successful; error message otherwise
         """
-        first_date = get_localzone().localize(datetime.datetime.strptime(updated_turn.get('date'), "%Y-%m-%d"))
+        first_date = MEXICO_TZ.localize(datetime.datetime.strptime(updated_turn.get('date'), "%Y-%m-%d"))
         last_date = first_date
         query = {'date': {'$gte': first_date, '$lte': last_date}}
         pilots = cls.remove_turn_pilots(reservation, former_turn, query)
@@ -262,7 +260,7 @@ class Turn(BaseModel):
                             for pilot in pilots:
                                 if pilot._id in [pilot._id for pilot in reservation.pilots]:
                                     turn.pilots.remove(pilot)
-                            if turn.pilots is None or turn.pilots == []:
+                            if "BLOQUEADO" not in turn.type and (turn.pilots is None or turn.pilots == []):
                                 turn.type = None
                             new_date.update_mongo(COLLECTION)
                             return pilots
@@ -276,7 +274,7 @@ class Turn(BaseModel):
         :return: None
         """
         first_date = reservation.date
-        last_date = reservation.date + datetime.timedelta(days=1)
+        last_date = first_date
 
         query = {'date': {'$gte': first_date, '$lte': last_date}}
         result = list(Database.find(COLLECTION, query))
@@ -303,7 +301,7 @@ class Turn(BaseModel):
             if turn._id == turn_id:
                 allocation_date = updated_turn.pop('date')
                 new_turn = cls(**updated_turn)
-                aware_datetime = get_localzone().localize(datetime.datetime.strptime(allocation_date, "%Y-%m-%d"))
+                aware_datetime = MEXICO_TZ.localize(datetime.datetime.strptime(allocation_date, "%Y-%m-%d"))
                 reservation.date = aware_datetime
                 reservation.turns.remove(turn)
                 reservation.turns.append(new_turn)
@@ -325,7 +323,8 @@ class Turn(BaseModel):
                             for pilot in pilots:
                                 turn.pilots.append(pilot)
                             if turn.type is None or turn.pilots is None or turn.pilots == []:
-                                turn.type = reservation.type
+                                if "BLOQUEADO" not in turn.type:
+                                    turn.type = reservation.type
                             new_date.update_mongo(COLLECTION)
 
 

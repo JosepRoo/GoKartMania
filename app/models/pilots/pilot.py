@@ -1,7 +1,5 @@
 import datetime
 
-from tzlocal import get_localzone
-
 from app import Database
 from app.models.baseModel import BaseModel
 from app.models.emails.email import Email

@@ -2,12 +2,11 @@ import datetime
 import uuid
 
 from flask import session
-from tzlocal import get_localzone
-
 from app.common.utils import Utils
 from app.models.admins.errors import InvalidLogin
 from app.models.baseModel import BaseModel
 from app.common.database import Database
+from app.models.dates.constants import MEXICO_TZ
 from app.models.promos.constants import COLLECTION
 from app.models.promos.errors import WrongPromotionType, PromotionNotFound, PromotionUsed, PromotionExpired, \
     PromotionUnauthorised, CouponNotFound
@@ -72,7 +71,7 @@ class Promotion(BaseModel):
         self.authoriser = authoriser
         self.creator = creator
         self.authorised = authorised
-        self.created_date = created_date if created_date else datetime.datetime.now().astimezone(get_localzone())
+        self.created_date = created_date if created_date else datetime.datetime.now().astimezone(MEXICO_TZ)
         self.description = description
         self.value = value
         self.coupons = [Coupons(**coupon) for coupon in coupons] if coupons is not None else list()
