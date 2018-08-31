@@ -745,5 +745,6 @@ class Admin(BaseModel):
         :return: A brand new admin object
         """
         new_admin: Admin = cls(**admin_data)
+        new_admin.set_password(admin_data.get('password'))
         new_admin.save_to_mongo(COLLECTION)
         return new_admin
