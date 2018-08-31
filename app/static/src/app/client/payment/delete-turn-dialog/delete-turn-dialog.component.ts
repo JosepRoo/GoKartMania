@@ -16,7 +16,6 @@ export class DeleteTurnDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.data)
   }
 
   deleteTurn(){

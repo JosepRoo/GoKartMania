@@ -13,7 +13,7 @@ import { ReservationDetailsDialogComponent } from './reservation-details-dialog/
 
 import { CalendarComponent } from '../../client/calendar/calendar.component';
 import { DatePipe } from '@angular/common';
-import { SelectionModel } from '@angular/cdk/collections';
+import { UnblockTurnsDialogComponent } from './unblock-turns-dialog/unblock-turns-dialog.component';
 
 @Component({
   selector: 'app-reservations',
@@ -32,6 +32,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
   reservationDetailsDialogRef;
   blockTurnsDialogRef;
   deleteReservationDialogRef;
+  unblockTurnsDialogRef;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(CalendarComponent) calendar: CalendarComponent;
   calendarMode:string;
@@ -48,11 +49,11 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     'delete'
   ];
 
-  // displayedColumnsBlockedTurns: string[] = [
-  //   'schedule',
-  //   'turn',
+  displayedColumnsBlockedTurns: string[] = [
+    'schedule',
+    'turn',
 
-  // ]
+  ]
 
   startDate:Date;
   endDate:Date;
@@ -65,7 +66,6 @@ export class ReservationsComponent implements OnInit, OnDestroy {
   error: string;
   selectedDate;
   blockedTurns = [];
-  selection;
 
   constructor(
     private reservationService: AdminReservationsService,
@@ -106,6 +106,9 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     if(this.deleteReservationDialogRef){
       this.deleteReservationDialogRef.close();
     }
+    if(this.unblockTurnsDialogRef){
+      this.unblockTurnsDialogRef.close();
+    }
   }
 
   openNewReservationDialog() {
@@ -142,6 +145,18 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     )
   }
 
+  openUnblockTurnsDialog(){
+    this.unblockTurnsDialogRef = this.dialog.open(UnblockTurnsDialogComponent,{
+      width:'70%',
+      data: this.selectedDate
+    });
+    this.unblockTurnsDialogRef.afterClosed().subscribe(
+      ()=>{
+        this.getBlockedTurns(this.selectedDate);
+      }
+    )
+  }
+
   getReservations(date) {
     let startDate = date.toISOString().substring(0,10);
     this.reservationService.getUpcomingReservations(startDate,startDate).subscribe(res => {
@@ -150,23 +165,20 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  // getBlockedTurns(selectedDate){
-  //   this.blockedTurns=[];
-  //   let date = selectedDate.toISOString().substring(0,10);
-  //   this.adminService.getBlockedTurns(date).subscribe(
-  //     res=>{
-  //       this.selection = new SelectionModel<any>(true, []);
-  //       console.log(res);
-  //       for (let i = 0; i<res.schedules.length;i++){
-  //         for (let j = 0; j < res.turns.length; j ++){
-  //           this.blockedTurns.push ({'schedule':res.schedules[i], 'turn':res.turns[j]});
-  //         }
-  //       }
-  //       console.log(this.blockedTurns);
-  //       this.dataSourceBlockedTurns = new MatTableDataSource(this.blockedTurns);
-  //     }
-  //   )
-  // }
+  getBlockedTurns(selectedDate){
+    this.blockedTurns=[];
+    let date = selectedDate.toISOString().substring(0,10);
+    this.adminService.getBlockedTurns(date).subscribe(
+      res=>{
+        for (let i = 0; i<res.schedules.length;i++){
+          for (let j = 0; j < res.turns.length; j ++){
+            this.blockedTurns.push ({'schedule':res.schedules[i], 'turn':res.turns[j]});
+          }
+        }
+        this.dataSourceBlockedTurns = new MatTableDataSource(this.blockedTurns);
+      }
+    )
+  }
 
   openReservationDetail(reservation){
     this.reservationDetailsDialogRef = this.dialog.open(ReservationDetailsDialogComponent,{
@@ -181,7 +193,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     this.reservationDetailsDialogRef.afterClosed().subscribe(()=>{
       this.getAvailableDates();
       this.getReservations(this.selectedDate);
-      // this.getBlockedTurns(this.selectedDate);
+      this.getBlockedTurns(this.selectedDate);
     })
   }
 
@@ -232,7 +244,7 @@ export class ReservationsComponent implements OnInit, OnDestroy {
       this.blockedDates=[];
       this.blockedDates.push(date.toISOString().substring(0,10));
       this.getReservations(date);
-      // this.getBlockedTurns(date);
+      this.getBlockedTurns(date);
     }else if(this.mode ==="block"){
       if(!this.blockedDates.includes(date)){
         this.blockedDates.push(date);
@@ -280,36 +292,10 @@ export class ReservationsComponent implements OnInit, OnDestroy {
     }
   }
 
-  // unblockTurns(){
-  //   this.select = !this.select;
-
-  //   if(this.select){
-  //     this.displayedColumnsBlockedTurns.push('select');
-  //   }else{
-  //     // this.adminService.unblockTurns().subscribe(
-  //     //   res=>{
-
-  //     //   }
-  //     // )
-  //     this.displayedColumnsBlockedTurns.splice(this.displayedColumnsBlockedTurns.length-1,1);
-  //   }
-  // }
-
   closeBanner(){
     setTimeout(()=>{
       this.error = null;
     },8000);
   }
 
-  // isAllSelected() {
-  //   const numSelected = this.selection.selected.length;
-  //   const numRows = this.dataSourceReservations.data.length;
-  //   return numSelected === numRows;
-  // }
-
-  // masterToggle() {
-  //   this.isAllSelected() ?
-  //       this.selection.clear() :
-  //       this.dataSourceReservations.data.forEach(row => this.selection.select(row));
-  // }
 }
