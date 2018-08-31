@@ -735,3 +735,14 @@ class Admin(BaseModel):
         self.set_password(new_data.get('password'))
         self.update_mongo(collection)
         return self
+
+    @classmethod
+    def add(cls, admin_data):
+        """
+        Inserts a new admin in the Admin Collection
+        :param admin_data: Admin information needed to create the admin
+        :return: A brand new admin object
+        """
+        new_admin: Admin = cls(**admin_data)
+        new_admin.save_to_mongo(COLLECTION)
+        return new_admin
