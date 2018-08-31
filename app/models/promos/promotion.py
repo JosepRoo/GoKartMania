@@ -71,7 +71,7 @@ class Promotion(BaseModel):
         self.authoriser = authoriser
         self.creator = creator
         self.authorised = authorised
-        self.created_date = created_date if created_date else datetime.datetime.now().astimezone(MEXICO_TZ)
+        self.created_date = created_date if created_date else MEXICO_TZ.localize(datetime.datetime.now())
         self.description = description
         self.value = value
         self.coupons = [Coupons(**coupon) for coupon in coupons] if coupons is not None else list()

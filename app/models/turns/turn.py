@@ -103,7 +103,7 @@ class Turn(BaseModel):
         :param new_turn: Turn information, such as the schedule
         :return: 0 or 1, depending the status of the schedule
         """
-        today = datetime.datetime.now().astimezone(MEXICO_TZ)
+        today = MEXICO_TZ.localize(datetime.datetime.now())
         if today.strftime("%Y-%m-%d") == new_turn.get('date'):
             if today.hour > int(new_turn.get('schedule')):
                 raise ScheduleNotAvailable("El horario que seleccionaste no se encuentra disponible por el momento.")

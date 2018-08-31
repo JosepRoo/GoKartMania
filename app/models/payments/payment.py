@@ -212,7 +212,7 @@ class Payment(BaseModel):
         payment.status = "APROBADO"
         payment.amount = amount
         payment.license_price = license_price
-        payment.date = datetime.datetime.now().astimezone(MEXICO_TZ)
+        payment.date = MEXICO_TZ.localize(datetime.datetime.now())
         if promo:
             # Cambiar el status de la promoción utilizada
             for c in promo.coupons:
