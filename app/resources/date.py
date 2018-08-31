@@ -2662,6 +2662,7 @@ class AvailableSchedulesUser(Resource):
         """
         try:
             reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
+            ReservationModel.remove_temporal_reservations()
             return DateModel.get_available_schedules_user(reservation, date), 200
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401

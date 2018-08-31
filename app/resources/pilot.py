@@ -222,6 +222,7 @@ class Pilots(Resource):
                         flask_restful.abort(400, message=msg)
             reservation_pilots = [PilotModel.add(reservation, pilots.get('pilots')[i]).json() for i in
                                   range(len(pilots.get('pilots')))]
+            ReservationModel.remove_temporal_reservations()
             return reservation_pilots
         except ReservationErrors as e:
             return Response(message=e.message).json(), 401
