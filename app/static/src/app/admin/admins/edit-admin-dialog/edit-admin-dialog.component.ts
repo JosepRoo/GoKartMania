@@ -36,9 +36,11 @@ export class EditAdminDialogComponent implements OnInit {
 
   changePassword(){
     if(this.adminData.controls.changePassword.value){
-			this.adminData.controls.password.setValidators(Validators.required);
+      this.adminData.controls.password.setValidators(Validators.required);
+      this.adminData.controls.password.setValue(null);
 		}else{
-			this.adminData.controls.password.setValidators(null);
+      this.adminData.controls.password.setValidators(null);
+      this.adminData.controls.password.setValue(this.data.password);
 		}
   }
 
