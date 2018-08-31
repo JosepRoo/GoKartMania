@@ -82,6 +82,7 @@ import { EditAdminDialogComponent } from './admin/admins/edit-admin-dialog/edit-
 import { DeleteAdminDialogComponent } from './admin/admins/delete-admindialog/delete-admindialog.component';
 import { NewAdminDialogComponent } from './admin/admins/new-admin-dialog/new-admin-dialog.component';
 import { DeleteReservationDialogComponent } from './admin/reservations/delete-reservation-dialog/delete-reservation-dialog.component';
+import { UnblockTurnsDialogComponent } from './admin/reservations/unblock-turns-dialog/unblock-turns-dialog.component';
 
 registerLocaleData(localeEs, 'es');
 
@@ -121,7 +122,8 @@ registerLocaleData(localeEs, 'es');
     EditAdminDialogComponent,
     DeleteAdminDialogComponent,
     NewAdminDialogComponent,
-    DeleteReservationDialogComponent
+    DeleteReservationDialogComponent,
+    UnblockTurnsDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -179,7 +181,8 @@ registerLocaleData(localeEs, 'es');
     EditAdminDialogComponent,
     DeleteAdminDialogComponent,
     NewAdminDialogComponent,
-    DeleteReservationDialogComponent
+    DeleteReservationDialogComponent,
+    UnblockTurnsDialogComponent
   ]
 })
 export class AppModule {}

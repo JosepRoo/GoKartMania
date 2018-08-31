@@ -1,5 +1,5 @@
 import { AdminService } from './../services/admin.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AdminReservationsService } from '../services/admin-reservations.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,7 +10,7 @@ import { ReservationDetailsDialogComponent } from '../reservations/reservation-d
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   busyHours;
   averagePrice;
   income;
@@ -70,6 +70,12 @@ export class HomeComponent implements OnInit {
       .subscribe(res=>{
         this.dataSourceReservations = new MatTableDataSource(res);
       })
+  }
+
+  ngOnDestroy(){
+    if(this.reservationDetailsDialogRef){
+      this.reservationDetailsDialogRef.close();
+    }
   }
 
   openReservationDetail(reservation){

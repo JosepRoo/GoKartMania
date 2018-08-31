@@ -1,5 +1,5 @@
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatTableDataSource } from '@angular/material';
 import { EditPromoDialogComponent } from '../edit-promo-dialog/edit-promo-dialog.component';
 
@@ -8,7 +8,7 @@ import { EditPromoDialogComponent } from '../edit-promo-dialog/edit-promo-dialog
   templateUrl: './promo-details-dialog.component.html',
   styleUrls: ['./promo-details-dialog.component.scss']
 })
-export class PromoDetailsDialogComponent implements OnInit {
+export class PromoDetailsDialogComponent implements OnInit, OnDestroy {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) private data: any,
@@ -34,6 +34,12 @@ export class PromoDetailsDialogComponent implements OnInit {
     this.promo = this.data.promo
     this.coupons = this.data.promo.coupons;
     this.dataSource = new MatTableDataSource(this.coupons);
+  }
+
+  ngOnDestroy(){
+    if(this.editPromoDialogRef){
+      this.editPromoDialogRef.close();
+    }
   }
 
   openEditPromoDialog(element) {

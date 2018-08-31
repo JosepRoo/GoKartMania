@@ -4,7 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { EditAdminDialogComponent } from './edit-admin-dialog/edit-admin-dialog.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { AdminService } from './../services/admin.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 
@@ -13,13 +13,13 @@ import { MatIconRegistry } from '@angular/material/icon';
   templateUrl: './admins.component.html',
   styleUrls: ['./admins.component.scss']
 })
-export class AdminsComponent implements OnInit {
+export class AdminsComponent implements OnInit, OnDestroy {
 
   dataSource;
   displayedColumns = ['id', 'name','email','editAdmin', 'deleteAdmin']
   editAdminDialogRef;
   deleteAdminDialogRef;
-  newAdminDialogRef;
+  newAdminDialogRef;s
 
   constructor(
     private adminService: AdminService,
@@ -34,6 +34,18 @@ export class AdminsComponent implements OnInit {
 
   ngOnInit() {
     this.getAdmins();
+  }
+  
+  ngOnDestroy(){
+    if (this.editAdminDialogRef){
+      this.editAdminDialogRef.close();
+    }
+    if(this.deleteAdminDialogRef){
+      this.deleteAdminDialogRef.close();
+    }
+    if(this.newAdminDialogRef){
+      this.newAdminDialogRef.close();
+    }
   }
 
   openEditAdminDialog(element){
