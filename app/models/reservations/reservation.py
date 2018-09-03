@@ -138,14 +138,10 @@ class Reservation(BaseModel):
         """
         for temp_reservation in Database.find(COLLECTION_TEMP, {}):
             reservation = cls(**temp_reservation)
-            now = MEXICO_TZ.localize(datetime.datetime.now())
-            print("now: ", now)
+            now = datetime.datetime.now(MEXICO_TZ)
             delta = now - reservation.date
-            print("delta: ", delta)
-            print("timeout: ", TIMEOUT)
             if delta > TIMEOUT:
                 reservation.delete_from_mongo(COLLECTION_TEMP)
-                print("deleted successful")
 
     def calculate_price(self):
         """

@@ -2,7 +2,6 @@ from flask_restful import Resource, reqparse
 
 from app import Response
 from app.common.utils import Utils
-from app.models.reservations.reservation import Reservation
 from app.models.users.errors import UserErrors
 from app.models.users.user import User as UserModel
 
@@ -79,7 +78,6 @@ class User(Resource):
                             )
         data = parser.parse_args()
         try:
-            Reservation.remove_temporal_reservations()
             return UserModel.register(data).json(), 200
         except UserErrors as e:
             return Response(message=e.message).json(), 401

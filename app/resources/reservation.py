@@ -371,7 +371,6 @@ class Reservations(Resource):
         """
         try:
             reservation = ReservationModel.get_by_id(session['reservation'], COLLECTION_TEMP)
-            ReservationModel.remove_temporal_reservations()
             return reservation.calculate_price().json(), 200
         except ReservationNotFound:
             try:
