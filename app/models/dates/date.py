@@ -320,7 +320,6 @@ class Date(BaseModel):
     def update_temp(cls, allocation_date, new_turn, reservation_type, is_user: bool) -> None:
         """
         Updates the indicated date with the schedule, turn, type, pilots, and allocation date
-        Only the admin has access to this resource.
         :param is_user: Indicates whether the operation is being held by the user or the administrator
         :param reservation_type: The type of reservation (Kids or Adults)
         :param allocation_date: The momentary date when the reservation will be occupied
@@ -337,7 +336,7 @@ class Date(BaseModel):
                 turn_number = int(new_turn.get('turn_number'))
                 for position in new_turn.get('positions'):
                     position_num = (int(position[-1]))
-                    now = MEXICO_TZ.localize(datetime.datetime.now())
+                    now = datetime.datetime.now(MEXICO_TZ)
                     if is_user:
                         AbstractPilot.add(schedule.turns[turn_number - 1],
                                           {'_id': new_turn.get('positions').get(position),
