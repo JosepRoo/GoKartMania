@@ -337,7 +337,7 @@ class Date(BaseModel):
                 turn_number = int(new_turn.get('turn_number'))
                 for position in new_turn.get('positions'):
                     position_num = (int(position[-1]))
-                    now = MEXICO_TZ.localize(datetime.datetime.now())
+                    now = MEXICO_TX.localize(datetime.datetime.now())
                     if is_user:
                         AbstractPilot.add(schedule.turns[turn_number - 1],
                                           {'_id': new_turn.get('positions').get(position),
