@@ -72,7 +72,8 @@ class Admin(BaseModel):
         password = data.get('password')
         admin = Admin.get_by_email(email)
         if admin and Utils.check_hashed_password(password, admin.password):
-            if admin.email == 'javierj@gokartmania.com.mx':
+            data = Database.find_one(SUPERADMINS, {"email": admin.email})
+            if data is not None:
                 session['sudo'] = admin._id
             session['admin_id'] = admin._id
             return admin
