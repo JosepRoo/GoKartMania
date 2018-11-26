@@ -48,3 +48,4 @@ Thumbs.db
 __pycache__
 venv/
 app/reservation_qrs/
+uwsgi.ini

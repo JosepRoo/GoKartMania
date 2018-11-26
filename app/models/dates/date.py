@@ -95,11 +95,13 @@ class Date(BaseModel):
         availability_arr = []
         for date in availability:
             availability[date].pop('cupo')
-            today = MEXICO_TZ.localize(datetime.datetime.now())
+            today = datetime.datetime.now(MEXICO_TZ)
+            # print(today, today.hour)
             reservation_date = datetime.datetime.strptime(date, "%Y-%m-%d")
             for schedule in availability[date]:
                 if today.strftime("%Y-%m-%d") == reservation_date.strftime("%Y-%m-%d"):
-                    if int(schedule) > today.hour:
+                    # print(schedule)
+                    if int(schedule) > today.hour+3:
                         availability_arr.append(cls.fill_availability_arr(reservation, availability, date, schedule))
                 elif reservation_date.strftime("%Y-%m-%d") > today.strftime("%Y-%m-%d"):
                     availability_arr.append(cls.fill_availability_arr(reservation, availability, date, schedule))
@@ -353,7 +355,7 @@ class Date(BaseModel):
                 updated_date.update_mongo(COLLECTION)
 
     @staticmethod
-    def insert_dates() -> None:
+    def insert_dates() -> str:
         """
         Adds to the Date Collection a whole month, taking into account the last month in the collection
         :return: None
@@ -365,3 +367,5 @@ class Date(BaseModel):
         month_dates = calendar.monthrange(now.year, now.month)[1]
         for i in range(month_dates):
             Date.add({'year': now.year, 'month': now.month}, i + 1)
+        return now.month
+

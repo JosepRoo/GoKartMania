@@ -99,7 +99,13 @@ class Admin(Resource):
                             )
         data = parser.parse_args()
         try:
-            return AdminModel.admin_login(data).json(), 200
+            admin = AdminModel.admin_login(data)
+            admin_json = admin.json({"password"})
+            if admin.isSuperAdmin == 1:
+                admin_json['isSuperAdmin'] = 1
+            else:
+                admin_json['isSuperAdmin'] = 0
+            return admin_json, 200
         except AdminErrors as e:
             return Response(message=e.message).json(), 401
         except Exception as e:
