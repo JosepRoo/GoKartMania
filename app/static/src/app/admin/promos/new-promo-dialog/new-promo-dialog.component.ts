@@ -89,8 +89,13 @@ export class NewPromoDialogComponent implements OnInit {
 	changePlaceholder(){
 		if (this.promoData.controls.type.value == "Descuento"){
 			this.placeholderValue = "% de descuento";
-		}else{
+			this.promoData.controls.value.setValidators(Validators.required);
+		} else if (this.promoData.controls.type.value == "Reservación") {
+			this.promoData.controls.value.setValue(1);
+		 }
+		else{
 			this.placeholderValue = "No. de carreras";
+			this.promoData.controls.value.setValidators(Validators.required);
 		}
 	}
 }

@@ -66,9 +66,9 @@ export class PilotsComponent implements OnInit {
     let pilot = pilots.controls[index] as FormGroup;
     const name = pilot.controls.name.value;
     const wasLicensed = pilot.controls.buy_license.value;
-    pilots.controls[index] = this.createPilot(0);
-    pilot = pilots.controls[index] as FormGroup;
-    pilot.controls.name.setValue(name);
+    pilot.controls.buy_license.setValue(true);
+    pilot.controls.licensed.setValue(false);
+
   }
 
   buyLicense(index) {
@@ -76,9 +76,8 @@ export class PilotsComponent implements OnInit {
     let pilot = pilots.controls[index] as FormGroup;
     const name = pilot.controls.name.value;
     const wasLicensed = pilot.controls.licensed.value;
-    pilots.controls[index] = this.createPilot(1);
-    pilot = pilots.controls[index] as FormGroup;
-    pilot.controls.name.setValue(name);
+    pilot.controls.buy_license.setValue(false);
+    pilot.controls.licensed.setValue(true);
   }
 
   // create pilot form
@@ -111,7 +110,7 @@ export class PilotsComponent implements OnInit {
         licensed: [false],
         buy_license: [true],
         location: ['Carso']
-    });
+      });
   }
 
   // add one pilot form to the array
@@ -135,6 +134,7 @@ export class PilotsComponent implements OnInit {
     const self = this;
     const ar = this.reservation.get('pilots') as FormArray;
     const len = ar.length;
+    console.log(self,this.reservation);
     if (self.reservation.valid && len) {
       let full_name, last_name, name;
       for(let i=0; i<len;i++){

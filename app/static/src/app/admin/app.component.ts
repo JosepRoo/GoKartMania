@@ -16,6 +16,7 @@ export class AdminComponent implements OnDestroy {
 
   logOutDialogRef;
   user;
+  isSuperAdmin;
 
   constructor(
     changeDetectorRef: ChangeDetectorRef,
@@ -28,6 +29,7 @@ export class AdminComponent implements OnDestroy {
     this.mobileQuery.addListener(this._mobileQueryListener);
     this.matIconRegistry.registerFontClassAlias('fontawesome', 'fa');
     this.user = localStorage.getItem('user');
+    this.isSuperAdmin = localStorage.getItem('is_super_admin');
   }
 
   ngOnDestroy(): void {

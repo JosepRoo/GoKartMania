@@ -52,7 +52,7 @@
         <div class="col-10 col-sm-6" *ngIf="turn.controls.schedule.value">
           <mat-form-field>
             <mat-select placeholder="Turno" formControlName="turn_number">
-              <mat-option (click)="assignPositions(turn)" *ngFor="let turn of availableTurns; let i = index;" [value]="turn.turn">Turno {{turn.turn}} ( aprox. {{getHour()}}:{{(i+1) * 10}}hrs. )</mat-option>
+              <mat-option (click)="assignPositions(turn)" *ngFor="let turn of availableTurns; let i = index;" [value]="turn.turn">Turno {{turn.turn}} ( aprox. {{getHour()}}:{{(turn.turn) * 10}}hrs. )</mat-option>
             </mat-select>
           </mat-form-field>
         </div>

@@ -27,7 +27,7 @@
       <li routerLinkActive="active" class="nav-item">
         <a class="nav-link waves-light" routerLink="./reservations" mdbWavesEffect>Reservaciones</a>
       </li>
-      <li routerLinkActive="active" class="nav-item" *ngIf="user === 'javierj@gokartmania.com.mx'">
+      <li routerLinkActive="active" class="nav-item" *ngIf="isSuperAdmin == '1'">
         <a class="nav-link waves-light" routerLink="./admins" mdbWavesEffect>Administradores</a>
       </li>
     </ul>
