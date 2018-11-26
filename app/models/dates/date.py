@@ -95,11 +95,13 @@ class Date(BaseModel):
         availability_arr = []
         for date in availability:
             availability[date].pop('cupo')
-            today = MEXICO_TZ.localize(datetime.datetime.now())
+            today = datetime.datetime.now(MEXICO_TZ)
+            # print(today, today.hour)
             reservation_date = datetime.datetime.strptime(date, "%Y-%m-%d")
             for schedule in availability[date]:
                 if today.strftime("%Y-%m-%d") == reservation_date.strftime("%Y-%m-%d"):
-                    if int(schedule) > today.hour:
+                    # print(schedule)
+                    if int(schedule) > today.hour+3:
                         availability_arr.append(cls.fill_availability_arr(reservation, availability, date, schedule))
                 elif reservation_date.strftime("%Y-%m-%d") > today.strftime("%Y-%m-%d"):
                     availability_arr.append(cls.fill_availability_arr(reservation, availability, date, schedule))
