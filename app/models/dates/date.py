@@ -1,5 +1,4 @@
-
-m flask import session
+from flask import session
 
 from app.common.database import Database
 from app.models.baseModel import BaseModel
