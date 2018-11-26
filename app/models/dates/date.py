@@ -353,7 +353,7 @@ class Date(BaseModel):
                 updated_date.update_mongo(COLLECTION)
 
     @staticmethod
-    def insert_dates() -> None:
+    def insert_dates() -> str:
         """
         Adds to the Date Collection a whole month, taking into account the last month in the collection
         :return: None
@@ -365,3 +365,4 @@ class Date(BaseModel):
         month_dates = calendar.monthrange(now.year, now.month)[1]
         for i in range(month_dates):
             Date.add({'year': now.year, 'month': now.month}, i + 1)
+        return now.month
