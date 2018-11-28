@@ -107,6 +107,6 @@ class Payments(Resource):
             return Response(message=e.message).json(), 401
         except PromotionErrors as e:
             return Response(message=e.message).json(), 401
-        except Exception as e:
-            print(e.__repr__())
-            return Response.generic_response(e), 500
+        # except Exception as e:
+        #     print(e.__repr__())
+        #     return Response.generic_response(e), 500
