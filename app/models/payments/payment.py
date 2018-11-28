@@ -65,6 +65,7 @@ class Card(BaseModel):
         if auth.status_code == 200:
             token = requests.post(URL_TOKEN, params={}, data=json.dumps(card_info), headers=HEADERS)
             obj_token = json.loads(token.text)
+            print(obj_token)
             if obj_token.get("error") == 1:
                 raise TokenisationFailed(obj_token.get("detail"))
             new_card["number"] = obj_token["card"]
