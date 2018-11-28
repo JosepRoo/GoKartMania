@@ -171,8 +171,8 @@ class Reservation(BaseModel):
         self.amount = self.license_price + self.turns_price
         self.update_mongo(COLLECTION_TEMP)
 
-        if session.get('reservation_date') != datetime.datetime.strftime(self.date, "%Y-%m-%d"):
-            self.date = datetime.datetime.strptime(session.get('reservation_date'), "%Y-%m-%d")
+        # if session.get('reservation_date') != datetime.datetime.strftime(self.date, "%Y-%m-%d"):
+        self.date = datetime.datetime.strptime(session.get('reservation_date'), "%Y-%m-%d")
         return self
 
     def insert_promo(self, promo_id):
