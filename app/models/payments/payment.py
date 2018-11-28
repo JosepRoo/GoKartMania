@@ -231,7 +231,7 @@ class Payment(BaseModel):
             payment.promo = promo
         reservation.payment = payment
         if session.get('reservation_date') != datetime.datetime.strftime(reservation.date, "%Y-%m-%d"):
-            aware_datetime = MEXICO_TZ.localize(datetime.datetime.strptime(session.get('reservation_date'), "%Y-%m-%d"))
+            aware_datetime = datetime.datetime.strptime(session.get('reservation_date'), "%Y-%m-%d")
             reservation.date = aware_datetime
         # print(reservation.date)
         for pilot in reservation.pilots:
