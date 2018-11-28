@@ -232,8 +232,9 @@ class Payment(BaseModel):
         reservation.payment = payment
         if session.get('reservation_date') != datetime.datetime.strftime(reservation.date, "%Y-%m-%d"):
             aware_datetime = datetime.datetime.strptime(session.get('reservation_date'), "%Y-%m-%d")
+            print(f"aware_datetime: {aware_datetime}")
             reservation.date = aware_datetime
-        # print(reservation.date)
+        print(f"reservation.date = {reservation.date}")
         for pilot in reservation.pilots:
             pilot.update_mongo(PILOTS)
         # Guardar en la coleccion de reservaciones reales

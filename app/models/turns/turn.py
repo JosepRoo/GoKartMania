@@ -276,6 +276,7 @@ class Turn(BaseModel):
 
         query = {'date': {'$gte': first_date, '$lte': last_date}}
         result = list(Database.find(COLLECTION, query))
+        print(first_date,last_date, query)
         new_date = DateModel(**result[0])
         for schedule in filter(lambda schedule: schedule.hour == current_turn.schedule, new_date.schedules):
             for turn in filter(lambda turn: turn.turn_number == int(current_turn.turn_number), schedule.turns):
