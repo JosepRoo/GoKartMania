@@ -271,12 +271,11 @@ class Turn(BaseModel):
         :param current_turn: Turn with its information, such as the turn number
         :return: None
         """
-        first_date = reservation.date
-        last_date = first_date
+        first_date = datetime.datetime.strptime(datetime.datetime.strftime(reservation.date, "%Y-%m-%d"), "%Y-%m-%d")
+        last_date = first_date + datetime.timedelta(days=1)
 
         query = {'date': {'$gte': first_date, '$lte': last_date}}
         result = list(Database.find(COLLECTION, query))
-        print(first_date,last_date, query)
         new_date = DateModel(**result[0])
         for schedule in filter(lambda schedule: schedule.hour == current_turn.schedule, new_date.schedules):
             for turn in filter(lambda turn: turn.turn_number == int(current_turn.turn_number), schedule.turns):
