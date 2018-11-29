@@ -105,7 +105,6 @@ class Pilot(BaseModel):
 
             pilots_detail = ""
             pilots_detail += "<p>Nombre: " + pilot.name + "</p>"
-            pilots_detail += "<p>Apellido: " + pilot.last_name + "</p>"
             pilots_detail += "<p>Apodo: " + pilot.nickname + "</p>"
             pilots_detail += "<br>"
 
