@@ -130,7 +130,6 @@ class Reservation(BaseModel):
             reservation = Database.find_one(collection, {'_id': _id})
         if reservation:
             reservation_obj: Reservation = cls(**reservation)
-            reservation_obj.date = datetime.datetime.strftime(reservation_obj.date, "%Y-%m-%d")
             return reservation_obj
         raise ReservationNotFound("La reservacion con el ID dado no existe.")
 
