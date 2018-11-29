@@ -36,7 +36,9 @@ class Database(object):
                         tz_aware=True, tzinfo=MEXICO_TZ)).find(query)
 
     @staticmethod
-    def find_one(collection, query):
+    def find_one(collection, query, tz_aware=True):
+        if not tz_aware:
+            return Database.DATABASE[collection].find_one(query)
         return Database.DATABASE[collection].with_options(
                     codec_options=CodecOptions(
                         tz_aware=True, tzinfo=MEXICO_TZ)).find_one(query)
