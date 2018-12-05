@@ -250,7 +250,7 @@ class Reservation(BaseModel):
         :return: Array of reservation objects
         """
         first_date = datetime.datetime.strptime(first_date, "%Y-%m-%d")
-        last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")  # + datetime.timedelta(days=1)
+        last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
         expressions = list()
         expressions.append({'$match': {'date': {'$gte': first_date, '$lte': last_date}}})
         result = list(Database.DATABASE[REAL_RESERVATIONS].with_options(
