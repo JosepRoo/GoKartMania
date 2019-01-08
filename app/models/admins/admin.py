@@ -91,7 +91,7 @@ class Admin(BaseModel):
         recovery = Recovery(admin_email=self.email)
         recovery.save_to_mongo()
         # email = Email(to=self.email, subject='Recuperación de contraseña', qr_code=None)
-        email: Email = Email(to='areyna@sitsolutions.org', subject='Recuperación de contraseña', qr_code=None)
+        email: Email = Email(to=self.email, subject='Recuperación de contraseña', qr_code=None)
         email.text(
             f"Hola, {self.name}:\nHas recibido este correo electrónico porque recientemente solicitaste restablecer "
             "la contraseña asociada a tu cuenta de GoKartMania. Si no solicitaste este cambio, puedes hacer caso "
@@ -226,8 +226,9 @@ class Admin(BaseModel):
         </html>
                 """
 
-        email.html(email_html)
-        email.send()
+        # email.html(email_html)
+        # email.send()
+        Email.mailgun(self.email, 'Recuperación de contraseña', email._text, email._html)
         return email
 
     def set_password(self, password) -> None:
@@ -422,7 +423,8 @@ class Admin(BaseModel):
         email.html(email_html)
 
         try:
-            email.send()
+            # email.send()
+            Email.mailgun(email.to, email.subject, email._text, email._html)
         except EmailErrors as e:
             raise FailedToSendEmail(e)
 

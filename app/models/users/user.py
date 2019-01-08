@@ -289,6 +289,7 @@ class User(BaseModel):
         email.html(email_html)
 
         try:
-            email.send()
+            # email.send()
+            Email.mailgun(email.to, email.subject, email._text, email._html)
         except EmailErrors as e:
             raise FailedToSendEmail(e)
