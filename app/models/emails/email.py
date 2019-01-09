@@ -113,3 +113,20 @@ class Email(object):
         # Display an error if something goes wrong.
         except ClientError as e:
             raise FailedToSendEmail(e.response['Error']['Message'])
+
+    @classmethod
+    def mailgun(cls, to, subject, text=None, html=None):
+        import requests
+        url = 'https://api.mailgun.net/v3/cloudsitedsolutions.com/messages'
+        auth = ("api", "97b6ce29aa88cdc75c906537e28752f5-49a2671e-0b1b85d4")
+        data = {
+            "from": "GoKartmania  <info@gokartmania.com.mx>",
+            "to": to,
+            "subject": subject,
+        }
+        if text:
+            data['text'] = text
+        if html:
+            data['html'] = html
+
+        requests.post(url, auth=auth, data=data)
