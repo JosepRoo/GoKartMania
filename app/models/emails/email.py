@@ -120,7 +120,7 @@ class Email(object):
         url = 'https://api.mailgun.net/v3/cloudsitedsolutions.com/messages'
         auth = ("api", "97b6ce29aa88cdc75c906537e28752f5-49a2671e-0b1b85d4")
         data = {
-            "from": "GoKartmania  <jromagosa@sitsolutions.org>",
+            "from": "GoKartmania  <info@gokartmania.com.mx>",
             "to": to,
             "subject": subject,
         }
