@@ -571,7 +571,7 @@ class Admin(BaseModel):
         last_date = MEXICO_TZ.localize(datetime.datetime.strptime(last_date, "%Y-%m-%d"))
         expressions = list()
         expressions.append({'$match': {'date': {'$gte': first_date, '$lte': last_date}}})
-        expressions.append({"$project": {"payment_total": "$payment.amount"}})
+        expressions.append({"$project": {"payment_total": "$amount"}})
         expressions.append({"$group": {"_id": None, "income": {"$sum": "$payment_total"}, "qty": {"$sum": 1}}})
         result = list(Database.aggregate(RESERVATIONS, expressions))
         return result
@@ -584,7 +584,7 @@ class Admin(BaseModel):
         """
         expressions = list()
         expressions.append({'$match': {}})
-        expressions.append({"$project": {"payment_total": "$payment.amount"}})
+        expressions.append({"$project": {"payment_total": "$amount"}})
         expressions.append({"$group": {"_id": None, "income": {"$sum": "$payment_total"}, "count": {"$sum": 1}}})
         expressions.append({"$project": {"avg_price": {"$divide": ["$income", "$count"]}}})
         result = list(Database.aggregate(RESERVATIONS, expressions))
