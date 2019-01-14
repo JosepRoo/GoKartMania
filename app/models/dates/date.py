@@ -1,14 +1,12 @@
-from flask import session
+import calendar
+import datetime
+import itertools
+from random import randint, choice
 
 from app.common.database import Database
 from app.models.baseModel import BaseModel
 from app.models.dates.constants import COLLECTION, MEXICO_TZ
-import datetime
-from random import randint, choice
-
-from app.models.reservations.constants import COLLECTION_TEMP
 from app.models.reservations.reservation import Reservation
-import calendar
 
 """
 This is the date model object which will be used to insert new available dates into the database, 
@@ -102,22 +100,50 @@ class Date(BaseModel):
                 if today.strftime("%Y-%m-%d") == reservation_date.strftime("%Y-%m-%d"):
                     # print(schedule)
                     if int(schedule) > today.hour+3:
-                        availability_arr.append(cls.fill_availability_arr(reservation, availability, date, schedule))
+                        availability_arr.append(cls.fill_availability_arr(availability, date, schedule))
                 elif reservation_date.strftime("%Y-%m-%d") > today.strftime("%Y-%m-%d"):
-                    availability_arr.append(cls.fill_availability_arr(reservation, availability, date, schedule))
+                    availability_arr.append(cls.fill_availability_arr(availability, date, schedule))
+        availability_arr = cls.block_turns_for_user(reservation, availability_arr)
         return availability_arr
 
     @staticmethod
-    def fill_availability_arr(reservation: Reservation, availability, date, schedule) -> dict:
+    def block_turns_for_user(reservation: Reservation, availability_arr: list) -> list:
+        """
+        Blocks the current, previous, and next turns for each turn in the current user reservation
+        :param reservation: Reservation object
+        :param availability_arr: Array containing status and positions for each available schedule and turn
+        :return: List object of availability array, updated with blocked turns
+        """
+        schedule_turns = [(turn.schedule, turn.turn_number) for turn in reservation.turns]
+        # print(schedule_turns)
+
+        schedules = [x.get('schedule') for x in availability_arr]
+        turns = [str(x.get('turn')) for x in availability_arr[0].get('turns')]
+        product = list(itertools.product(schedules, turns))
+        # print(product)
+
+        result = [(product.index(x) - 1, product.index(x) + 1) for x in schedule_turns if x in product]
+        for x in result:
+            turns_to_block = product[0 if x[0] < 0 else x[0]: None if x[1] + 1 > len(product) else x[1] + 1]
+            # print(turns_to_block)
+            for schedule_turn in turns_to_block:
+                # print(schedule_turn) => ('schedule    ', 'turn')
+                for item in availability_arr:
+                    if item.get('schedule') == schedule_turn[0]:
+                        item.get('turns')[int(schedule_turn[1]) - 1].update({'status': 0})
+                        item.update({'cupo': 1})
+
+        return availability_arr
+
+    @staticmethod
+    def fill_availability_arr(availability, date, schedule: int) -> dict:
         """
         Builds a schedule dictionary containing the status of the schedule, the turn and the positions
-        :param reservation: Reservation object containing the schedules and turns
         :param availability: The dictionary of availability of all dates
         :param date: A given date by the user
-        :param schedule: A given schedule by the user
+        :param schedule: 11 - 21 schedules in a given date
         :return: A dictionary with schedules, status, and turns
         """
-        schedule_turn = [(turn.schedule, turn.turn_number) for turn in reservation.turns]
         turns = []
         schedule_status = availability[date][schedule].pop('cupo')
         for turn in availability[date][schedule]:
@@ -126,15 +152,6 @@ class Date(BaseModel):
                           "positions": [
                               {"position": position[-1], "status": availability[date][schedule][turn][position]}
                               for position in availability[date][schedule][turn]]})
-
-        for i in range(len(turns)):
-            result = list(filter(lambda x: schedule in x, schedule_turn))
-            if result:
-                for j in range(len(result)):
-                    turn = int(result[j][1])
-                    # Block the turn before, the turn after, and the current turn, for this user
-                    if (i - 1 == turn - 1) or (i + 1 == turn - 1) or (i == turn - 1):
-                        turns[i]['status'] = 0
         schedule = {'schedule': schedule, 'cupo': schedule_status, 'turns': turns}
         return schedule
 
