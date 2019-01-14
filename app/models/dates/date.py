@@ -130,10 +130,11 @@ class Date(BaseModel):
         for i in range(len(turns)):
             result = list(filter(lambda x: schedule in x, schedule_turn))
             if result:
-                turn = int(result[0][1])
-                # Block the turn before, the turn after, and the current turn, for this user
-                if (i - 1 == turn - 1) or (i + 1 == turn - 1) or (i == turn - 1):
-                    turns[i]['status'] = 0
+                for j in range(len(result)):
+                    turn = int(result[j][1])
+                    # Block the turn before, the turn after, and the current turn, for this user
+                    if (i - 1 == turn - 1) or (i + 1 == turn - 1) or (i == turn - 1):
+                        turns[i]['status'] = 0
         schedule = {'schedule': schedule, 'cupo': schedule_status, 'turns': turns}
         return schedule
 
