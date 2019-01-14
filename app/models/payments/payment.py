@@ -241,7 +241,7 @@ class Payment(BaseModel):
         reservation.delete_from_mongo(COLLECTION_TEMP)
         # Nulificar las fechas tentativas de reservacion
         for turn in reservation.turns:
-            TurnModel.remove_allocation_dates(reservation, turn)
+            TurnModel.remove_allocation_dates(reservation, turn, remove_type="allocation_date")
         # Agregar la reservación al usuario
         user.reservations.append(reservation._id)
         user.update_mongo(USER)

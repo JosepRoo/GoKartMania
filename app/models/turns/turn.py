@@ -264,11 +264,12 @@ class Turn(BaseModel):
                             return pilots
 
     @classmethod
-    def remove_allocation_dates(cls, reservation: Reservation, current_turn) -> None:
+    def remove_allocation_dates(cls, reservation: Reservation, current_turn: 'Turn', remove_type: str) -> None:
         """
         Removes from the Dates collection the field of "allocation date" if the transaction was completed
         :param reservation: Reservation object
         :param current_turn: Turn with its information, such as the turn number
+        :param remove_type: Indicates whether to remove just the allocation_date or the whole pilot from the reservation
         :return: None
         """
         first_date = datetime.datetime.strptime(datetime.datetime.strftime(reservation.date, "%Y-%m-%d"), "%Y-%m-%d")
@@ -282,7 +283,14 @@ class Turn(BaseModel):
                 pilots = turn.pilots.copy()
                 for pilot in filter(lambda pilot: pilot._id in [pilot._id for pilot in reservation.pilots],
                                     pilots):
-                    pilot.allocation_date = None
+                    if remove_type == "allocation_date":
+                        pilot.allocation_date = None
+                    elif remove_type == "pilot":
+                        for pos in [x for x in current_turn.positions]:
+                            if pilot.position == int(pos[-1]):
+                                turn.pilots.remove(pilot)
+                if "BLOQUEADO" not in turn.type and (turn.pilots is None or turn.pilots == []):
+                    turn.type = None
         new_date.update_mongo(COLLECTION)
 
     @classmethod

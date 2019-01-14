@@ -106,13 +106,20 @@ class Reservation(BaseModel):
         :param reservation_id: The id of the reservation to be deleted from the collection
         :return: None
         """
+        from app.models.turns.turn import Turn as TurnModel
         try:
             reservation = Reservation.get_by_id(reservation_id, COLLECTION_TEMP)
             reservation.delete_from_mongo(COLLECTION_TEMP)
+            # Quitar los turnos y las posiciones del objeto Date
+            for turn in reservation.turns:
+                TurnModel.remove_allocation_dates(reservation, turn, remove_type="pilot")
         except ReservationNotFound:
             try:
                 reservation = Reservation.get_by_id(reservation_id, REAL_RESERVATIONS)
                 reservation.delete_from_mongo(REAL_RESERVATIONS)
+                # Quitar los turnos y las posiciones del objeto Date
+                for turn in reservation.turns:
+                    TurnModel.remove_allocation_dates(reservation, turn, remove_type="pilot")
             except ReservationNotFound:
                 raise ReservationNotFound("La reservacion con el ID dado no existe.")
 
