@@ -260,7 +260,5 @@ class Reservation(BaseModel):
         last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d") + datetime.timedelta(days=1)
         expressions = list()
         expressions.append({'$match': {'date': {'$gte': first_date, '$lte': last_date}}})
-        result = list(Database.DATABASE[REAL_RESERVATIONS].with_options(
-            codec_options=CodecOptions(
-                tz_aware=True, tzinfo=MEXICO_TZ)).aggregate(expressions))
+        result = list(Database.aggregate(REAL_RESERVATIONS, expressions))
         return [cls(**reservation) for reservation in result]

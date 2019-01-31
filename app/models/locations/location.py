@@ -317,4 +317,4 @@ class Location(BaseModel):
                 # email.send()
                 Email.mailgun(email.to, email.subject, email._text, email._html)
             except EmailErrors as e:
-                raise FailedToSendEmail(e)
+                continue
