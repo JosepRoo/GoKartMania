@@ -3,7 +3,7 @@ from app.models.baseModel import BaseModel
 from app.models.emails.email import Email
 from app.models.emails.errors import EmailErrors, FailedToSendEmail
 from app.models.locations.constants import COLLECTION
-from app.models.admins.constants import COLLECTION as ADMINS
+from app.models.admins.constants import COLLECTION as ADMINS, SUPERADMINS
 from app.models.locations.errors import LocationNotFound
 from app.models.users.user import User
 
@@ -70,7 +70,10 @@ class Location(BaseModel):
         :param reservation: Reservation object
         :return: POST method requesting an email to be sent to the user making the reservation
         """
-        for admin in Database.find(ADMINS, {}):
+        admins = list()
+        admins.extend(Database.find(ADMINS, {}))
+        admins.extend(Database.find(SUPERADMINS, {}))
+        for admin in admins:
             email = Email(to=admin.get('email'), subject='Confirmación de reservación', qr_code=qr_code)
             # email = Email(to="areyna@sitsolutions.org", subject='Confirmación de reservación', qr_code=qr_code)
             turns_detail = ""
