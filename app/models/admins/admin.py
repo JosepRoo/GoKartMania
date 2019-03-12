@@ -226,9 +226,9 @@ class Admin(BaseModel):
         </html>
                 """
 
-        # email.html(email_html)
-        # email.send()
-        Email.mailgun(self.email, 'Recuperación de contraseña', email._text, email._html)
+        email.html(email_html)
+        email.send()
+        # Email.mailgun(self.email, 'Recuperación de contraseña', email._text, email._html)
         return email
 
     def set_password(self, password) -> None:
@@ -423,8 +423,8 @@ class Admin(BaseModel):
         email.html(email_html)
 
         try:
-            # email.send()
-            Email.mailgun(email.to, email.subject, email._text, email._html)
+            email.send()
+            # Email.mailgun(email.to, email.subject, email._text, email._html)
         except EmailErrors as e:
             raise FailedToSendEmail(e)
 
