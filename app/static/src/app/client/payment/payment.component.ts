@@ -30,6 +30,10 @@ export class PaymentComponent implements OnInit, OnDestroy {
     show: false,
     text: ''
   };
+
+  today = new Date();
+  years = [];
+
   @Output() goBack: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild('pilotFormButton') pilotFormButton: ElementRef;
   @Output() paymentDone: EventEmitter<any> = new EventEmitter<any>();
@@ -43,6 +47,14 @@ export class PaymentComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+
+    let year = this.today.getFullYear();
+    for (let i = 0; i < 7; i++) {
+      this.years.push(year);
+      year = year + 1;
+    }
+    console.log(this.years);
+
     this.getReservation();
     this.payment = this.formBuilder.group({
       payment_method: ['', Validators.required],
