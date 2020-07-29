@@ -102,7 +102,7 @@ class Payments(Resource):
         except PaymentErrors as e:
             return Response(message=e.message).json(), 401
         except EmailErrors as e:
-            return Response(message=e.message).json(), 401
+            return Response(message=str(e.message)).json(), 401
         except UserErrors as e:
             return Response(message=e.message).json(), 401
         except PromotionErrors as e:

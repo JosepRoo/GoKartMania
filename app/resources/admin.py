@@ -1564,7 +1564,7 @@ class ForgotPassword(Resource):
         except AdminErrors as e:
             return Response(message=e.message).json(), 400
         except EmailErrors as e:
-            return Response(message=e.message).json(), 400
+            return Response(message=str(e.message)).json(), 401
         except Exception as e:
             return Response.generic_response(e), 500
 

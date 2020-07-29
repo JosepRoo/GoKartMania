@@ -90,4 +90,5 @@ class Email(object):
             )
         # Display an error if something goes wrong.
         except ClientError as e:
+            print(str(e.response['Error']['Message']))
             raise FailedToSendEmail(e.response['Error']['Message'])
