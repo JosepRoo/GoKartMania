@@ -123,7 +123,7 @@
 <a *ngIf="!loading" (click)="goBack.emit({pilots: reservation.pilots, date: reservation.date})">
   <div class="row justify-content-center">
     <div class="col-8 col-sm-6 text-center">
-      <button mat-raised-button color="primary" class="btn btn-block">Agregar otra reservación</button>      
+      <button mat-raised-button color="primary" class="btn btn-block">Agregar otra reservación</button>
     </div>
   </div>
 </a>
@@ -212,13 +212,13 @@
       <div class="container-fluid" *ngIf="payment.controls.payment_method.value && payment.controls.payment_method.value != 'PAYPAL'">
         <div class="row justify-content-center">
           <div class="col-11 col-sm-6 text-center">
-            <mat-form-field>          
+            <mat-form-field>
               <input matInput placeholder="Nombre que aparece en la tarjeta" formControlName="name" required>
-              <mat-error *ngIf="payment.controls.name.hasError('required')">El nombre es necesario</mat-error>          
+              <mat-error *ngIf="payment.controls.name.hasError('required')">El nombre es necesario</mat-error>
             </mat-form-field>
           </div>
           <div class="col-11 col-sm-6 text-center">
-            <mat-form-field>          
+            <mat-form-field>
               <input matInput placeholder="Número de tarjeta" [attr.maxlength]="16" formControlName="number" type="tel" required>
               <mat-error *ngIf="payment.controls.number.hasError('required')">El número es necesario</mat-error>
               <mat-error *ngIf="payment.controls.number.hasError('error') && !payment.controls.number.hasError('required')">El número es inválido</mat-error>
@@ -246,12 +246,7 @@
           <div class="col-5 col-sm-4 text-center">
             <mat-form-field>
               <mat-select placeholder="Año de expiración" formControlName="year" required>
-                <mat-option [value]="'2018'">2018</mat-option>
-                <mat-option [value]="'2019'">2019</mat-option>
-                <mat-option [value]="'2020'">2020</mat-option>
-                <mat-option [value]="'2021'">2021</mat-option>
-                <mat-option [value]="'2022'">2022</mat-option>
-                <mat-option [value]="'2023'">2023</mat-option>
+                <mat-option *ngFor="let year of years" [value]="year">{{year}}</mat-option>
               </mat-select>
               <mat-error *ngIf="payment.controls.year.hasError('required')">El año es necesario</mat-error>
             </mat-form-field>
