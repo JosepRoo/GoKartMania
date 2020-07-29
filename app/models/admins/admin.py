@@ -90,15 +90,8 @@ class Admin(BaseModel):
         """
         recovery = Recovery(admin_email=self.email)
         recovery.save_to_mongo()
-        # email = Email(to=self.email, subject='Recuperación de contraseña', qr_code=None)
-        email: Email = Email(to=self.email, subject='Recuperación de contraseña', qr_code=None)
-        email.text(
-            f"Hola, {self.name}:\nHas recibido este correo electrónico porque recientemente solicitaste restablecer "
-            "la contraseña asociada a tu cuenta de GoKartMania. Si no solicitaste este cambio, puedes hacer caso "
-            "omiso de este correo.\n\nCopia y pega el siguiente enlace en tu navegador de internet para restablecer tu contraseña:\n"
-            f"reservas.gokartmania.com.mx/#/admin/reset_password/{recovery._id}\n\nSaludos,\nEl equipo de GoKartMania.")
-
-        email_html = """
+        email: Email = Email(recipients=[self.email], subject='Recuperación de contraseña')
+        html = """
         <html>
         <head>
           <meta charset='utf-8' />
@@ -169,7 +162,7 @@ class Admin(BaseModel):
                               <tr>
                                 <td align='left' style='padding-top: 0px !important; font-weight: 700; padding-bottom:15px; font-size: 20px; color: white'>
                                   <br>"""
-        email_html += f"""
+        html += f"""
                                    <p style='font-size:28px;'>Recuperación de <span class='primary'>contraseña</span>.</p>
                                 </td>
                               </tr>
@@ -225,10 +218,8 @@ class Admin(BaseModel):
         </body>
         </html>
                 """
-
-        email.html(email_html)
-        email.send()
-        # Email.mailgun(self.email, 'Recuperación de contraseña', email._text, email._html)
+        email.html(html)
+        email.send_email()
         return email
 
     def set_password(self, password) -> None:
@@ -263,10 +254,8 @@ class Admin(BaseModel):
         :param promo: Promotion object containing the information of the promo to be confirmed
         :return: POST method requesting an email to be sent to the user making the reservation
         """
-        email = Email(to='javierj@gokartmania.com.mx', subject='Confirmación de promoción', qr_code=None)
-        # email = Email(to='areyna@sitsolutions.org', subject='Confirmación de promoción', qr_code=None)
-
-        email_html = """
+        email = Email(recipients=['javierj@gokartmania.com.mx'], subject='Confirmación de promoción')
+        html = """
 <html>
 <head>
   <meta charset='utf-8' />
@@ -337,7 +326,7 @@ class Admin(BaseModel):
                       <tr>
                         <td align='left' style='padding-top: 0px !important; font-weight: 700; padding-bottom:15px; font-size: 20px; color: white'>
                           <br>"""
-        email_html += """
+        html += """
                            <p style='font-size:28px;'>Autorización de <span class='primary'>promoción</span>.</p>
                         </td>
                       </tr>
@@ -368,7 +357,7 @@ class Admin(BaseModel):
                                                 promo.creator,
                                                 datetime.datetime.strftime(promo.created_date, '%d-%m-%Y %H:%M'),
                                                 promo.description, promo.value)
-        email_html += """
+        html += """
                                   <p>
                                     <span align="center" style="font-weight: 700;">Entra en el siguiente <a href='http://gokartmania.com.mx/#/admin/promos/{}'>enlace</a> para confirmar, modificar o desactivar esta promoción.</span>
                                   </p>
@@ -394,37 +383,9 @@ class Admin(BaseModel):
 </body>
 </html>
         """.format(promo._id)
-
-        email.text("Autorización de promoción.\n"
-                   "Nuestro sistema ha detectado que un empleado de GoKartMania ha intentado "
-                   "introducir una promoción con los siguientes detalles:\n\n"
-                   "Numero de cupones:\n"
-                   "{}\n"
-                   "Fecha de inicio:\n"
-                   "{}\n"
-                   "Fecha de término:\n"
-                   "{}\n"
-                   "Tipo de promoción:\n"
-                   "{}\n"
-                   "Nombre del encargado:\n"
-                   "{}\n"
-                   "Fecha de creación:\n"
-                   "{}\n"
-                   "Descripción:\n"
-                   "{}\n"
-                   "Valor de la promo::\n"
-                   "${}\n\n"
-                   "Presenta en taquilla el codigo adjunto para comenzar tu carrera.\n\n"
-                   "En sus marcas. Listos. ¡Fuera!".format(promo.existence, promo.start_date, promo.end_date,
-                                                           promo.type,
-                                                           promo.creator, promo.created_date, promo.description,
-                                                           promo.value))
-
-        email.html(email_html)
-
+        email.html(html)
         try:
-            email.send()
-            # Email.mailgun(email.to, email.subject, email._text, email._html)
+            email.send_email()
         except EmailErrors as e:
             raise FailedToSendEmail(e)
 

@@ -92,8 +92,9 @@ class Pilot(BaseModel):
         :param reservation: Reservation object
         :return: POST method requesting an email to be sent to the user making the reservation
         """
+
         for pilot in reservation.pilots:
-            email = Email(to=pilot.email, subject='Confirmación de reservación', qr_code=qr_code)
+            email = Email(recipients=[pilot.email], subject='Confirmación de reservación')
             turns_detail = ""
             for turn in reservation.turns:
                 turns_detail += "<p>" + turn.schedule + " hrs - Turno " + turn.turn_number + "</p>"
@@ -108,29 +109,7 @@ class Pilot(BaseModel):
             pilots_detail += "<p>Apodo: " + pilot.nickname + "</p>"
             pilots_detail += "<br>"
 
-            email.text("Estimado {}:\n"
-                       "Gracias por usar el servicio de Reservaciones de GoKartMania.\n"
-                       "A continuacion se desglosan los datos de su compra:\n\n"
-                       "Numero de confirmacion:\n"
-                       "{}\n\n"
-                       "Ubicacion:\n"
-                       "{}\n\n"
-                       "Fecha:\n"
-                       "{}\n\n"
-                       "Detalle de los turnos:\n"
-                       "{}\n"
-                       "Tus datos:\n"
-                       "{}\n"
-                       "Total de la compra:\n"
-                       "${}\n\n"
-                       "Presenta en taquilla el codigo adjunto para comenzar tu carrera.\n\n"
-                       "En sus marcas. Listos. ¡Fuera!".format(pilot.name, reservation._id,
-                                                               reservation.location.name,
-                                                               reservation.date.strftime("%Y-%m-%d"),
-                                                               turns_detail, pilots_detail,
-                                                               reservation.payment.amount))
-
-            email_html = """
+            html = """
             <html>
             <head>
               <meta charset='utf-8' />
@@ -201,9 +180,9 @@ class Pilot(BaseModel):
                                   <tr>
                                     <td align='left' style='padding-top: 0px !important; font-weight: 700; padding-bottom:15px; font-size: 20px; color: white'>
                                       <br>"""
-            email_html += """
+            html += """
                                        <p style='font-size:28px;'>¡Hola <span class='primary'>{}</span>!</p>""".format(pilot.name)
-            email_html += """
+            html += """
                                     </td>
                                   </tr>
                                   <tr>
@@ -220,19 +199,19 @@ class Pilot(BaseModel):
                                                 <span style="font-weight: 700;">Fecha:</span> <span class="primary">{}</span></p>
                                               <p>""".format(reservation._id, reservation.location.name,
                                                             reservation.date.strftime("%Y-%m-%d"))
-            email_html += """
+            html += """
                                                 <span style="font-weight: 700;">Detalle de los turnos:</span></p>
                                                 <div style="padding-left:25px">
                                                   {}
                                                 </div>""".format(turns_detail)
-            email_html += """
+            html += """
                                               <p>
                                                 <span style="font-weight: 700;">Tus datos:</span></p>
                                                 <div style="padding-left:25px; color: white;">
                                                   {}
                                                 </div>""".format(pilots_detail)
             qr_url = "http://138.197.209.15/qr/" + qr_code
-            email_html += """
+            html += """
                                               <p>
                                                 <span align="center" style="font-weight: 700;">Presenta en taquilla el siguiente <span class="primary">código QR</span> para comenzar tu carrera.</span></p>
                                           </td>
@@ -278,10 +257,9 @@ class Pilot(BaseModel):
             </html>
                     """.format(qr_url)
 
-            email.html(email_html)
+            email.html(html)
             try:
-                email.send()
-                # Email.mailgun(email.to, email.subject, email._text, email._html)
+                email.send_email()
             except EmailErrors as e:
                 raise FailedToSendEmail(e)
 

@@ -5,6 +5,7 @@ from werkzeug.exceptions import BadRequest
 from app import Response
 from app.common.utils import Utils
 from app.models.admins.errors import AdminErrors
+from app.models.emails.errors import EmailErrors
 from app.models.promos.errors import PromotionErrors
 from app.models.promos.promotion import Promotion as PromoModel
 from app.models.promos.constants import PARSER
@@ -80,6 +81,8 @@ class Promos(Resource):
             return Response(message=e.message).json(), 401
         except Exception as e:
             return Response.generic_response(e), 500
+        except EmailErrors as e:
+            return Response(message=str(e.message)).json(), 401
 
     @staticmethod
     @Utils.admin_login_required

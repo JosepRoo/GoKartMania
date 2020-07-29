@@ -60,7 +60,7 @@ class User(BaseModel):
         :param reservation: Reservation object
         :return: POST method requesting an email to be sent to the user making the reservation
         """
-        email = Email(to=self.email, subject='Confirmación de reservación', qr_code=qr_code)
+        email = Email(recipients=[self.email], subject='Confirmación de reservación')
 
         turns_detail = ""
         for turn in reservation.turns:
@@ -82,27 +82,7 @@ class User(BaseModel):
                 pilots_detail += "<p>Licencia: No" + "</p>"
             pilots_detail += "<br>"
 
-        email.text("Estimado {}:\n"
-                   "Gracias por usar el servicio de Reservaciones de GoKartMania.\n"
-                   "A continuacion se desglosan los datos de su compra:\n\n"
-                   "Numero de confirmacion:\n"
-                   "{}\n\n"
-                   "Ubicacion:\n"
-                   "{}\n\n"
-                   "Fecha:\n"
-                   "{}\n\n"
-                   "Detalle de los turnos:\n"
-                   "{}\n"
-                   "Pilotos:\n"
-                   "{}\n"
-                   "Total de la compra:\n"
-                   "${}\n\n"
-                   "Presenta en taquilla el codigo adjunto para comenzar tu carrera.\n\n"
-                   "En sus marcas. Listos. ¡Fuera!".format(self.name, reservation._id,
-                                                           reservation.location.name,
-                                                           reservation.date.strftime("%Y-%m-%d"),
-                                                           turns_detail, pilots_detail, reservation.amount))
-        email_html = """
+        html = """
 <html>
 <head>
   <meta charset='utf-8' />
@@ -173,9 +153,9 @@ class User(BaseModel):
                       <tr>
                         <td align='left' style='padding-top: 0px !important; font-weight: 700; padding-bottom:15px; font-size: 20px; color: white'>
                           <br>"""
-        email_html += """
+        html += """
                            <p style='font-size:28px;'>¡Hola <span class='primary'>{}</span>!</p>""".format(self.name)
-        email_html += """
+        html += """
                         </td>
                       </tr>
                       <tr>
@@ -192,18 +172,18 @@ class User(BaseModel):
                                     <span style="font-weight: 700;">Fecha:</span> <span class="primary">{}</span></p>
                                   <p>""".format(reservation._id, reservation.location.name,
                                                 reservation.date.strftime("%Y-%m-%d"))
-        email_html += """
+        html += """
                                     <span style="font-weight: 700;">Detalle de los turnos:</span></p>
                                     <div style="padding-left:25px">
                                       {}
                                     </div>""".format(turns_detail)
-        email_html += """
+        html += """
                                   <p>
                                     <span style="font-weight: 700;">Pilotos:</span></p>
                                     <div style="padding-left:25px; color: white;">
                                       {}
                                     </div>""".format(pilots_detail)
-        email_html += """
+        html += """
                                   <p>
                                     <span style="font-weight: 700;">Desglose de tu compra:</span>
                                   </p>
@@ -220,16 +200,16 @@ class User(BaseModel):
                                                    reservation.turns_price,
                                                    reservation.license_price + reservation.turns_price)
         if reservation.payment.promo:
-            email_html += """
+            html += """
                                     <p>
                                       Descuento: <span class="primary">${}</span>
                                     </p>""".format(reservation.discount)
         else:
-            email_html += """
+            html += """
                                     <p>
                                       Descuento: <span class="primary">$0</span>
                                     </p>"""
-        email_html += """
+        html += """
                                     <p>
                                       Total: <span class="primary">${}</span>
                                     </p>
@@ -249,7 +229,7 @@ class User(BaseModel):
                           <td>
                       </tr>""".format(reservation.amount)
         qr_url = "http://138.197.209.15/qr/"+qr_code
-        email_html += """
+        html += """
                       <tr>
                         <td>
                           <table width="100%">
@@ -286,10 +266,9 @@ class User(BaseModel):
 </body>
 </html>
         """.format(qr_url)
-        email.html(email_html)
+        email.html(html)
 
         try:
-            email.send()
-            # Email.mailgun(email.to, email.subject, email._text, email._html)
+            email.send_email()
         except EmailErrors as e:
             raise FailedToSendEmail(e)

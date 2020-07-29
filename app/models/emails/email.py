@@ -11,122 +11,83 @@ from app.models.emails.errors import FailedToSendEmail
 AWS_ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY")
 AWS_SECRET_KEY = os.environ.get("AWS_SECRET_KEY")
 
-"""
-This is the email model that will be used to handle the requests of sending emails to the user, the admin, and pilots
-"""
+# Replace sender@example.com with your "From" address.
+# This address must be verified with Amazon SES.
+# SENDER = "Sender Name <sender@example.com>"
+SENDER = os.environ.get("SES_VERIFIED_SENDER")
 
 
 class Email(object):
-    def __init__(self, to, subject, qr_code):
-        self.to = to
+    def __init__(self, recipients: list, subject: str, attachments=list()):
+        self.recipients = recipients
         self.subject = subject
-        self.qr_code = qr_code
-        self._html = None
+        self.attachments = attachments
         self._text = None
-        self._format = 'html'
-
-    def html(self, html):
-        """
-        Sets the html attribute to the given parameter
-        :param html: The HTML code to be set to the email
-        :return: None
-        """
-        self._html = html
+        self._html = None
 
     def text(self, text):
-        """
-        Sets the text attribute to the given parameter
-        :param text: The text body that the email will show
-        :return: None
-        """
         self._text = text
 
-    def send(self, from_addr=None):
+    def html(self, html):
+        self._html = html
+
+    def create_multipart_message(self) -> MIMEMultipart:
         """
-        Send the email from a given address, with a certain body, to a given user
-        :param from_addr: The address sending the email
-        :return: SES connection with the sent email object
+        Creates a MIME multipart message object.
+        Uses only the Python `email` standard library.
+        Emails, both sender and recipients, can be just the email string or have the format 'The Name <the_email@host.com>'.
+        :return: A `MIMEMultipart` to be used to send_email the email.
         """
-        body = self._html
 
-        if isinstance(self.to, str):
-            pass
-            # self.to = [self.to]
-        if not from_addr:
-            from_addr = 'info@gokartmania.com.mx'
-        if not self._html and not self._text:
-            raise FailedToSendEmail('Debes proporcionar un mensaje de texto o cuerpo HTML valido.')
-        if not self._html:
-            self._format = 'text'
-            body = self._text
-
-        connection = boto3.client('ses',
-                                  region_name='us-east-1',
-                                  aws_access_key_id=AWS_ACCESS_KEY,
-                                  aws_secret_access_key=AWS_SECRET_KEY
-                                  )
-
+        # Create a multipart/mixed parent container.
         msg = MIMEMultipart('mixed')
         # Add subject, from and to lines.
         msg['Subject'] = self.subject
-        msg['From'] = from_addr
-        msg['To'] = self.to
+        msg['From'] = SENDER
+        msg['To'] = ', '.join(self.recipients)
 
         # Create a multipart/alternative child container.
         msg_body = MIMEMultipart('alternative')
 
+        # Record the MIME types of both parts - text/plain and text/html.
+        # According to RFC 2046, the last part of a multipart message, in this case the HTML message, is preferred.
+
         # Encode the text and HTML content and set the character encoding. This step is
         # necessary if you're sending a message with characters outside the ASCII range.
-        textpart = MIMEText(self._text.encode("utf-8"), 'plain', "utf-8")
-        htmlpart = MIMEText(self._html.encode("utf-8"), 'html', "utf-8")
-
         # Add the text and HTML parts to the child container.
-        msg_body.attach(textpart)
-        msg_body.attach(htmlpart)
+        if self._text:
+            textpart = MIMEText(self._text.encode('utf-8'), 'plain', 'utf-8')
+            msg_body.attach(textpart)
+        if self._html:
+            htmlpart = MIMEText(self._html.encode('utf-8'), 'html', 'utf-8')
+            msg_body.attach(htmlpart)
 
-        # Define the attachment part and encode it using MIMEApplication.
-        #att = MIMEApplication(open(self.qr_code, 'rb').read())
+        # Add attachments
+        for attachment in self.attachments:
+            with open(attachment, 'rb') as f:
+                # Define the attachment part and encode it using MIMEApplication.
+                part = MIMEApplication(f.read())
+                # Add a header to tell the email client to treat this part as an attachment,
+                # and to give the attachment a name.
+                part.add_header('Content-Disposition', 'attachment', filename=os.path.basename(attachment))
+                # Add the attachment to the parent container.
+                msg.attach(part)
 
-        # Add a header to tell the email client to treat this part as an attachment,
-        # and to give the attachment a name.
-        #att.add_header('Content-Disposition', 'attachment', filename=os.path.basename(self.qr_code))
-
-        # Attach the multipart/alternative child container to the multipart/mixed
-        # parent container.
+        # Attach the multipart/alternative child container to the multipart/mixed parent container.
         msg.attach(msg_body)
+        return msg
 
-        # Add the attachment to the parent container.
-        #msg.attach(att)
-
+    def send_email(self):
+        msg = self.create_multipart_message()
+        ses_client = boto3.client('ses', region_name='us-east-1',
+                                  aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_KEY)
         try:
             # Provide the contents of the email.
-            response = connection.send_raw_email(
-                Source=from_addr,
-                Destinations=[
-                    self.to
-                ],
-                RawMessage={
-                    'Data': msg.as_string(),
-                }
+            return ses_client.send_raw_email(
+                Source=SENDER,
+                Destinations=self.recipients,
+                RawMessage={'Data': msg.as_string()}
             )
-            return response
         # Display an error if something goes wrong.
         except ClientError as e:
             raise FailedToSendEmail(e.response['Error']['Message'])
-
-    @classmethod
-    def mailgun(cls, to, subject, text=None, html=None):
-        import requests
-        url = 'https://api.mailgun.net/v3/cloudsitedsolutions.com/messages'
-        auth = ("api", "97b6ce29aa88cdc75c906537e28752f5-49a2671e-0b1b85d4")
-        data = {
-            "from": "GoKartmania  <info@gokartmania.com.mx>",
-            "to": to,
-            "subject": subject,
-        }
-        if text:
-            data['text'] = text
-        if html:
-            data['html'] = html
-
-        requests.post(url, auth=auth, data=data)
